@@ -35,7 +35,7 @@ State:implements {
         }
 
         player = Player:new(State, world, {})
-        Phys:newBody(world, 0, State.world_bottom - 32, 16 * 50, 32, "static")
+        Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
     end,
     --
     --
@@ -49,6 +49,15 @@ State:implements {
             State.camera:toggle_grid()
             State.camera:toggle_world_bounds()
             -- State.camera:toggle_debug()
+        end
+
+        if key == 'p' then
+            State:change_gamestate(State, {
+                skip_load = true,
+                transition = "door",
+                transition_conf = {}
+            })
+            return
         end
 
         player:key_pressed(key)

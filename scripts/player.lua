@@ -52,6 +52,8 @@ end
 ---@param self Player
 local function move_default(self, dt)
     local bd = self.body
+    local gamestate = self.gamestate
+    local camera = gamestate.camera
 
     bd.max_speed_x = bd.ground and self.max_speed_ground or self.max_speed
 
@@ -69,6 +71,21 @@ local function move_default(self, dt)
         if bd.speed_y <= -self.max_speed then
             bd.speed_y = -self.max_speed
         end
+    end
+
+    local last_px, last_py = bd.x, bd.y
+
+    bd:refresh(
+        Utils:clamp(bd.x, camera.bounds_left, camera.bounds_right - bd.w),
+        Utils:clamp(bd.y, camera.bounds_top, math.huge)
+    )
+
+    if bd.x ~= last_px then
+        bd.speed_x = 0.0
+    end
+
+    if bd.y ~= last_py then
+        bd.speed_y = bd.world.meter * 1.5
     end
 end
 --==========================================================================
@@ -111,6 +128,7 @@ function Player:__constructor__(state)
 
     self:set_update_order(10)
 
+    self.time_state = 0.0
     self:set_state(States.default)
 
     self.draw = Player.draw
@@ -120,6 +138,7 @@ function Player:set_state(state)
     if state == self.state then return false end
     local last = self.state
     self.state = state
+    self.time_state = 0.0
 
     if state == States.default then
         self.cur_movement = move_default
@@ -148,6 +167,8 @@ end
 function Player:update(dt)
     local bd = self.body
     GC.update(self, dt)
+
+    self.time_state = self.time_state + dt
     self:cur_movement(dt)
 
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
