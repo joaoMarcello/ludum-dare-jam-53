@@ -1,5 +1,6 @@
 local GC = require "lib.bodyComponent"
 local Utils = _G.JM_Utils
+local Spell = require "scripts.spell"
 
 local keys = {
     left = { 'left', 'a' },
@@ -93,6 +94,13 @@ local function move_default(self, dt)
         bd.speed_y = self.max_speed
     end
 end
+
+---@param self Player
+local function move_dead(self, dt)
+    local bd = self.body
+    bd.speed_x = 0
+    bd.acc_x = 0
+end
 --==========================================================================
 
 ---@class Player : BodyComponent
@@ -132,7 +140,7 @@ function Player:__constructor__(state)
     self.direction = 1
 
     --=======   STATS ============
-    self.max_hp = 6
+    self.max_hp = 3
     self.hp = self.max_hp
     self.atk = 1
     self.max_atk = 3
@@ -149,6 +157,14 @@ function Player:__constructor__(state)
     self:set_state(States.default)
 
     self.draw = Player.draw
+end
+
+function Player:load()
+    Spell:load()
+end
+
+function Player:finish()
+    Spell:finish()
 end
 
 function Player:is_dead()
@@ -188,11 +204,20 @@ end
 function Player:set_state(state)
     if state == self.state then return false end
     local last = self.state
+    local bd = self.body
     self.state = state
     self.time_state = 0.0
 
     if state == States.default then
         self.cur_movement = move_default
+        --
+    elseif state == States.dead then
+        self.cur_movement = move_dead
+        bd.speed_y = 0
+        bd:jump(16 * 1.5, -1)
+        bd.bouncing_y = 0.25
+        -- bd.mass = bd.world.default_mass * 0.4
+        --
     end
 
     return true
@@ -201,11 +226,19 @@ end
 function Player:key_pressed(key)
     local bd = self.body
 
-    -- if pressed('jump', key) then
-    --     if bd.speed_y == 0.0 then
-    --         bd:jump(16 * 3, -1)
-    --     end
-    -- end
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+
+    if self.state ~= States.dead then
+        if pressed('atk', key) then
+            local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
+            gamestate:game_add_component(Spell:new(gamestate, self.world, {
+                x = px,
+                y = bd.y,
+                direction = self.direction,
+            }))
+        end
+    end
 end
 
 function Player:key_released(key)
@@ -222,6 +255,21 @@ function Player:update(dt)
     self.time_state = self.time_state + dt
     self:cur_movement(dt)
 
+    if self.time_invicible ~= 0 then
+        self.time_invicible = Utils:clamp(self.time_invicible - dt, 0, self.invicible_duration)
+    end
+
+    if self.time_invicible ~= 0 and not self:is_dead() then
+        self:apply_effect('flickering', { speed = 0.06 })
+    else
+        local eff = self.eff_actives and self.eff_actives['flickering']
+        if eff then
+            eff.__remove = true
+            self.eff_actives['flickering'] = nil
+            self:set_visible(true)
+        end
+    end
+
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 
@@ -233,6 +281,10 @@ end
 
 function Player:draw()
     GC.draw(self, self.my_draw)
+
+    local font = JM_Font.current
+    local t = self.hp
+    font:print(tostring(t), self.x, self.y - 10)
 end
 
 return Player

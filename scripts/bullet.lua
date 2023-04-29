@@ -52,7 +52,8 @@ function Bullet:update(dt)
 
     ---@type GameState.Game | any
     local gamestate = self.gamestate
-    local player_bd = gamestate:game_player().body
+    local player = gamestate:game_player()
+    local player_bd = player.body
     local bd = self.body
 
     if not gamestate.camera:rect_is_on_view(bd.x, bd.y, bd.w, bd.h) then
@@ -60,7 +61,8 @@ function Bullet:update(dt)
         return
     end
 
-    if bd:check_collision(player_bd:rect()) then
+    if bd:check_collision(player_bd:rect()) and not player:is_dead() then
+        -- player:damage(self)
         self.__remove = true
     end
 end

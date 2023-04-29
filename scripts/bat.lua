@@ -47,12 +47,22 @@ end
 local idle = function(self, dt)
     local bd = self.body
 
+    ---@type GameState.Game | JM.Scene | any
+    local gamestate = self.gamestate
+
+    if not gamestate.camera:rect_is_on_view(bd:rect()) then
+        -- self.time_state = self.time_state + dt * 3.0
+        self.dur_idle = 0
+    end
+
     -- bd.speed_x = 0.0
     -- bd.speed_y = 0.0
     -- bd.acc_x = 0.0
     -- bd.acc_y = 0.0
 
-    if self.time_state >= self.dur_idle then
+    if self.time_state >= self.dur_idle
+        and not gamestate:game_player():is_dead()
+    then
         self.dur_idle = 3 * math.random()
         self:set_state(States.chase)
     end
@@ -108,6 +118,10 @@ function Bat:__constructor__(args)
     self.dur_chase = 4 + 3 * math.random()
 end
 
+function Bat:is_dead()
+    return self.state == States.dead or self.hp <= 0
+end
+
 function Bat:set_state(state)
     if state == self.state then return false end
     local bd = self.body
@@ -139,7 +153,10 @@ function Bat:shoot(dt)
     local bd = self.body
 
     self.time_shoot = self.time_shoot + dt
-    if self.time_shoot >= speed_shoot then
+
+    if self.time_shoot >= speed_shoot
+        and not gamestate:game_player():is_dead()
+    then
         self.time_shoot = self.time_shoot - speed_shoot - 4 * random()
         if self.time_shoot >= speed_shoot then self.time_shoot = 0.0 end
 
