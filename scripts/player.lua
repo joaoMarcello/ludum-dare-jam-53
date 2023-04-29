@@ -87,6 +87,10 @@ local function move_default(self, dt)
     if bd.y ~= last_py then
         bd.speed_y = bd.world.meter * 1.5
     end
+
+    if bd.speed_y > 0 and bd.speed_y > self.max_speed then
+        bd.speed_y = self.max_speed
+    end
 end
 --==========================================================================
 
@@ -122,9 +126,21 @@ function Player:__constructor__(state)
     bd.max_speed_x = self.max_speed
     bd.mass = bd.mass * 0.25
 
-    self.max_speed_ground = self.max_speed * 0.5
+    self.max_speed_ground = self.max_speed * 0.4
 
     self.direction = 1
+
+    --=======   STATS ============
+    self.max_hp = 6
+    self.hp = self.max_hp
+    self.atk = 1
+    self.max_atk = 3
+    self.def = 1
+    self.max_def = 3
+    --=============================
+
+    self.time_invicible = 0.0
+    self.invicible_duration = 1
 
     self:set_update_order(10)
 
@@ -132,6 +148,40 @@ function Player:__constructor__(state)
     self:set_state(States.default)
 
     self.draw = Player.draw
+end
+
+function Player:is_dead()
+    return self.state == States.dead or self.hp <= 0
+end
+
+function Player:is_invencible()
+    return self.time_invicible ~= 0
+end
+
+function Player:increase_hp()
+    local last = self.hp
+    self.hp = Utils:clamp(self.hp + 1, 0, self.max_hp)
+    return self.hp ~= last
+end
+
+function Player:damage(obj)
+    if self:is_dead() or self.time_invicible ~= 0.0 then return false end
+
+    self.hp = Utils:clamp(self.hp - 1, 0, self.max_hp)
+    self.time_invicible = self.invicible_duration
+
+    if self.hp == 0 then
+        self:set_state(States.dead)
+        _G.PLAY_SFX("death")
+    else
+        _G.PLAY_SFX("scream")
+    end
+
+    self.hit_obj = obj
+    self.gamestate:pause(self:is_dead() and 1.3 or 0.2, function(dt)
+        self.gamestate.camera:update(dt)
+    end)
+    return true
 end
 
 function Player:set_state(state)
