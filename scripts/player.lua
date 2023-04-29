@@ -103,8 +103,8 @@ function Player:new(state, world, args)
     args.type = "dynamic"
     args.x = args.x or (16 * 5)
     args.y = args.y or (0)
-    args.w = 12
-    args.h = 24
+    args.w = args.w or 12
+    args.h = args.h or 24
     args.y = args.bottom and (args.bottom - args.h) or args.y
 
     args.acc = 16 * 12
@@ -137,6 +137,7 @@ function Player:__constructor__(state)
     self.max_atk = 3
     self.def = 1
     self.max_def = 3
+    self.score = 0
     --=============================
 
     self.time_invicible = 0.0
