@@ -1,7 +1,9 @@
 local Pack = _G.JM_Love2D_Package
 local Phys = Pack.Physics
 local Player = require "scripts.player"
+local Bat = require "scripts.bat"
 
+---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
     {
         left = 0,
@@ -22,25 +24,70 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 local world
 ---@type Player
 local player
---=============================================================================--=============================================================================
+
+local components, score, time
+--=============================================================================
+local sort_update = function(a, b) return a.update_order > b.update_order end
+local sort_draw = function(a, b) return a.draw_order < b.draw_order end
+
+local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.sort, love.math.random, math
+    .abs
+
+function State:game_add_component(gc)
+    insert(components, gc)
+    return gc
+end
+
+function State:game_remove_component(index)
+    ---@type JM.Physics.Body
+    local body = components[index].body
+    if body then
+        body.__remove = true
+    end
+    return remove(components, index)
+end
+
+function State:game_components()
+    return components
+end
+
+function State:game_player()
+    return player
+end
+
+function State:game_add_score(value)
+    value = abs(value)
+    score = score + value
+end
+
+--=============================================================================
 State:implements {
     load = function()
         Player:load()
+        Bat:load()
     end,
     --
     --
     init = function()
+        --
+        components = {}
+
         world = Phys:newWorld {
             tile = 16,
         }
 
         player = Player:new(State, world, {})
+        State:game_add_component(player)
+
+        State:game_add_component(Bat:new(State, world, {}))
+
         Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
     end,
     --
     --
     finish = function()
         Player:finish()
+        Bat:finish()
     end,
     --
     --
@@ -69,7 +116,20 @@ State:implements {
 
     update = function(dt)
         world:update(dt)
-        player:update(dt)
+
+        tab_sort(components, sort_update)
+
+        for i = #components, 1, -1 do
+            ---@type GameComponent
+            local gc = components[i]
+
+            local r = gc.update and gc.is_enable
+                and not gc.__remove and gc:update(dt)
+
+            if gc.__remove then
+                State:game_remove_component(i)
+            end
+        end
 
         State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
     end,
@@ -83,7 +143,12 @@ State:implements {
                     bd:draw()
                 end
 
-                player:draw()
+                tab_sort(components, sort_draw)
+                for i = 1, #components do
+                    ---@type GameComponent
+                    local gc = components[i]
+                    local r = gc.draw and gc:draw()
+                end
             end
         },
     }

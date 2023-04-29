@@ -6,7 +6,8 @@ local keys = {
     right = { 'right', 'd' },
     down = { 'down', 's' },
     jump = { 'space', 'up', 'w' },
-    atk = { 'e', 'q', 'f' },
+    atk = { 'j', 'f' },
+    drop = { 'd', 'k' },
 }
 
 ---@enum Player.States
@@ -137,7 +138,6 @@ function Player:__constructor__(state)
     self.max_atk = 3
     self.def = 1
     self.max_def = 3
-    self.score = 0
     --=============================
 
     self.time_invicible = 0.0
