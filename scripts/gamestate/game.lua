@@ -159,7 +159,7 @@ State:implements {
             cam_py = 0,
             draw = function(self, camera)
                 local font = JM_Font.current
-                font:print(tostring(#components), 16, 16)
+                font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
             end
         }
     }

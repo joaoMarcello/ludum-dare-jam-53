@@ -70,6 +70,16 @@ local idle = function(self, dt)
     self:shoot(dt)
 end
 
+---@param self Bat
+local dead = function(self, dt)
+    local bd = self.body
+
+    if self.time_state >= 5
+    then
+        self.__remove = true
+    end
+end
+
 ---@class Bat : BodyComponent
 local Bat = setmetatable({}, GC)
 Bat.__index = Bat
@@ -107,7 +117,8 @@ function Bat:__constructor__(args)
     bd.dacc_y = dacc
     bd.id = "bat"
 
-    self.hp = 1
+    self.hp = 2
+    self.max_hp = 4
 
     self.state = nil
     self:set_state(States.chase)
@@ -122,6 +133,20 @@ function Bat:is_dead()
     return self.state == States.dead or self.hp <= 0
 end
 
+function Bat:damage(value)
+    if self:is_dead() then return false end
+
+    value = value or 1
+
+    self.hp = Utils:clamp(self.hp - value, 0, self.max_hp)
+
+    if self.hp == 0 then
+        self:set_state(States.dead)
+    end
+
+    return true
+end
+
 function Bat:set_state(state)
     if state == self.state then return false end
     local bd = self.body
@@ -133,6 +158,19 @@ function Bat:set_state(state)
         --
     elseif state == States.idle then
         self.cur_movement = idle
+        --
+    elseif state == States.dead then
+        self.cur_movement = dead
+        bd.allowed_air_dacc = false
+        bd.allowed_gravity = true
+        bd.speed_y = 0.0
+        bd.speed_x = bd.speed_x < 0 and (-32) or 32
+        bd.mass = bd.world.default_mass * 0.5
+        bd.type = bd.Types.ghost
+        bd.max_speed_y = nil
+        bd:jump(16 * 2, -1)
+        self:set_draw_order(16)
+        --
     end
 
     self.time_state = 0.0
@@ -187,6 +225,8 @@ end
 
 function Bat:draw()
     GC.draw(self, self.my_draw)
+    local font = JM_Font.current
+    font:print(tostring(self.hp), self.x, self.y - 10)
 end
 
 return Bat
