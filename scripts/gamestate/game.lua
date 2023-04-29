@@ -80,6 +80,7 @@ State:implements {
         State:game_add_component(player)
 
         State:game_add_component(Bat:new(State, world, {}))
+        State:game_add_component(Bat:new(State, world, { x = 0, y = 0 }))
 
         Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
     end,
@@ -151,6 +152,16 @@ State:implements {
                 end
             end
         },
+        --
+        --
+        {
+            cam_px = 0,
+            cam_py = 0,
+            draw = function(self, camera)
+                local font = JM_Font.current
+                font:print(tostring(#components), 16, 16)
+            end
+        }
     }
 }
 

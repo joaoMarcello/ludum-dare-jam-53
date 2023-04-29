@@ -9,6 +9,9 @@ lgx.setBackgroundColor(0, 0, 0, 1)
 lgx.setDefaultFilter("nearest", "nearest")
 lgx.setLineStyle("rough")
 love.mouse.setVisible(true)
+
+JM_Font.current:set_font_size(8)
+
 -- love.mouse.setRelativeMode(true)
 
 -- collectgarbage("setstepmul", 150)

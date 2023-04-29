@@ -27,8 +27,9 @@ function GC:__constructor__(state, args)
 
     self.__remove = false
 
-    self.draw_order = args.update_order or 0
-    self.update_order = args.draw_order or 0
+    self.draw_order = args.draw_order or 0
+    self.update_order = args.update_order or 0
+
     self.draw_order = self.draw_order + math.random()
     self.update_order = self.update_order + math.random()
 end

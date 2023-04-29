@@ -29,7 +29,7 @@ function Component:__constructor__(world, args)
     self.w = args.w
     self.h = args.h
 
-    self.args = args
+    -- self.args = args
 
     ---@type JM.Physics.World
     self.world = world
@@ -49,11 +49,11 @@ function Component:__constructor__(world, args)
 end
 
 function Component:init()
-    local args = self.args
-    self.x = args.x
-    self.y = args.y
-    self.w = args.w
-    self.h = args.h
+    -- local args = self.args
+    -- self.x = args.x
+    -- self.y = args.y
+    -- self.w = args.w
+    -- self.h = args.h
 
     self.is_enable = true
     self.__remove = false
