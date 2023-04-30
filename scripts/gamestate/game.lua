@@ -24,6 +24,15 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 )
 
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
+
+Leader:on_quit_action(function()
+    Leader:change_gamestate(State, {})
+end)
+
+Leader:on_restart_action(function()
+    Leader:change_gamestate(State, {})
+end)
+
 --=============================================================================
 ---@type JM.Physics.World
 local world
@@ -162,13 +171,7 @@ State:implements {
             if player.time_state >= 3.0 and not State.transition then
                 Leader:jgdr_pnt(score)
 
-                Leader:on_quit_action(function()
-                    Leader:change_gamestate(State, {})
-                end)
 
-                Leader:on_restart_action(function()
-                    Leader:change_gamestate(State, {})
-                end)
 
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Leader, { skip_finish = true, transition = "door" })
