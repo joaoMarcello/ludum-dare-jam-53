@@ -10,7 +10,7 @@ local Affectable = Pack.Affectable
 ---@class LeaderBoard : JM.Scene
 local State = Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, nil,
     {
-        subpixel = 2,
+        subpixel = 2.5,
         canvas_filter = 'linear',
 
     }

@@ -26,6 +26,7 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 )
 
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
+State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
 Leader:on_quit_action(function()
     Leader:change_gamestate(State, {})
@@ -46,7 +47,7 @@ local cauldron
 local components, score, time
 
 local time_spawn = 0.0
-local spawn_speed = 10.0
+local spawn_speed = 11.0
 local time_game = 0.0
 local time_heart = 0.0
 
@@ -65,14 +66,14 @@ local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.
     .abs
 
 local function spawn_enemy(dt)
-    if time_game >= 120 then
+    if time_game >= 140 then
         spawn_speed = 4.0
-    elseif time_game >= 90 then
+    elseif time_game >= 100 then
         spawn_speed = 5.0
-    elseif time_game >= 75 then
-        spawn_speed = 6.0
-    elseif time_game >= 45 then
-        spawn_speed = 8.0
+    elseif time_game >= 80 then
+        spawn_speed = 7.0
+    elseif time_game >= 50 then
+        spawn_speed = 9.0
     end
 
     time_spawn = time_spawn + dt

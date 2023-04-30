@@ -91,7 +91,7 @@ function Item:drop()
     bd.max_speed_y = nil
     bd.bouncing_y = 0.6
     bd.bouncing_x = 0.5
-    bd.speed_y = 0.0
+    bd.speed_y = 16 + 16
     self:set_visible(true)
     bd.speed_x = player_bd.speed_x
     bd.dacc_x = 16 * 1
@@ -102,7 +102,12 @@ function Item:drop()
     self.time_throw = 0.0
     self.bounce_count = 0
 
-    bd:refresh(player_bd.x, player_bd:bottom() - bd.h)
+    bd:refresh(player_bd.x, player_bd:bottom())
+
+    local col = bd:check(nil, bd.y + 2, bd.filter_col_y)
+    if col.n > 0 then
+        bd:resolve_collisions_y(col)
+    end
 end
 
 function Item:deflick()

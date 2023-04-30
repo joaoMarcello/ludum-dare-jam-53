@@ -22,6 +22,9 @@ local States = {
     move = 6,
     up = 7,
 }
+
+local imgs
+
 --==========================================================================
 local keyboard_is_down = love.keyboard.isDown
 local math_abs, type = math.abs, type
@@ -166,16 +169,29 @@ function Player:__constructor__(state)
 
     self.items = {}
 
+    local Anima = _G.JM_Anima
+    self.anim = {
+        [States.default] = Anima:new { img = imgs[States.default] },
+    }
+
+    self.cur_anima = self.anim[States.default]
+
     self.update = Player.update
     self.draw = Player.draw
 end
 
 function Player:load()
     Spell:load()
+
+    local newImage = lgx.newImage
+    imgs = imgs or {
+        [States.default] = newImage("data/img/brunette-fly.png"),
+    }
 end
 
 function Player:finish()
     Spell:finish()
+    imgs = nil
 end
 
 function Player:hp_up(value)
@@ -323,6 +339,7 @@ function Player:update(dt)
     local bd = self.body
     GC.update(self, dt)
 
+
     self:reload_spell(dt)
 
     self.time_state = self.time_state + dt
@@ -343,23 +360,28 @@ function Player:update(dt)
         end
     end
 
+    self.cur_anima:update(dt)
+    self.cur_anima:set_flip_x(self.direction < 0 and true or false)
+
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 
 function Player:my_draw()
-    lgx.setColor(0, 0, 1)
-    local bd = self.body
-    lgx.rectangle("fill", bd.x, bd.y, bd.w, bd.h)
-    lgx.setColor(0, 0, 0)
-    lgx.rectangle("line", bd.x, bd.y, bd.w, bd.h)
+    -- local bd = self.body
+    -- lgx.setColor(0, 0, 1)
+    -- lgx.rectangle("fill", bd.x, bd.y, bd.w, bd.h)
+    -- lgx.setColor(0, 0, 0)
+    -- lgx.rectangle("line", bd.x, bd.y, bd.w, bd.h)
+
+    self.cur_anima:draw(self.x + self.w * 0.5, self.y + self.h * 0.5)
 end
 
 function Player:draw()
     GC.draw(self, self.my_draw)
 
-    local font = JM_Font.current
-    local t = self.hp
-    font:print(tostring(t), self.x, self.y - 10)
+    -- local font = JM_Font.current
+    -- local t = self.hp
+    -- font:print(tostring(t), self.x, self.y - 10)
 end
 
 return Player
