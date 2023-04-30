@@ -86,18 +86,22 @@ State:implements {
         components = {}
         score = 0
 
+        State.camera.x = 0
+        State.camera.y = 0
+
         world = Phys:newWorld {
             tile = 16,
         }
 
-        player = Player:new(State, world, {})
+        local ground = Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
+
+        player = Player:new(State, world, { bottom = ground.y })
         State:game_add_component(player)
 
         State:game_add_component(Bat:new(State, world, {}))
         State:game_add_component(Bat:new(State, world, { x = 0, y = 0 }))
         State:game_add_component(Item:new(State, world, { x = 64, y = 0, allowed_gravity = true }))
 
-        local ground = Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
     end,
@@ -157,6 +161,15 @@ State:implements {
         else
             if player.time_state >= 3.0 and not State.transition then
                 Leader:jgdr_pnt(score)
+
+                Leader:on_quit_action(function()
+                    Leader:change_gamestate(State, {})
+                end)
+
+                Leader:on_restart_action(function()
+                    Leader:change_gamestate(State, {})
+                end)
+
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Leader, { skip_finish = true, transition = "door" })
                 end)

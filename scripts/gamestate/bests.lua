@@ -69,6 +69,10 @@ local anima_btn_refresh
 local btn_refresh
 ---@type JM.GUI.Component
 local btn_send
+---@type JM.GUI.Component
+local btn_quit
+---@type JM.GUI.Component
+local btn_restart
 
 ---@type JM.Template.Affectable
 local aff_player
@@ -169,7 +173,7 @@ local player_is_on_ranking = function()
     if rank_data then
         local name, score, sec, text, date = Board:get_proper(rank_data[MAX])
 
-        if name then
+        if name and score then
             return player_score > score
         end
     end
@@ -198,11 +202,61 @@ local bt_send_draw = function(self)
     end
     lgx.rectangle("fill", self.x, self.y, self.w, self.h)
 
-    font:printf("Send", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center", self.w)
+    font:push()
+    font:set_font_size(8)
+    font:printf("<color, 0.9, 0.9, 0.9>Send", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center", self.w)
+    font:pop()
+end
+
+---@param self JM.GUI.Component
+local bt_quit_draw = function(self)
+    if self.on_focus then
+        lgx.setColor(1, 0, 0)
+    else
+        lgx.setColor(0, 0, 1)
+    end
+
+    font:push()
+    font:set_font_size(8)
+    lgx.rectangle("fill", self.x, self.y, self.w, self.h)
+    font:printf("<color, 0.9, 0.9, 0.9>Quit", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center", self.w)
+    font:pop()
+end
+
+---@param self JM.GUI.Component
+local bt_restart_draw = function(self)
+    if self.on_focus then
+        lgx.setColor(1, 0, 0)
+    else
+        lgx.setColor(0, 0, 1)
+    end
+
+    font:push()
+    font:set_font_size(6)
+    lgx.rectangle("fill", self.x, self.y, self.w, self.h)
+    font:printf("<color, 0.9, 0.9, 0.9>Play Again", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center",
+        self.w)
+    font:pop()
 end
 
 function State:jgdr_pnt(value)
     player_score = math.abs(value)
+end
+
+local quit_action, quit_args
+-- quit_action = function()
+--     State:change_gamestate(require "scripts.gamestate.game", {})
+-- end
+
+function State:on_quit_action(action, args)
+    quit_action = action
+    quit_args = args
+end
+
+local restart_action, restart_args
+function State:on_restart_action(action, args)
+    restart_action = action
+    restart_args = args
 end
 
 --=============================================================================
@@ -254,10 +308,30 @@ State:implements {
             x = 0, y = 0,
             w = tile * 2.5,
             h = tile,
-            on_focus = true
+            on_focus = false
         }
         btn_send.__custom_draw__ = bt_send_draw
         btn_send:on_event("mouse_pressed", send)
+
+        ---@type JM.GUI.Component
+        btn_quit = Component:new {
+            x = 0, y = 0,
+            w = tile * 2.5,
+            h = tile,
+            on_focus = false
+        }
+        btn_quit.__custom_draw__ = bt_quit_draw
+        btn_quit:on_event("mouse_pressed", quit_action, quit_args)
+
+        ---@type JM.GUI.Component
+        btn_restart = Component:new {
+            x = 0, y = 0,
+            w = tile * 2.5,
+            h = tile,
+            on_focus = false
+        }
+        btn_restart.__custom_draw__ = bt_restart_draw
+        btn_restart:on_event("mouse_pressed", restart_action, restart_args)
 
         if args and type(args) == "table" then
             player_score = args.pnts
@@ -277,9 +351,9 @@ State:implements {
     end,
 
     finish = function()
-        player_score = nil
-        player_sec = nil
-        player_text = nil
+        -- player_score = nil
+        -- player_sec = nil
+        -- player_text = nil
     end,
 
     keypressed = function(key)
@@ -311,6 +385,9 @@ State:implements {
 
     mousepressed = function(x, y, b, istouch, presses)
         btn_refresh:mouse_pressed(x, y, b, istouch, presses)
+        btn_quit:mouse_pressed(x, y, b, istouch, presses)
+        btn_restart:mouse_pressed(x, y, b, istouch, presses)
+
         if not enabled() or not player_is_on_ranking() then return end
 
         label:mouse_pressed(x, y, b, istouch, presses)
@@ -321,6 +398,8 @@ State:implements {
         label:mouse_released(x, y, b, istouch, presses)
         btn_refresh:mouse_released(x, y, b, istouch, presses)
         btn_send:mouse_released(x, y, b, istouch, presses)
+        btn_quit:mouse_released(x, y, b, istouch, presses)
+        btn_restart:mouse_released(x, y, b, istouch, presses)
     end,
 
     update = function(dt)
@@ -363,8 +442,28 @@ State:implements {
                 btn_send:set_focus(false)
             end
 
+            col = btn_quit:check_collision(mx, my, 0, 0)
+            if col then
+                if not btn_quit.on_focus then
+                    btn_quit:set_focus(true)
+                end
+            elseif btn_quit.on_focus then
+                btn_quit:set_focus(false)
+            end
+
+            col = btn_restart:check_collision(mx, my, 0, 0)
+            if col then
+                if not btn_restart.on_focus then
+                    btn_restart:set_focus(true)
+                end
+            elseif btn_restart.on_focus then
+                btn_restart:set_focus(false)
+            end
+
             btn_send:update(dt)
             btn_refresh:update(dt)
+            btn_quit:update(dt)
+            btn_restart:update(dt)
             aff_player:update(dt)
         end
     end,
@@ -504,10 +603,14 @@ State:implements {
 
                     if enabled() then
                         if player_is_on_ranking() then
+                            local size = font.__font_size
+
+                            font:set_font_size(size - 2)
                             font:set_color(def_rect_color)
                             font:print("Enter your name:", label.x - tile / 2, label.y - font.__font_size - 4, math.huge)
                             label:draw()
 
+                            font:set_font_size(size)
                             btn_send:set_position(label.right + 16, label.y + label.h * 0.5 - btn_send.h * 0.5)
                             btn_send:draw()
                         end
@@ -535,6 +638,14 @@ State:implements {
                         btn_refresh:draw()
                     end
                 end
+
+                btn_quit:set_position(camera.viewport_w - btn_quit.w - tile * 0.5, label.y)
+                btn_quit:draw()
+
+                btn_restart:set_position(btn_quit.x - btn_restart.w - tile * 0.5, label.y)
+                btn_restart:draw()
+
+                font:printf(tostring(player_score), 0, tile, "right", camera.viewport_w - tile * 0.5)
             end
         },
         --
