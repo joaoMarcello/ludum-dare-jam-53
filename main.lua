@@ -3,6 +3,10 @@ local lgx = love.graphics
 
 local Pack = require "jm-love2d-package.init"
 local SceneManager = Pack.SceneManager
+do
+    local Word = require "jm-love2d-package.modules.font.Word"
+    Word.eff_wave_range = 1
+end
 
 math.randomseed(os.time())
 lgx.setBackgroundColor(0, 0, 0, 1)
@@ -25,7 +29,7 @@ SCREEN_WIDTH = Pack.Utils:round(320)  --576 *1.5
 
 DEVICE = "Android"
 
-local initial_state = 'game'
+local initial_state = 'bests'
 
 --==================================================================
 

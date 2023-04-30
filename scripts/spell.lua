@@ -156,7 +156,13 @@ end
 function Spell:update(dt)
     GC.update(self, dt)
 
-    self:cur_movement(dt)
+    local player = self.gamestate:game_player()
+
+    if player:is_dead() then
+        self:remove()
+    else
+        self:cur_movement(dt)
+    end
 end
 
 function Spell:my_draw()

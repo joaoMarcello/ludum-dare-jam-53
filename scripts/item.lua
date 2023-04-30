@@ -45,6 +45,7 @@ function Item:__constructor__(args)
     local bd = self.body
     bd.allowed_gravity = args.allowed_gravity
     bd.allowed_air_dacc = args.allowed_air_dacc
+    bd.speed_x = args.speed_x or bd.speed_x
 
     bd.mass = bd.mass * 0.25
     bd.max_speed_y = 16 * 4
@@ -109,11 +110,14 @@ end
 
 function Item:grab()
     local player = self.gamestate:game_player()
-    self.grabbed = true
-    self.dropped = false
-    player:insert_item(self)
-    self:deflick()
-    self:set_visible(false)
+    local success = player:insert_item(self)
+
+    if success then
+        self.grabbed = true
+        self.dropped = false
+        self:deflick()
+        self:set_visible(false)
+    end
 end
 
 local tab = { speed = 0.06 }

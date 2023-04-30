@@ -4,6 +4,7 @@ local Player = require "scripts.player"
 local Bat = require "scripts.bat"
 local Cauldron = require "scripts.cauldron"
 local Item = require "scripts.item"
+local Leader = require "scripts.gamestate.bests"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -151,7 +152,16 @@ State:implements {
             end
         end
 
-        State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
+        if not player:is_dead() then
+            State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
+        else
+            if player.time_state >= 3.0 and not State.transition then
+                Leader:jgdr_pnt(5000)
+                State:add_transition("door", "out", {}, nil, function()
+                    State:change_gamestate(Leader, { skip_finish = true, transition = "door" })
+                end)
+            end
+        end
     end,
 
     layers = {
@@ -188,14 +198,24 @@ State:implements {
         },
         --
         --
+        --================== GUI ========================
         {
             cam_px = 0,
             cam_py = 0,
+            --
+            ---@param camera JM.Camera.Camera
             draw = function(self, camera)
                 local font = JM_Font.current
                 font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
 
                 font:printf("SCORE:\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
+
+
+                if player:bag_is_full() then
+                    font:printx("<effect=flickering, speed=0.8> <color>Bag is full!", 4, camera.viewport_h - 20)
+                else
+                    font:print("BAG: " .. player.bag_count, 4, camera.viewport_h - 20)
+                end
             end
         }
     }

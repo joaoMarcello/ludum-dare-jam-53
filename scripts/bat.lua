@@ -1,6 +1,7 @@
 local GC = require "lib.bodyComponent"
 local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
+local Item = require "scripts.item"
 
 local lgx = love.graphics
 local atan2, sqrt, cos, sin = math.atan2, math.sqrt, math.cos, math.sin
@@ -158,6 +159,19 @@ function Bat:damage(value)
     return true
 end
 
+function Bat:drop_wing()
+    local bd = self.body
+    local wing = Item:new(self.gamestate, self.body.world, {
+        x = bd.x,
+        bottom = bd:bottom(),
+        allowed_gravity = true,
+        allowed_air_dacc = true,
+        item_type = Item.Types.wing,
+        speed_x = bd.speed_x
+    })
+    self.gamestate:game_add_component(wing)
+end
+
 function Bat:set_state(state)
     if state == self.state then return false end
     local bd = self.body
@@ -171,6 +185,8 @@ function Bat:set_state(state)
         self.cur_movement = idle
         --
     elseif state == States.dead then
+        self:drop_wing()
+
         self.cur_movement = dead
         bd.allowed_air_dacc = false
         bd.allowed_gravity = true
@@ -183,6 +199,7 @@ function Bat:set_state(state)
         self:set_draw_order(16)
 
         self.gamestate:game_add_score(self:get_score())
+
         --
     end
 
@@ -192,10 +209,12 @@ end
 
 function Bat:load()
     Bullet:load()
+    Item:load()
 end
 
 function Bat:finish()
     Bullet:finish()
+    Item:finish()
 end
 
 function Bat:get_score()

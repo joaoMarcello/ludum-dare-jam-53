@@ -151,6 +151,14 @@ function Player:__constructor__(state)
     self.time_invicible = 0.0
     self.invicible_duration = 1
 
+    self.max_spell = 3
+    self.count_spell = self.max_spell
+    self.time_spell = 0.0
+    self.time_reload_spell = 1.0
+
+    self.bag_count = 0
+    self.bag_capacity = 1
+
     self:set_update_order(10)
 
     self.time_state = 0.0
@@ -170,9 +178,35 @@ function Player:finish()
     Spell:finish()
 end
 
+function Player:reload_spell(dt)
+    if self.count_spell < self.max_spell then
+        self.time_spell = self.time_spell + dt
+
+        local rel_time = self.count_spell <= 0
+            and (self.time_reload_spell * 3.5)
+            or self.time_reload_spell
+
+        if self.time_spell >= rel_time then
+            self.time_spell = self.time_spell - rel_time
+            self.count_spell = self.count_spell + 1
+        end
+    else
+        self.time_spell = 0.0
+    end
+end
+
+function Player:bag_is_full()
+    return self.bag_count >= self.bag_capacity
+end
+
 ---@param item Item
 function Player:insert_item(item)
+    if self.bag_count >= self.bag_capacity or self:is_dead() then
+        return false
+    end
     table.insert(self.items, item)
+    self.bag_count = self.bag_count + 1
+    return true
 end
 
 function Player:is_dead()
@@ -231,28 +265,44 @@ function Player:set_state(state)
     return true
 end
 
-function Player:key_pressed(key)
+function Player:lauch_spell()
+    if self.count_spell <= 0 then return false end
+
+    self.count_spell = self.count_spell - 1
+
+    local gamestate = self.gamestate
     local bd = self.body
 
-    ---@type GameState.Game | any
-    local gamestate = self.gamestate
+    local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
+    gamestate:game_add_component(Spell:new(gamestate, self.world, {
+        x = px,
+        y = bd.y,
+        direction = self.direction,
+    }))
 
+    self.time_spell = 0.0
+
+    return true
+end
+
+function Player:drop_item()
+    ---@type Item | nil
+    local item = table.remove(self.items, self.bag_count)
+
+    if item then
+        item:drop()
+        self.bag_count = self.bag_count - 1
+    end
+end
+
+function Player:key_pressed(key)
     if self.state ~= States.dead then
         if pressed('atk', key) then
-            local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
-            gamestate:game_add_component(Spell:new(gamestate, self.world, {
-                x = px,
-                y = bd.y,
-                direction = self.direction,
-            }))
-            --
+            self:lauch_spell()
             --
         elseif pressed('drop', key) then
-            ---@type Item | nil
-            local item = table.remove(self.items, #self.items)
-            if item then
-                item:drop()
-            end
+            self:drop_item()
+            --
         end
     end
 end
@@ -267,6 +317,8 @@ end
 function Player:update(dt)
     local bd = self.body
     GC.update(self, dt)
+
+    self:reload_spell(dt)
 
     self.time_state = self.time_state + dt
     self:cur_movement(dt)
@@ -293,13 +345,15 @@ function Player:my_draw()
     lgx.setColor(0, 0, 1)
     local bd = self.body
     lgx.rectangle("fill", bd.x, bd.y, bd.w, bd.h)
+    lgx.setColor(0, 0, 0)
+    lgx.rectangle("line", bd.x, bd.y, bd.w, bd.h)
 end
 
 function Player:draw()
     GC.draw(self, self.my_draw)
 
     local font = JM_Font.current
-    local t = self.hp
+    local t = self.count_spell
     font:print(tostring(t), self.x, self.y - 10)
 end
 
