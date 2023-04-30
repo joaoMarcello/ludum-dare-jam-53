@@ -13,7 +13,7 @@ function Cauldron:new(state, world, args)
     args.y = args.y or 64
     args.x = args.x or 96
     args.w = 48
-    args.h = 28
+    args.h = 24
     args.y = args.bottom and (args.bottom - args.h) or args.y
     args.draw_order = 0
 
@@ -27,8 +27,8 @@ end
 function Cauldron:__constructor__(world, args)
     self.world = world
 
-    Phys:newBody(world, self.x, self.y, 4, self.h, "static")
-    Phys:newBody(world, self.x + self.w - 4, self.y, 4, self.h, "static")
+    Phys:newBody(world, self.x, self.y, 1, self.h, "static")
+    Phys:newBody(world, self.x + self.w - 1, self.y, 1, self.h, "static")
     Phys:newBody(world, self.x - 3, self.y, 3, 3, "static")
     Phys:newBody(world, self.x + self.w, self.y, 3, 3, "static")
 end

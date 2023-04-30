@@ -8,7 +8,7 @@ local States = {
     chase = 2,
 }
 
-local speed = 16 * 8
+local speed = 16 * 3
 local speed_chase = 16 * 3
 local dacc = 16 * 3
 

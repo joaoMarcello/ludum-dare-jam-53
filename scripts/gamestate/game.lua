@@ -3,6 +3,7 @@ local Phys = Pack.Physics
 local Player = require "scripts.player"
 local Bat = require "scripts.bat"
 local Cauldron = require "scripts.cauldron"
+local Item = require "scripts.item"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -25,6 +26,8 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 local world
 ---@type Player
 local player
+---@type Cauldron
+local cauldron
 
 local components, score, time
 --=============================================================================
@@ -56,6 +59,10 @@ function State:game_player()
     return player
 end
 
+function State:game_cauldron()
+    return cauldron
+end
+
 function State:game_add_score(value)
     value = abs(value)
     score = score + value
@@ -67,6 +74,7 @@ State:implements {
         Player:load()
         Bat:load()
         Cauldron:load()
+        Item:load()
     end,
     --
     --
@@ -83,10 +91,11 @@ State:implements {
 
         State:game_add_component(Bat:new(State, world, {}))
         State:game_add_component(Bat:new(State, world, { x = 0, y = 0 }))
+        State:game_add_component(Item:new(State, world, { x = 64, y = 0, allowed_gravity = true }))
 
         local ground = Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
 
-        State:game_add_component(Cauldron:new(State, world, { bottom = ground.y }))
+        cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
     end,
     --
     --
@@ -94,6 +103,7 @@ State:implements {
         Player:finish()
         Bat:finish()
         Cauldron:finish()
+        Item:finish()
     end,
     --
     --

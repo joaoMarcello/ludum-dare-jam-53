@@ -156,6 +156,9 @@ function Player:__constructor__(state)
     self.time_state = 0.0
     self:set_state(States.default)
 
+    self.items = {}
+
+    self.update = Player.update
     self.draw = Player.draw
 end
 
@@ -165,6 +168,11 @@ end
 
 function Player:finish()
     Spell:finish()
+end
+
+---@param item Item
+function Player:insert_item(item)
+    table.insert(self.items, item)
 end
 
 function Player:is_dead()
@@ -237,6 +245,14 @@ function Player:key_pressed(key)
                 y = bd.y,
                 direction = self.direction,
             }))
+            --
+            --
+        elseif pressed('drop', key) then
+            ---@type Item | nil
+            local item = table.remove(self.items, #self.items)
+            if item then
+                item:drop()
+            end
         end
     end
 end
