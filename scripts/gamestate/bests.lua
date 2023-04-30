@@ -26,6 +26,13 @@ Board:init(Loader.load("data/dummy1.dat"))
 --[[
     marco, joana, bruno, sarah, peter
 ]]
+--[[
+    Dummy1 Content
+{
+    [1]="http://dreamlo.com/lb/644e7e728f40bb6dec7c1941/",
+    [2]="http://dreamlo.com/lb/ENIIH2BoRkG30ewXF2HHKQXqsst4hqDk2nMtrwAI7pGA/"
+}
+]]
 --=============================================================================
 local lgx = love.graphics
 local format = string.format
