@@ -2,6 +2,7 @@ local Pack = _G.JM_Love2D_Package
 local Phys = Pack.Physics
 local Player = require "scripts.player"
 local Bat = require "scripts.bat"
+local Cauldron = require "scripts.cauldron"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -30,7 +31,7 @@ local components, score, time
 local sort_update = function(a, b) return a.update_order > b.update_order end
 local sort_draw = function(a, b) return a.draw_order < b.draw_order end
 
-local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.sort, love.math.random, math
+local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.sort, math.random, math
     .abs
 
 function State:game_add_component(gc)
@@ -65,6 +66,7 @@ State:implements {
     load = function()
         Player:load()
         Bat:load()
+        Cauldron:load()
     end,
     --
     --
@@ -82,13 +84,16 @@ State:implements {
         State:game_add_component(Bat:new(State, world, {}))
         State:game_add_component(Bat:new(State, world, { x = 0, y = 0 }))
 
-        Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
+        local ground = Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
+
+        State:game_add_component(Cauldron:new(State, world, { bottom = ground.y }))
     end,
     --
     --
     finish = function()
         Player:finish()
         Bat:finish()
+        Cauldron:finish()
     end,
     --
     --

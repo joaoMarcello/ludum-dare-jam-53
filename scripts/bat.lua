@@ -35,6 +35,8 @@ local chase = function(self, dt)
 
     bd:apply_force(-speed * cos(angle), -speed * sin(angle))
 
+    if bd.ground then bd:jump(4) end
+
     if self.time_state >= self.dur_chase then
         self.dur_chase = 4 + 3 * math.random()
         self:set_state(States.idle)
@@ -168,7 +170,7 @@ function Bat:set_state(state)
         bd.mass = bd.world.default_mass * 0.5
         bd.type = bd.Types.ghost
         bd.max_speed_y = nil
-        bd:jump(16 * 2, -1)
+        bd:jump(16 * 1.5, -1)
         self:set_draw_order(16)
         --
     end
