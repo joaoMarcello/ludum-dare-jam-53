@@ -348,12 +348,14 @@ State:implements {
         rank_data = data or Board:get_tab()
         rank_time = 0.0
         rank_cur_player = 1
+        love.mouse.setVisible(true)
     end,
 
     finish = function()
         -- player_score = nil
         -- player_sec = nil
         -- player_text = nil
+        love.mouse.setVisible(false)
     end,
 
     keypressed = function(key)
@@ -645,7 +647,7 @@ State:implements {
                 btn_restart:set_position(btn_quit.x - btn_restart.w - tile * 0.5, label.y)
                 btn_restart:draw()
 
-                font:printf(tostring(player_score), 0, tile, "right", camera.viewport_w - tile * 0.5)
+                font:printf("Score \n " .. tostring(player_score), 0, tile, "right", camera.viewport_w - tile * 0.5)
             end
         },
         --

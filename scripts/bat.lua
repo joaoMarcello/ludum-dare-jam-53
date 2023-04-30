@@ -26,7 +26,7 @@ local max_speed = 16 * 5
 local speed = 16 * 2.5
 local acc = 16 * 4
 local dacc = 16 * 8
-local speed_shoot = 2
+local speed_shoot = 1
 
 ---@param self Bat
 local chase = function(self, dt)
@@ -160,6 +160,7 @@ function Bat:damage(value)
 end
 
 function Bat:drop_wing()
+    if love.math.random() <= 0.4 then return false end
     local bd = self.body
     local wing = Item:new(self.gamestate, self.body.world, {
         x = bd.x,
@@ -167,9 +168,11 @@ function Bat:drop_wing()
         allowed_gravity = true,
         allowed_air_dacc = true,
         item_type = Item.Types.wing,
-        speed_x = bd.speed_x
+        speed_x = bd.speed_x,
+        auto_remove = true,
     })
     self.gamestate:game_add_component(wing)
+    return true
 end
 
 function Bat:set_state(state)
@@ -237,7 +240,7 @@ function Bat:shoot(dt)
     if self.time_shoot >= speed_shoot
         and not gamestate:game_player():is_dead()
     then
-        self.time_shoot = self.time_shoot - speed_shoot - 4 * random()
+        self.time_shoot = self.time_shoot - speed_shoot - 3 * random()
         if self.time_shoot >= speed_shoot then self.time_shoot = 0.0 end
 
         gamestate:game_add_component(Bullet:new(gamestate, bd.world,
@@ -257,6 +260,13 @@ function Bat:update(dt)
 
     local bd = self.body
 
+    if not self:is_dead() then
+        local player = self.gamestate:game_player()
+        local player_bd = player.body
+        if player_bd:check_collision(bd:rect()) then
+            player:damage(self)
+        end
+    end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 

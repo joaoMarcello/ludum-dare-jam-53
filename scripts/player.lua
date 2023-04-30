@@ -140,7 +140,7 @@ function Player:__constructor__(state)
     self.direction = 1
 
     --=======   STATS ============
-    self.max_hp = 3
+    self.max_hp = 5
     self.hp = self.max_hp
     self.atk = 1
     self.max_atk = 3
@@ -157,7 +157,7 @@ function Player:__constructor__(state)
     self.time_reload_spell = 1.0
 
     self.bag_count = 0
-    self.bag_capacity = 1
+    self.bag_capacity = 5
 
     self:set_update_order(10)
 
@@ -183,7 +183,7 @@ function Player:reload_spell(dt)
         self.time_spell = self.time_spell + dt
 
         local rel_time = self.count_spell <= 0
-            and (self.time_reload_spell * 3.5)
+            and (self.time_reload_spell * 3.0)
             or self.time_reload_spell
 
         if self.time_spell >= rel_time then
@@ -353,7 +353,7 @@ function Player:draw()
     GC.draw(self, self.my_draw)
 
     local font = JM_Font.current
-    local t = self.count_spell
+    local t = self.hp
     font:print(tostring(t), self.x, self.y - 10)
 end
 

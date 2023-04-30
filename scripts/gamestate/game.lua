@@ -1,5 +1,6 @@
 local Pack = _G.JM_Love2D_Package
 local Phys = Pack.Physics
+local Utils = Pack.Utils
 local Player = require "scripts.player"
 local Bat = require "scripts.bat"
 local Cauldron = require "scripts.cauldron"
@@ -9,7 +10,7 @@ local Leader = require "scripts.gamestate.bests"
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
     {
-        left = -16 * 6,
+        left = -16 * 30,
         top = -16 * 5,
         right = 16 * 50,
         bottom = 16 * 12,
@@ -42,12 +43,55 @@ local player
 local cauldron
 
 local components, score, time
+
+local time_spawn = 0.0
+local spawn_speed = 10.0
+local time_game = 0.0
+
+local bottom = State.camera.bounds_bottom - 32
+local mush_spot = {
+    { x = 16 * 7,  bottom = bottom, time = 0.0, obj = nil },
+    { x = 16 * 27, bottom = bottom, time = 0.0, obj = nil },
+}
 --=============================================================================
 local sort_update = function(a, b) return a.update_order > b.update_order end
 local sort_draw = function(a, b) return a.draw_order < b.draw_order end
 
 local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.sort, math.random, math
     .abs
+
+local function spawn_enemy(dt)
+    if time_game >= 120 then
+        spawn_speed = 4.0
+    elseif time_game >= 90 then
+        spawn_speed = 5.0
+    elseif time_game >= 75 then
+        spawn_speed = 6.0
+    elseif time_game >= 45 then
+        spawn_speed = 8.0
+    end
+
+    time_spawn = time_spawn + dt
+    if time_spawn >= spawn_speed then
+        time_spawn = time_spawn - spawn_speed
+        if time_spawn >= spawn_speed then time_spawn = 0.0 end
+
+        local cam = State.camera
+        local vx, vy, vw, vh = cam:get_viewport_in_world_coord()
+
+        local px, py
+        py = vy + random() * (vh - 16 * 3)
+
+        if random() >= 0.5 then
+            px = vx - 32
+        else
+            px = vx + vw + 32
+        end
+
+        State:game_add_component(Bat:new(State, world, { x = px, bottom = py }))
+    end
+end
+
 
 function State:game_add_component(gc)
     insert(components, gc)
@@ -80,6 +124,30 @@ function State:game_add_score(value)
     score = score + value
 end
 
+local function respawn_mush(dt)
+    for i = 1, #mush_spot do
+        local spot = mush_spot[i]
+
+        ---@type Item
+        local item = spot.obj
+        if item.grabbed or item.dropped then
+            spot.time = spot.time + dt
+
+            if spot.time > 15.0 then
+                spot.time = 0.0
+
+                ---@type Item
+                local obj = State:game_add_component(Item:new(State, world,
+                    { x = spot.x, bottom = spot.bottom, allowed_gravity = false, item_type = item.type }))
+
+                obj:apply_effect("popin", { speed = 0.3 })
+
+                spot.obj = obj
+            end
+        end
+    end
+end
+
 --=============================================================================
 State:implements {
     load = function()
@@ -94,6 +162,8 @@ State:implements {
         --
         components = {}
         score = 0
+        time_spawn = -5.0
+        time_game = 0.0
 
         State.camera.x = 0
         State.camera.y = 0
@@ -102,14 +172,28 @@ State:implements {
             tile = 16,
         }
 
-        local ground = Phys:newBody(world, 0, State.camera.bounds_bottom - 32, 16 * 50, 32, "static")
+        local camera = State.camera
 
-        player = Player:new(State, world, { bottom = ground.y })
+        local ground = Phys:newBody(world,
+            camera.bounds_left,
+            camera.bounds_bottom - 32,
+            camera.bounds_right - camera.bounds_left,
+            32,
+            "static"
+        )
+
+        player = Player:new(State, world, { x = 16 * 3, bottom = ground.y })
         State:game_add_component(player)
 
-        State:game_add_component(Bat:new(State, world, {}))
-        State:game_add_component(Bat:new(State, world, { x = 0, y = 0 }))
-        State:game_add_component(Item:new(State, world, { x = 64, y = 0, allowed_gravity = true }))
+
+        for i = 1, #mush_spot do
+            mush_spot[i].time = 0.0
+
+            local obj = State:game_add_component(Item:new(State, world,
+                { x = mush_spot[i].x, bottom = mush_spot[i].bottom, allowed_gravity = true }))
+
+            mush_spot[i].obj = obj
+        end
 
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
@@ -149,6 +233,8 @@ State:implements {
     end,
 
     update = function(dt)
+        time_game = time_game + dt
+
         world:update(dt)
 
         tab_sort(components, sort_update)
@@ -166,6 +252,9 @@ State:implements {
         end
 
         if not player:is_dead() then
+            spawn_enemy(dt)
+            respawn_mush(dt)
+
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
         else
             if player.time_state >= 3.0 and not State.transition then

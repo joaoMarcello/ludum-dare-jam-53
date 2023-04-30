@@ -12,7 +12,7 @@ math.randomseed(os.time())
 lgx.setBackgroundColor(0, 0, 0, 1)
 lgx.setDefaultFilter("nearest", "nearest")
 lgx.setLineStyle("rough")
-love.mouse.setVisible(true)
+love.mouse.setVisible(false)
 
 JM_Font.current:set_font_size(8)
 JM_Font.current:set_line_space(2)

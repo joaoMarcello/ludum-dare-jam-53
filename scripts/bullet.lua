@@ -62,7 +62,7 @@ function Bullet:update(dt)
     end
 
     if bd:check_collision(player_bd:rect()) and not player:is_dead() then
-        -- player:damage(self)
+        player:damage(self)
         self.__remove = true
     end
 end

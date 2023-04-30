@@ -37,7 +37,7 @@ function Cauldron:__constructor__(world, args)
 
     local Anima = _G.JM_Anima
     self.anim_down = Anima:new { img = imgs.down }
-    self.anim_down:apply_effect("float", { range = 4, speed = 0.5 })
+    self.anim_down:apply_effect("flickering", { range = 4, speed = 0.15 })
 end
 
 function Cauldron:load()

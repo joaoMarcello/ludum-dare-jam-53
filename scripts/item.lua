@@ -29,6 +29,7 @@ function Item:new(state, world, args)
     args.w = 12
     args.h = 12
     args.draw_order = -1
+    args.y = args.bottom and (args.bottom - args.h) or args.y
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
@@ -55,9 +56,14 @@ function Item:__constructor__(args)
 
     self.grabbed = false
 
+    self.auto_remove = args.auto_remove
+
     self.time_dropped = 0.0
     self.time_throw = 0.0
     self.bounce_count = 0
+
+    self.ox = self.w * 0.5
+    self.oy = self.h * 0.5
 
     bd:on_event("ground_touch", ground_touch_action, self)
 end
@@ -137,13 +143,13 @@ function Item:update(dt)
         end
     end
 
-    if self.dropped then
+    if self.dropped or (not self.grabbed and self.auto_remove) then
         self.time_throw = self.time_throw + dt
 
         local cauldron = gamestate:game_cauldron()
         if cauldron:is_inside(bd) then
             local score = self.score
-            score = self.bounce_count > 0 and (score * 3) or score
+            score = self.bounce_count > 0 and (score * 5) or score
             gamestate:game_add_score(score)
             self.__remove = true
             return
@@ -155,11 +161,11 @@ function Item:update(dt)
             end
             self.time_dropped = self.time_dropped + dt
 
-            if self.time_dropped >= 2 then
+            if self.time_dropped >= 3 then
                 self:apply_effect('flickering', tab)
             end
 
-            if self.time_dropped >= 3 then
+            if self.time_dropped >= 4.5 then
                 self.__remove = true
                 return
             end
