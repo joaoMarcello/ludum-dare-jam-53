@@ -156,7 +156,7 @@ State:implements {
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
         else
             if player.time_state >= 3.0 and not State.transition then
-                Leader:jgdr_pnt(5000)
+                Leader:jgdr_pnt(score)
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Leader, { skip_finish = true, transition = "door" })
                 end)

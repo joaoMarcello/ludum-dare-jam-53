@@ -29,7 +29,7 @@ SCREEN_WIDTH = Pack.Utils:round(320)  --576 *1.5
 
 DEVICE = "Android"
 
-local initial_state = 'bests'
+local initial_state = 'game'
 
 --==================================================================
 
