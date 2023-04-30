@@ -100,8 +100,8 @@ function Spell:__constructor__(args)
     self:set_state(States.straight)
 
     self.hit_box = Phys:newBody(self.world, self.x, self.y,
-        16 * 3,
-        16 * 3, "ghost"
+        16 * 3.5,
+        16 * 3.5, "ghost"
     )
     self.hit_box.allowed_gravity = false
 

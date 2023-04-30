@@ -41,6 +41,11 @@ function Cauldron:finish()
 
 end
 
+---@param bd JM.Physics.Body
+function Cauldron:is_inside(bd)
+    return bd:check_collision(self.x, self.y + 4, self.w, self.h)
+end
+
 function Cauldron:update(dt)
     GC.update(self, dt)
 
@@ -50,7 +55,7 @@ function Cauldron:update(dt)
 
     if not player:is_dead() then
         local bd = player.body
-        if bd:check_collision(self.x, self.y + 4, self.w, self.h) then
+        if self:is_inside(bd) then
             -- bd:apply_force(nil, -bd:weight() - bd.acc_y - 16 * 6)
             bd:jump(16 * 3, -1)
         end

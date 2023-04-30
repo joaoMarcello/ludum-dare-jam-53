@@ -9,10 +9,19 @@ local Types = {
     heart = 4,
 }
 
+---@enum Item.Scores
+local Scores = {
+    [Types.mush] = 100,
+    [Types.wing] = 60,
+    [Types.fruit] = 80,
+    [Types.heart] = 50,
+}
+
 ---@class Item : BodyComponent
 local Item = setmetatable({}, GC)
 Item.__index = Item
 Item.Types = Types
+Item.Scores = Scores
 
 function Item:new(state, world, args)
     args = args or {}
@@ -27,6 +36,11 @@ function Item:new(state, world, args)
     return obj
 end
 
+---@param self Item
+local ground_touch_action = function(self)
+    self.bounce_count = self.bounce_count + 1
+end
+
 function Item:__constructor__(args)
     local bd = self.body
     bd.allowed_gravity = args.allowed_gravity
@@ -35,13 +49,15 @@ function Item:__constructor__(args)
     bd.mass = bd.mass * 0.25
     bd.max_speed_y = 16 * 4
 
-    self.type = args.type or Types.mush
+    self.type = args.item_type or Types.mush
+    self.score = Scores[self.type]
 
     self.grabbed = false
 
     self.time_dropped = 0.0
+    self.bounce_count = 0
 
-    -- self:drop()
+    bd:on_event("ground_touch", ground_touch_action, self)
 end
 
 function Item:load()
@@ -75,6 +91,7 @@ function Item:drop()
     self:deflick()
 
     self.time_dropped = 0.0
+    self.bounce_count = 0
 
     bd:refresh(player_bd.x, player_bd:bottom() - bd.h)
 end
@@ -116,6 +133,15 @@ function Item:update(dt)
     end
 
     if self.dropped then
+        local cauldron = gamestate:game_cauldron()
+        if cauldron:is_inside(bd) then
+            local score = self.score
+            score = self.bounce_count > 0 and (score * 3) or score
+            gamestate:game_add_score(score)
+            self.__remove = true
+            return
+        end
+
         if bd.ground then
             if bd.speed_y == 0 then
                 bd.dacc_x = 16 * 8
@@ -146,6 +172,8 @@ end
 
 function Item:draw()
     GC.draw(self, self.my_draw)
+    local font = JM_Font.current
+    font:print(tostring(self.bounce_count), self.x, self.y - 10)
 end
 
 return Item

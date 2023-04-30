@@ -89,8 +89,6 @@ Bat.__index = Bat
 
 function Bat:new(state, world, args)
     args = args or {}
-
-    args = args or {}
     args.type = "dynamic"
     args.x = args.x or (16 * 5)
     args.y = args.y or (16 * 2)

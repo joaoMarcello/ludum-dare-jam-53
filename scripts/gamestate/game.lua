@@ -81,6 +81,7 @@ State:implements {
     init = function()
         --
         components = {}
+        score = 0
 
         world = Phys:newWorld {
             tile = 16,
@@ -175,6 +176,8 @@ State:implements {
             draw = function(self, camera)
                 local font = JM_Font.current
                 font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
+
+                font:printf("SCORE:\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
             end
         }
     }

@@ -11,6 +11,7 @@ lgx.setLineStyle("rough")
 love.mouse.setVisible(true)
 
 JM_Font.current:set_font_size(8)
+JM_Font.current:set_line_space(2)
 
 -- love.mouse.setRelativeMode(true)
 
