@@ -72,16 +72,20 @@ function Item:drop()
     bd.speed_x = player_bd.speed_x
     bd.dacc_x = 16 * 1
 
+    self:deflick()
+
+    self.time_dropped = 0.0
+
+    bd:refresh(player_bd.x, player_bd:bottom() - bd.h)
+end
+
+function Item:deflick()
     local eff = self.eff_actives and self.eff_actives['flickering']
     if eff then
         eff.__remove = true
         self.eff_actives['flickering'] = nil
         self:set_visible(true)
     end
-
-    self.time_dropped = 0.0
-
-    bd:refresh(player_bd.x, player_bd:bottom() - bd.h)
 end
 
 function Item:grab()
@@ -90,6 +94,7 @@ function Item:grab()
     self.grabbed = true
     self.dropped = false
     player:insert_item(self)
+    self:deflick()
     self:set_visible(false)
 end
 
@@ -120,6 +125,7 @@ function Item:update(dt)
             if self.time_dropped >= 2 then
                 self:apply_effect('flickering', tab)
             end
+
             if self.time_dropped >= 3 then
                 self.__remove = true
                 return
