@@ -78,7 +78,7 @@ local btn_restart
 local aff_player
 
 local MAX = 5
-local WEB = false
+local WEB = _G.DEVICE == "Web" or false
 
 local rank_data, rank_time, rank_cur_player
 local rank_speed = 0.4 / MAX
@@ -257,6 +257,10 @@ local restart_action, restart_args
 function State:on_restart_action(action, args)
     restart_action = action
     restart_args = args
+end
+
+function State:set_cur_player_rank(value)
+    rank_cur_player = Utils:clamp(value, 1, MAX)
 end
 
 --=============================================================================

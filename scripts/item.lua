@@ -187,8 +187,8 @@ end
 
 function Item:draw()
     GC.draw(self, self.my_draw)
-    local font = JM_Font.current
-    font:print(tostring(self.bounce_count), self.x, self.y - 10)
+    -- local font = JM_Font.current
+    -- font:print(tostring(self.bounce_count), self.x, self.y - 10)
 end
 
 return Item

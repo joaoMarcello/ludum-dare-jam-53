@@ -37,7 +37,10 @@ function Cauldron:__constructor__(world, args)
 
     local Anima = _G.JM_Anima
     self.anim_down = Anima:new { img = imgs.down }
-    self.anim_down:apply_effect("flickering", { range = 4, speed = 0.15 })
+    self.anim_down:apply_effect("flickering", { speed = 0.15 })
+
+    self.anim2 = Anima:new { img = imgs.down }
+    self.anim2:apply_effect("float", { range = 1.4, speed = 0.6 })
 end
 
 function Cauldron:load()
@@ -59,6 +62,7 @@ function Cauldron:update(dt)
     GC.update(self, dt)
 
     self.anim_down:update(dt)
+    self.anim2:update(dt)
 
     ---@type GameState.Game | any
     local gamestate = self.gamestate
@@ -99,25 +103,15 @@ function Cauldron:draw()
             self.h
         )
 
-        -- if not camera:rect_is_on_view(self.x, vy - 10, self.w, vh) then
-        --     if vx > self.x then
-        --         self.anim_down:set_rotation(math.pi / 2)
-        --         self.anim_down:draw_rec(vx,
-        --             Utils:clamp(self.y, self.y, vy + vh - self.h - 10),
-        --             32, self.h
-        --         )
-        --     end
-
-        --     if vx < self.x then
-        --         self.anim_down:set_rotation(-math.pi / 2)
-        --         self.anim_down:draw_rec(vx + vw - 32,
-        --             Utils:clamp(self.y, self.y, vy + vh - self.h - 10),
-        --             32, self.h
-        --         )
-        --     end
-        -- end
-
         self.anim_down:set_rotation(rot)
+        --
+    else
+        local player_bd = self.gamestate:game_player().body
+
+        if not player_bd:check_collision(self.x - 16, self.y - 32, self.w + 32, self.h + 64) then
+            self.anim2:draw_rec(self.x, self.y - 35, self.w, self.h)
+        end
+        --
     end
 end
 

@@ -98,7 +98,7 @@ end
 
 local function spawn_heart(dt)
     time_heart = time_heart + dt
-    if time_heart >= 5 then
+    if time_heart >= 25 then
         time_heart = 0
         local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
         vx = vx + 16
@@ -108,7 +108,6 @@ local function spawn_heart(dt)
         )
     end
 end
-
 
 function State:game_add_component(gc)
     insert(components, gc)
@@ -218,10 +217,6 @@ State:implements {
 
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
-
-        State:game_add_component(
-            Heart:new(State, world, { x = 32, y = 0 })
-        )
     end,
     --
     --
@@ -284,13 +279,13 @@ State:implements {
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
         else
-            if player.time_state >= 3.0 and not State.transition then
+            if player.time_state >= 4.0 and not State.transition then
                 Leader:jgdr_pnt(score)
-
-
 
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Leader, { skip_finish = true, transition = "door" })
+
+                    Leader:set_cur_player_rank(10)
                 end)
             end
         end
@@ -338,16 +333,26 @@ State:implements {
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
                 local font = JM_Font.current
-                font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
+                -- font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
+
+                if player:is_dead() and player.time_state >= 1.0 then
+                    font:push()
+                    font:set_font_size(22)
+                    font:printx("<effect=scream>YOU ARE \n DEAD", 0, 16 * 3, camera.viewport_w, "center")
+                    font:pop()
+                end
 
                 font:printf("SCORE:\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
 
-
                 if player:bag_is_full() then
-                    font:printx("<effect=flickering, speed=0.8> <color>Bag is full!", 4, camera.viewport_h - 20)
+                    font:printx("<effect=flickering, speed=0.8> <color>Bag is full!", camera.viewport_w * 0.5, 8,
+                        camera.viewport_w * 0.5, "center")
                 else
-                    font:print("BAG: " .. player.bag_count, 4, camera.viewport_h - 20)
+                    font:printf("BAG:\n " .. player.bag_count, camera.viewport_w * 0.5, 8, "center",
+                        camera.viewport_w * 0.5)
                 end
+
+                font:printf("HP: " .. player.hp, 8, 8, "left", camera.viewport_w * 0.5)
             end
         }
     }
