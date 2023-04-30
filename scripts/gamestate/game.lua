@@ -155,6 +155,21 @@ State:implements {
     end,
 
     layers = {
+        --
+        --================== TREES ========================
+        {
+            factor_x = -0.6,
+            factor_y = -0.6,
+            infinity_scroll_x = true,
+            scroll_width = 32 * 6,
+            ---@param camera JM.Camera.Camera
+            draw = function(self, camera)
+                love.graphics.setColor(0, 0, 1)
+                love.graphics.rectangle("fill", -16, camera.bounds_bottom - 16 * 7, 32, 16 * 7)
+            end
+        },
+        --
+        --================== MAIN LAYER ========================
         {
             draw = function(self, camera)
                 for i = 1, #world.bodies_static do
