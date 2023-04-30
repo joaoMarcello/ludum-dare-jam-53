@@ -16,7 +16,16 @@ local State = Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, nil,
     }
 )
 
-Board:init(Loader.load("data/dummy2.dat"))
+-- local dm2 = love.filesystem.read("/data/dymmy2.txt")
+-- Loader.save(dm2, "dummy1.dat")
+Board:init(Loader.load("data/dummy1.dat"))
+
+-- local http = require "socket.http"
+-- http.request("http://dreamlo.com/lb/ENIIH2BoRkG30ewXF2HHKQXqsst4hqDk2nMtrwAI7pGA/add/Marco/50")
+
+--[[
+    marco, joana, bruno, sarah, peter
+]]
 --=============================================================================
 local lgx = love.graphics
 local format = string.format
