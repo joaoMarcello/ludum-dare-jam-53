@@ -12,7 +12,7 @@ love.mouse.setVisible(true)
 
 JM_Font.current:set_font_size(8)
 JM_Font.current:set_line_space(2)
-
+-- JM_Font.current.__imgs[0]:setFilter("nearest", "nearest")
 -- love.mouse.setRelativeMode(true)
 
 -- collectgarbage("setstepmul", 150)

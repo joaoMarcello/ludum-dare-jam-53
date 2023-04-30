@@ -8,19 +8,21 @@ local Item = require "scripts.item"
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
     {
-        left = 0,
-        top = -16 * 0,
+        left = -16 * 6,
+        top = -16 * 5,
         right = 16 * 50,
         bottom = 16 * 12,
     },
     --
     {
-        subpixel = 2,
+        subpixel = 3,
         canvas_filter = 'linear',
         tile = 16,
         cam_tile = 16,
     }
 )
+
+State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 --=============================================================================
 ---@type JM.Physics.World
 local world
@@ -118,6 +120,7 @@ State:implements {
         if key == 'p' then
             State:change_gamestate(State, {
                 skip_load = true,
+                skip_finish = true,
                 transition = "door",
                 transition_conf = {}
             })

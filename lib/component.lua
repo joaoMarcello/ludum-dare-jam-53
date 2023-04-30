@@ -4,7 +4,7 @@ local Affectable = _G.JM_Affectable
 local GC = setmetatable({}, Affectable)
 GC.__index = GC
 
----@param game JM.Scene
+---@param game JM.Scene | GameState.Game | any
 ---@return table
 function GC:new(game, args)
     args = args or {}
@@ -13,7 +13,7 @@ function GC:new(game, args)
     return obj
 end
 
----@param state JM.Scene
+---@param state JM.Scene | GameState.Game | any
 function GC:__constructor__(state, args)
     self.gamestate = state
 

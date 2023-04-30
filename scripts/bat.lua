@@ -14,6 +14,13 @@ local States = {
     atk = 3,
 }
 
+---@enum Bat.Modes
+local Modes = {
+    normal = 1,
+    medium = 2,
+    hard = 3
+}
+
 local max_speed = 16 * 5
 local speed = 16 * 2.5
 local acc = 16 * 4
@@ -85,7 +92,8 @@ end
 ---@class Bat : BodyComponent
 local Bat = setmetatable({}, GC)
 Bat.__index = Bat
-
+Bat.States = States
+Bat.Modes = Modes
 
 function Bat:new(state, world, args)
     args = args or {}
@@ -109,6 +117,8 @@ function Bat:__constructor__(args)
     bd.allowed_gravity = false
     bd.allowed_air_dacc = true
 
+    self.mode = args.mode or Modes.normal
+
     bd.max_speed_x = max_speed
     bd.max_speed_y = max_speed
     bd.acc_x = acc
@@ -122,6 +132,7 @@ function Bat:__constructor__(args)
 
     self.state = nil
     self:set_state(States.chase)
+
 
     self.time_shoot = -5.0 * math.random()
     self.time_state = 0.0
@@ -170,6 +181,8 @@ function Bat:set_state(state)
         bd.max_speed_y = nil
         bd:jump(16 * 1.5, -1)
         self:set_draw_order(16)
+
+        self.gamestate:game_add_score(self:get_score())
         --
     end
 
@@ -183,6 +196,16 @@ end
 
 function Bat:finish()
     Bullet:finish()
+end
+
+function Bat:get_score()
+    if self.mode == Modes.normal then
+        return 20
+    elseif self.mode == Modes.medium then
+        return 50
+    else
+        return 80
+    end
 end
 
 function Bat:shoot(dt)

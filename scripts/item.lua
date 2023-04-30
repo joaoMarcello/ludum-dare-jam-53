@@ -11,10 +11,10 @@ local Types = {
 
 ---@enum Item.Scores
 local Scores = {
-    [Types.mush] = 100,
-    [Types.wing] = 60,
-    [Types.fruit] = 80,
-    [Types.heart] = 50,
+    [Types.mush] = 150,
+    [Types.wing] = 50,
+    [Types.fruit] = 150,
+    [Types.heart] = 100,
 }
 
 ---@class Item : BodyComponent
@@ -26,8 +26,8 @@ Item.Scores = Scores
 function Item:new(state, world, args)
     args = args or {}
     args.type = "dynamic"
-    args.w = 16
-    args.h = 16
+    args.w = 12
+    args.h = 12
     args.draw_order = -1
 
     local obj = GC:new(state, world, args)
@@ -55,6 +55,7 @@ function Item:__constructor__(args)
     self.grabbed = false
 
     self.time_dropped = 0.0
+    self.time_throw = 0.0
     self.bounce_count = 0
 
     bd:on_event("ground_touch", ground_touch_action, self)
@@ -91,6 +92,7 @@ function Item:drop()
     self:deflick()
 
     self.time_dropped = 0.0
+    self.time_throw = 0.0
     self.bounce_count = 0
 
     bd:refresh(player_bd.x, player_bd:bottom() - bd.h)
@@ -106,7 +108,6 @@ function Item:deflick()
 end
 
 function Item:grab()
-    ---@diagnostic disable-next-line: undefined-field
     local player = self.gamestate:game_player()
     self.grabbed = true
     self.dropped = false
@@ -133,6 +134,8 @@ function Item:update(dt)
     end
 
     if self.dropped then
+        self.time_throw = self.time_throw + dt
+
         local cauldron = gamestate:game_cauldron()
         if cauldron:is_inside(bd) then
             local score = self.score
@@ -156,7 +159,9 @@ function Item:update(dt)
                 self.__remove = true
                 return
             end
+        end
 
+        if bd.ground or self.time_throw >= 1.5 then
             local player = gamestate:game_player()
             if bd:check_collision(player.body:rect()) then
                 self:grab()
