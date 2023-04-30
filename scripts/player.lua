@@ -178,6 +178,11 @@ function Player:finish()
     Spell:finish()
 end
 
+function Player:hp_up(value)
+    value = value or 1
+    self.hp = Utils:clamp(self.hp + 1, 0, self.max_hp)
+end
+
 function Player:reload_spell(dt)
     if self.count_spell < self.max_spell then
         self.time_spell = self.time_spell + dt

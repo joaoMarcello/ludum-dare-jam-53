@@ -349,6 +349,7 @@ State:implements {
         rank_time = 0.0
         rank_cur_player = 1
         love.mouse.setVisible(true)
+        love.keyboard.setKeyRepeat(true)
     end,
 
     finish = function()
@@ -356,6 +357,7 @@ State:implements {
         -- player_sec = nil
         -- player_text = nil
         love.mouse.setVisible(false)
+        love.keyboard.setKeyRepeat(false)
     end,
 
     keypressed = function(key)

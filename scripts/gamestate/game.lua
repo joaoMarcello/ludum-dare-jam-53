@@ -6,11 +6,12 @@ local Bat = require "scripts.bat"
 local Cauldron = require "scripts.cauldron"
 local Item = require "scripts.item"
 local Leader = require "scripts.gamestate.bests"
+local Heart = require "scripts.heart"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
     {
-        left = -16 * 30,
+        left = -16 * 20,
         top = -16 * 5,
         right = 16 * 50,
         bottom = 16 * 12,
@@ -47,11 +48,14 @@ local components, score, time
 local time_spawn = 0.0
 local spawn_speed = 10.0
 local time_game = 0.0
+local time_heart = 0.0
 
 local bottom = State.camera.bounds_bottom - 32
 local mush_spot = {
-    { x = 16 * 7,  bottom = bottom, time = 0.0, obj = nil },
-    { x = 16 * 27, bottom = bottom, time = 0.0, obj = nil },
+    { x = -16 * 10, bottom = bottom, time = 0.0, obj = nil },
+    { x = 16 * 7,   bottom = bottom, time = 0.0, obj = nil },
+    { x = 16 * 27,  bottom = bottom, time = 0.0, obj = nil },
+    { x = 16 * 40,  bottom = bottom, time = 0.0, obj = nil },
 }
 --=============================================================================
 local sort_update = function(a, b) return a.update_order > b.update_order end
@@ -89,6 +93,19 @@ local function spawn_enemy(dt)
         end
 
         State:game_add_component(Bat:new(State, world, { x = px, bottom = py }))
+    end
+end
+
+local function spawn_heart(dt)
+    time_heart = time_heart + dt
+    if time_heart >= 5 then
+        time_heart = 0
+        local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
+        vx = vx + 16
+        vw = vw - 16
+        State:game_add_component(
+            Heart:new(State, world, { x = (vx + vw * random()), y = vy - 32 })
+        )
     end
 end
 
@@ -133,7 +150,7 @@ local function respawn_mush(dt)
         if item.grabbed or item.dropped then
             spot.time = spot.time + dt
 
-            if spot.time > 15.0 then
+            if spot.time > 18.0 then
                 spot.time = 0.0
 
                 ---@type Item
@@ -155,6 +172,7 @@ State:implements {
         Bat:load()
         Cauldron:load()
         Item:load()
+        Heart:load()
     end,
     --
     --
@@ -163,10 +181,9 @@ State:implements {
         components = {}
         score = 0
         time_spawn = -5.0
-        time_game = 0.0
+        time_game = -5.0
+        time_heart = 0.0
 
-        State.camera.x = 0
-        State.camera.y = 0
 
         world = Phys:newWorld {
             tile = 16,
@@ -182,8 +199,12 @@ State:implements {
             "static"
         )
 
-        player = Player:new(State, world, { x = 16 * 3, bottom = ground.y })
+        player = Player:new(State, world, { x = 16 * 0, bottom = ground.y })
         State:game_add_component(player)
+
+        State.camera.x = 0
+        State.camera.y = 0
+        State.camera:set_position(player.x - camera.focus_x)
 
 
         for i = 1, #mush_spot do
@@ -197,6 +218,10 @@ State:implements {
 
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
+
+        State:game_add_component(
+            Heart:new(State, world, { x = 32, y = 0 })
+        )
     end,
     --
     --
@@ -205,6 +230,7 @@ State:implements {
         Bat:finish()
         Cauldron:finish()
         Item:finish()
+        Heart:finish()
     end,
     --
     --
@@ -254,6 +280,7 @@ State:implements {
         if not player:is_dead() then
             spawn_enemy(dt)
             respawn_mush(dt)
+            spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
         else
