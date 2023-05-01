@@ -32,6 +32,8 @@ local Modes = {
     hard = 3
 }
 
+local imgs
+
 local max_speed = 16 * 5
 local speed = 16 * 2.5
 local acc = 16 * 4
@@ -176,6 +178,16 @@ function Bat:__constructor__(args)
     self.hp = 2
     self.max_hp = 4
 
+    local Anima = _G.JM_Anima
+    self.anim = {
+        [States.idle] = Anima:new { img = imgs[States.idle], frames = 2, duration = 0.3 },
+        -- [States.dead] = Anima:new { img = imgs[States.dead], frames = 1 },
+    }
+    self.anim[States.chase] = self.anim[States.idle]
+    self.anim[States.leave] = self.anim[States.idle]
+    self.anim[States.atk] = self.anim[States.idle]
+    self.anim[States.dead] = self.anim[States.idle]
+
     self.state = nil
     self:set_state(States.chase)
 
@@ -186,7 +198,26 @@ function Bat:__constructor__(args)
     self.dur_idle = 3 * math.random()
     self.dur_chase = 4 + 3 * math.random()
 
+    self.cur_anima = self.anim[States.idle]
+
     self.direction = 1
+end
+
+function Bat:load()
+    Bullet:load()
+    Item:load()
+
+    local newImage = lgx.newImage
+    imgs = imgs or {
+        [States.idle] = newImage("data/img/bat-fly.png"),
+        [States.dead] = newImage("data/img/bat-fly.png"),
+    }
+end
+
+function Bat:finish()
+    Bullet:finish()
+    Item:finish()
+    imgs = nil
 end
 
 function Bat:is_dead()
@@ -274,17 +305,9 @@ function Bat:set_state(state)
     end
 
     self.time_state = 0.0
+    self.cur_anima = self.anim[self.state]
+
     return true
-end
-
-function Bat:load()
-    Bullet:load()
-    Item:load()
-end
-
-function Bat:finish()
-    Bullet:finish()
-    Item:finish()
 end
 
 function Bat:get_score()
@@ -327,6 +350,8 @@ end
 function Bat:update(dt)
     GC.update(self, dt)
 
+    self.cur_anima:update(dt)
+
     self.time_state = self.time_state + dt
     self:cur_movement(dt)
 
@@ -344,19 +369,26 @@ function Bat:update(dt)
         if self.time_leave >= 20 then
             self:set_state(States.leave)
         end
+
+        self.cur_anima:set_flip_x(player_bd.x > bd.x and true or false)
+        --
+    else
+        self.cur_anima.current_frame = 1
+        self.cur_anima:set_rotation(math.pi)
     end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 
 function Bat:my_draw()
-    lgx.setColor(1, 0, 0)
-    lgx.rectangle("fill", self.body:rect())
+    -- lgx.setColor(1, 0, 0)
+    -- lgx.rectangle("fill", self.body:rect())
+    self.cur_anima:draw(self.x + self.w * 0.5, self.y + self.h * 0.5)
 end
 
 function Bat:draw()
     GC.draw(self, self.my_draw)
-    local font = JM_Font.current
-    font:print(tostring(self.hp), self.x, self.y - 10)
+    -- local font = JM_Font.current
+    -- font:print(tostring(self.hp), self.x, self.y - 10)
 end
 
 return Bat

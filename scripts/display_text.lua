@@ -14,6 +14,7 @@ Display.__index = Display
 function Display:new(state, args)
     args = args or {}
     args.w = args.w or 64
+    args.draw_order = 50
 
     local obj = setmetatable(GC:new(state, args), self)
     Display.__constructor__(obj, state, args)

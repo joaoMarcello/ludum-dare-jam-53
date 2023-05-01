@@ -12,6 +12,8 @@ local speed = 16 * 3
 local speed_chase = 16 * 3
 local dacc = 16 * 3
 
+local imgs
+
 ---@param self Spell
 local chase = function(self, dt)
     local bd = self.body
@@ -105,16 +107,18 @@ function Spell:__constructor__(args)
     )
     self.hit_box.allowed_gravity = false
 
+    self.anim = _G.JM_Anima:new { img = imgs }
+
     ---@type Bat | any
     self.chase_obj = nil
 end
 
 function Spell:load()
-
+    imgs = imgs or lgx.newImage("/data/img/spell.png")
 end
 
 function Spell:finish()
-
+    imgs = nil
 end
 
 function Spell:destroy_bat()
@@ -156,6 +160,8 @@ end
 function Spell:update(dt)
     GC.update(self, dt)
 
+    self.anim:update(dt)
+
     local player = self.gamestate:game_player()
 
     if player:is_dead() then
@@ -166,10 +172,12 @@ function Spell:update(dt)
 end
 
 function Spell:my_draw()
-    lgx.setColor(0, 0, 0)
-    lgx.rectangle("fill", self.body:rect())
+    -- lgx.setColor(0, 0, 0)
+    -- lgx.rectangle("fill", self.body:rect())
 
-    lgx.rectangle("line", self.hit_box:rect())
+    -- lgx.rectangle("line", self.hit_box:rect())
+
+    self.anim:draw(self.x + self.w * 0.5, self.y + self.h * 0.5)
 end
 
 function Spell:draw()

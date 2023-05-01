@@ -51,7 +51,7 @@ local imgs
 local anim
 
 local time_spawn = 0.0
-local spawn_speed = 11.0
+local spawn_speed = 11 -- 11
 local time_game = 0.0
 local time_heart = 0.0
 
