@@ -8,8 +8,8 @@ local keys = {
     right = { 'right', 'd' },
     down = { 'down', 's' },
     jump = { 'space', 'up', 'w' },
-    atk = { 'j', 'f' },
-    drop = { 'd', 'k' },
+    atk = { 'j', 'f', 'e' },
+    drop = { 'v', 'k', 'q' },
 }
 
 ---@enum Player.States

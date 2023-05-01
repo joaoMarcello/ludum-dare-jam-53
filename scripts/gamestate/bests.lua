@@ -654,7 +654,8 @@ State:implements {
                 btn_restart:set_position(btn_quit.x - btn_restart.w - tile * 0.5, label.y)
                 btn_restart:draw()
 
-                font:printf("Score \n " .. tostring(player_score), 0, tile, "right", camera.viewport_w - tile * 0.5)
+                font:printx("<effect=flickering, speed=0.6>Score \n " .. tostring(player_score), 0, tile,
+                    camera.viewport_w - tile * 0.5, "right")
             end
         },
         --
