@@ -7,6 +7,15 @@ local lgx = love.graphics
 local atan2, sqrt, cos, sin = math.atan2, math.sqrt, math.cos, math.sin
 local random = love.math.random
 
+local reuse_tab = {}
+local pairs = pairs
+local function empty_table()
+    for index, _ in pairs(reuse_tab) do
+        reuse_tab[index] = nil
+    end
+    return reuse_tab
+end
+
 ---@enum Bat.States
 local States = {
     idle = 0,
@@ -133,7 +142,7 @@ Bat.States = States
 Bat.Modes = Modes
 
 function Bat:new(state, world, args)
-    args = args or {}
+    args = args or empty_table()
     args.type = "dynamic"
     args.x = args.x or (16 * 5)
     args.y = args.y or (16 * 2)
@@ -201,15 +210,26 @@ end
 function Bat:drop_wing()
     if love.math.random() <= 0.4 then return false end
     local bd = self.body
-    local wing = Item:new(self.gamestate, self.body.world, {
-        x = bd.x,
-        bottom = bd:bottom(),
-        allowed_gravity = true,
-        allowed_air_dacc = true,
-        item_type = Item.Types.wing,
-        speed_x = bd.speed_x,
-        auto_remove = true,
-    })
+
+    local tab = empty_table()
+    tab.x = bd.x
+    tab.bottom = bd:bottom()
+    tab.allowed_gravity = true
+    tab.allowed_air_dacc = true
+    tab.item_type = Item.Types.wing
+    tab.speed_x = bd.speed_x
+    tab.auto_remove = true
+
+    local wing = Item:new(self.gamestate, self.body.world, tab)
+    -- local wing = Item:new(self.gamestate, self.body.world, {
+    --     x = bd.x,
+    --     bottom = bd:bottom(),
+    --     allowed_gravity = true,
+    --     allowed_air_dacc = true,
+    --     item_type = Item.Types.wing,
+    --     speed_x = bd.speed_x,
+    --     auto_remove = true,
+    -- })
     self.gamestate:game_add_component(wing)
     return true
 end
@@ -288,12 +308,17 @@ function Bat:shoot(dt)
         self.time_shoot = self.time_shoot - speed_shoot - 3 * random()
         if self.time_shoot >= speed_shoot then self.time_shoot = 0.0 end
 
-        gamestate:game_add_component(Bullet:new(gamestate, bd.world,
-            {
-                x = bd.x,
-                y = bd.y,
-            }
-        ))
+        local tab = empty_table()
+        tab.x = bd.x
+        tab.y = bd.y
+
+        gamestate:game_add_component(Bullet:new(gamestate, bd.world, tab))
+        -- gamestate:game_add_component(Bullet:new(gamestate, bd.world,
+        --     {
+        --         x = bd.x,
+        --         y = bd.y,
+        --     }
+        -- ))
     end
 end
 

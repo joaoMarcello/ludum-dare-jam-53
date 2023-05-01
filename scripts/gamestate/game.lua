@@ -84,6 +84,15 @@ local ground_map = function()
         end
     end
 end
+
+local reuse_tab = {}
+local pairs = pairs
+local function empty_table()
+    for index, _ in pairs(reuse_tab) do
+        reuse_tab[index] = nil
+    end
+    return reuse_tab
+end
 --=============================================================================
 local sort_update = function(a, b) return a.update_order > b.update_order end
 local sort_draw = function(a, b) return a.draw_order < b.draw_order end
@@ -119,7 +128,12 @@ local function spawn_enemy(dt)
             px = vx + vw + 32
         end
 
-        State:game_add_component(Bat:new(State, world, { x = px, bottom = py }))
+        local tab = empty_table()
+        tab.x = px
+        tab.bottom = py
+
+        State:game_add_component(Bat:new(State, world, tab))
+        -- State:game_add_component(Bat:new(State, world, { x = px, bottom = py }))
     end
 end
 
@@ -130,9 +144,17 @@ local function spawn_heart(dt)
         local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
         vx = vx + 16
         vw = vw - 16
+
+        local tab = empty_table()
+        tab.x = (vx + vw * random())
+        tab.y = vy - 32
+
         State:game_add_component(
-            Heart:new(State, world, { x = (vx + vw * random()), y = vy - 32 })
+            Heart:new(State, world, tab)
         )
+        -- State:game_add_component(
+        --     Heart:new(State, world, { x = (vx + vw * random()), y = vy - 32 })
+        -- )
     end
 end
 
@@ -181,7 +203,7 @@ local function respawn_mush(dt)
 
                 ---@type Item
                 local obj = State:game_add_component(Item:new(State, world,
-                    { x = spot.x, bottom = spot.bottom, allowed_gravity = false, item_type = item.type }))
+                    { x = spot.x, bottom = spot.bottom, allowed_gravity = true, item_type = item.type }))
 
                 obj:apply_effect("popin", { speed = 0.3 })
 

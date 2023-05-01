@@ -17,6 +17,19 @@ local Scores = {
     [Types.heart] = 100,
 }
 
+local reuse_tab = {}
+local pairs = pairs
+local function empty_table()
+    for index, _ in pairs(reuse_tab) do
+        reuse_tab[index] = nil
+    end
+    return reuse_tab
+end
+
+local imgs
+
+local arrow_color = _G.JM_Utils:get_rgba2(180, 32, 42)
+
 ---@class Item : BodyComponent
 local Item = setmetatable({}, GC)
 Item.__index = Item
@@ -42,6 +55,7 @@ local ground_touch_action = function(self)
     self.bounce_count = self.bounce_count + 1
 end
 
+local eff_tab = { range = 2 }
 function Item:__constructor__(args)
     local bd = self.body
     bd.allowed_gravity = args.allowed_gravity
@@ -65,15 +79,30 @@ function Item:__constructor__(args)
     self.ox = self.w * 0.5
     self.oy = self.h * 0.5
 
+    local tab = empty_table()
+    tab.img = imgs[self.type]
+    self.anim = _G.JM_Anima:new(tab)
+
+    tab = empty_table()
+    tab.img = imgs["mini-arrow"]
+    self.anim_arrow = _G.JM_Anima:new(tab)
+    self.anim_arrow:apply_effect("float", eff_tab)
+    self.anim_arrow:set_color(arrow_color)
+
     bd:on_event("ground_touch", ground_touch_action, self)
 end
 
 function Item:load()
-
+    local newImage = lgx.newImage
+    imgs = imgs or {
+        [Types.wing] = newImage("data/img/bat-wing.png"),
+        [Types.mush] = newImage("data/img/mushroom.png"),
+        ["mini-arrow"] = newImage("/data/img/mini-arrow.png"),
+    }
 end
 
 function Item:finish()
-
+    imgs = nil
 end
 
 function Item:drop()
@@ -135,6 +164,9 @@ local tab = { speed = 0.06 }
 function Item:update(dt)
     GC.update(self, dt)
 
+    self.anim:update(dt)
+    self.anim_arrow:update(dt)
+
     ---@type GameState.Game | any
     local gamestate = self.gamestate
 
@@ -186,8 +218,13 @@ function Item:update(dt)
 end
 
 function Item:my_draw()
-    lgx.setColor(self.color)
-    lgx.rectangle("fill", self.body:rect())
+    -- lgx.setColor(self.color)
+    -- lgx.rectangle("fill", self.body:rect())
+    self.anim:draw_rec(self.x, self.y, self.w, self.h)
+
+    if self.body.ground and self.body.speed_y == 0 then
+        self.anim_arrow:draw_rec(self.x, self.y - 24, self.w, self.h)
+    end
 end
 
 function Item:draw()

@@ -30,6 +30,15 @@ local keyboard_is_down = love.keyboard.isDown
 local math_abs, type = math.abs, type
 local lgx = love.graphics
 
+local reuse_tab = {}
+local pairs = pairs
+local function empty_table()
+    for index, _ in pairs(reuse_tab) do
+        reuse_tab[index] = nil
+    end
+    return reuse_tab
+end
+
 local function pressing(key)
     local field = keys[key]
     if not field then return nil end
@@ -297,11 +306,19 @@ function Player:lauch_spell()
     local bd = self.body
 
     local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
-    gamestate:game_add_component(Spell:new(gamestate, self.world, {
-        x = px,
-        y = bd.y,
-        direction = self.direction,
-    }))
+
+    local tab = empty_table()
+    tab.x = px
+    tab.y = bd.y
+    tab.direction = self.direction
+
+    gamestate:game_add_component(Spell:new(gamestate, self.world, tab))
+
+    -- gamestate:game_add_component(Spell:new(gamestate, self.world, {
+    --     x = px,
+    --     y = bd.y,
+    --     direction = self.direction,
+    -- }))
 
     self.time_spell = 0.0
 
@@ -310,7 +327,7 @@ end
 
 function Player:drop_item()
     ---@type Item | nil
-    local item = table.remove(self.items, self.bag_count)
+    local item = table.remove(self.items, 1)
 
     if item then
         item:drop()

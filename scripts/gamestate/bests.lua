@@ -512,22 +512,22 @@ State:implements {
                 --
                 fr_leader:draw(0, fr_leader_py, "center")
 
-                lgx.setColor(1, 0, 0)
-                lgx.rectangle("fill",
-                    (camera.viewport_w * .5) - (fr_leader_w * .5) - 32,
-                    fr_leader_py + (fr_leader_h * 0.5) - (32 * 0.5),
-                    32, 32)
+                -- lgx.setColor(1, 0, 0)
+                -- lgx.rectangle("fill",
+                --     (camera.viewport_w * .5) - (fr_leader_w * .5) - 32,
+                --     fr_leader_py + (fr_leader_h * 0.5) - (32 * 0.5),
+                --     32, 32)
 
-                lgx.rectangle("fill",
-                    (camera.viewport_w * 0.5) + (fr_leader_w * 0.5),
-                    fr_leader_py + (fr_leader_h * 0.5) - (32 * 0.5),
-                    32, 32)
+                -- lgx.rectangle("fill",
+                --     (camera.viewport_w * 0.5) + (fr_leader_w * 0.5),
+                --     fr_leader_py + (fr_leader_h * 0.5) - (32 * 0.5),
+                --     32, 32)
 
                 if rank_data then
                     font:push()
                     font:set_font_size(10)
 
-                    local py = fr_leader_py + fr_leader_h + tile / 2
+                    local py = fr_leader_py + fr_leader_h + tile
                     local px = tile
 
                     local N = #rank_data
