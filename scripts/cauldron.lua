@@ -39,6 +39,8 @@ function Cauldron:__constructor__(world, args)
     self.anim_down = Anima:new { img = imgs.down }
     self.anim_down:apply_effect("flickering", { speed = 0.15 })
 
+    self.anim1 = Anima:new { img = imgs.cauldron }
+
     self.anim2 = Anima:new { img = imgs.down }
     self.anim2:apply_effect("float", { range = 1.4, speed = 0.6 })
 end
@@ -46,6 +48,7 @@ end
 function Cauldron:load()
     imgs = imgs or {
         down = lgx.newImage("data/img/down.png"),
+        cauldron = lgx.newImage("data/img/cauldron.png"),
     }
 end
 
@@ -62,6 +65,7 @@ function Cauldron:update(dt)
     GC.update(self, dt)
 
     self.anim_down:update(dt)
+    self.anim1:update(dt)
     self.anim2:update(dt)
 
     ---@type GameState.Game | any
@@ -80,6 +84,8 @@ end
 function Cauldron:my_draw()
     lgx.setColor(0, 0, 0)
     lgx.rectangle("line", self.x, self.y, self.w, self.h)
+
+    self.anim1:draw_rec(self.x, self.y, self.w, self.h)
 end
 
 function Cauldron:draw()

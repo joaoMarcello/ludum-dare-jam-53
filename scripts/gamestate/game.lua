@@ -8,6 +8,7 @@ local Cauldron = require "scripts.cauldron"
 local Item = require "scripts.item"
 local Leader = require "scripts.gamestate.bests"
 local Heart = require "scripts.heart"
+local DisplayHP = require "scripts.display_hp"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -54,6 +55,9 @@ local time_spawn = 0.0
 local spawn_speed = 11 -- 11
 local time_game = 0.0
 local time_heart = 0.0
+
+---@type DisplayHP
+local display_hp
 
 ---@type JM.TileMap
 local ground_tilemap
@@ -239,6 +243,7 @@ State:implements {
         Cauldron:load()
         Item:load()
         Heart:load()
+        DisplayHP:load()
 
         ground_tilemap = TileMap:new(ground_map, "data/img/ground-tile.png", 16)
 
@@ -298,6 +303,8 @@ State:implements {
 
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
+
+        display_hp = DisplayHP:new(State)
     end,
     --
     --
@@ -307,6 +314,7 @@ State:implements {
         Cauldron:finish()
         Item:finish()
         Heart:finish()
+        DisplayHP:finish()
     end,
     --
     --
@@ -370,6 +378,8 @@ State:implements {
                 end)
             end
         end
+
+        display_hp:update(dt)
     end,
 
     layers = {
@@ -456,7 +466,7 @@ State:implements {
                     font:pop()
                 end
 
-                font:printf("SCORE:\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
+                font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
 
                 if player:bag_is_full() then
                     font:printx("<effect=flickering, speed=0.8> <color>Bag is full!", camera.viewport_w * 0.5, 8,
@@ -466,7 +476,9 @@ State:implements {
                         camera.viewport_w * 0.5)
                 end
 
-                font:printf("HP: " .. player.hp, 8, 8, "left", camera.viewport_w * 0.5)
+                -- font:printf("HP: " .. player.hp, 8, 8, "left", camera.viewport_w * 0.5)
+
+                display_hp:draw()
             end
         }
     }
