@@ -385,7 +385,7 @@ State:implements {
                 for i = 1, #world.bodies_static do
                     ---@type JM.Physics.Body
                     local bd = world.bodies_static[i]
-                    bd:draw()
+                    -- bd:draw()
                 end
                 ground_tilemap:draw(camera)
 

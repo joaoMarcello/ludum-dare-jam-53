@@ -176,7 +176,7 @@ function Player:__constructor__(state)
 
     self.cur_anima = self.anim[States.default]
 
-    self:apply_effect("float", { range = 1 })
+    self:apply_effect("float", { range = 2 })
 
     self.update = Player.update
     self.draw = Player.draw

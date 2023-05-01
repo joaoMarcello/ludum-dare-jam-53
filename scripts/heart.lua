@@ -16,6 +16,7 @@ function Heart:new(state, world, args)
     args.w = 14
     args.h = 14
     args.type = "dynamic"
+    args.draw_order = -2
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
