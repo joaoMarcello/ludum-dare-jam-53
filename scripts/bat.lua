@@ -151,7 +151,7 @@ function Bat:new(state, world, args)
     args.w = 12
     args.h = 12
     args.y = args.bottom and (args.bottom - args.h) or args.y
-    args.draw_order = 5
+    args.draw_order = -1
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
@@ -366,7 +366,7 @@ function Bat:update(dt)
             player:damage(self)
         end
 
-        if self.time_leave >= 15 then
+        if self.time_leave >= 20 then
             self:set_state(States.leave)
         end
 

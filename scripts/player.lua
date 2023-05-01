@@ -181,7 +181,7 @@ function Player:__constructor__(state)
 
     local Anima = _G.JM_Anima
     self.anim = {
-        [States.default] = Anima:new { img = imgs[States.default] },
+        [States.default] = Anima:new { img = imgs[States.default], frames = 2, duration = 0.3 },
     }
 
     self.cur_anima = self.anim[States.default]
@@ -197,7 +197,7 @@ function Player:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
-        [States.default] = newImage("data/img/brunette-fly.png"),
+        [States.default] = newImage("/data/img/brunette-fly-Sheet.png"),
     }
 end
 
@@ -300,6 +300,11 @@ function Player:set_state(state)
         bd:jump(16 * 1.5, -1)
         bd.bouncing_y = 0.25
         -- bd.mass = bd.world.default_mass * 0.4
+        local eff = self.eff_actives and self.eff_actives["float"]
+        if eff then
+            eff.__remove = true
+            self.eff_actives['float'] = nil
+        end
         --
     end
 
