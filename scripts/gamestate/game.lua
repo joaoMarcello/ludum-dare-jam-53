@@ -214,11 +214,20 @@ local function respawn_mush(dt)
 end
 
 function State:display_text(text, x, y, duration)
+    x = x or 0
+    y = y or 0
+
     local tab = empty_table()
     tab.text = text
     tab.x = x
     tab.y = y
     tab.duration = duration
+
+    if not self.camera:rect_is_on_view(x, y, 0, 0) then
+        tab.x = player.x
+        tab.y = player.y - 32
+    end
+
     self:game_add_component(_G.DisplayText:new(self, tab))
 end
 
