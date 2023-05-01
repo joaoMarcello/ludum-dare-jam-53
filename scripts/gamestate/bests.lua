@@ -534,11 +534,12 @@ State:implements {
                     N = Utils:clamp(N, 0, MAX)
                     local center = false
 
+                    local rect_name_w = tile * 7
                     local offset = tile / 2
                     local line_space = font.__font_size + 14
                     local rect_height = font.__font_size + 8
                     local total_width = tile * 2 + offset
-                        + tile * 5 + offset
+                        + rect_name_w + offset
                         + tile * 4
                     local total_height = (line_space) * N - 14
                     if center then
@@ -589,13 +590,13 @@ State:implements {
                         px = px + tile * 2 + offset
 
                         lgx.setColor(shadow_color)
-                        lgx.rectangle("fill", px, py + 1, tile * 5, rect_height)
+                        lgx.rectangle("fill", px, py + 1, rect_name_w, rect_height)
                         lgx.setColor(rect_color)
-                        lgx.rectangle("fill", px, py - 2, tile * 5, rect_height)
+                        lgx.rectangle("fill", px, py - 2, rect_name_w, rect_height)
                         lgx.setColor(1, 1, 1)
-                        lgx.rectangle("line", px, py - 2, tile * 5, rect_height)
-                        font:printf(name, px, py, "center", tile * 5)
-                        px = px + tile * 5 + offset
+                        lgx.rectangle("line", px, py - 2, rect_name_w, rect_height)
+                        font:printf(name, px, py, "center", rect_name_w)
+                        px = px + rect_name_w + offset
 
                         lgx.setColor(shadow_color)
                         lgx.rectangle("fill", px, py + 1, tile * 4, rect_height)
