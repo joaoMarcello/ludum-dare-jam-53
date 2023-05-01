@@ -10,6 +10,7 @@ local Leader = require "scripts.gamestate.bests"
 local Heart = require "scripts.heart"
 local DisplayHP = require "scripts.display_hp"
 local DisplaySpell = require "scripts.display_spell"
+local DisplayBag = require "scripts.display_bag"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -21,7 +22,7 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
     },
     --
     {
-        subpixel = 3,
+        subpixel = _G.SUB_PIXEL or 3,
         canvas_filter = 'linear',
         tile = 16,
         cam_tile = 16,
@@ -63,6 +64,8 @@ local time_heart = 0.0
 local display_hp
 ---@type DisplaySpell
 local display_spell
+---@type DisplayBag
+local display_bag
 
 ---@type JM.TileMap
 local ground_tilemap
@@ -256,6 +259,7 @@ State:implements {
         Heart:load()
         DisplayHP:load()
         DisplaySpell:load()
+        DisplayBag:load()
 
         ground_tilemap = TileMap:new(ground_map, "data/img/ground-tile.png", 16)
 
@@ -326,6 +330,7 @@ State:implements {
 
         display_hp = DisplayHP:new(State)
         display_spell = DisplaySpell:new(State, world)
+        display_bag = DisplayBag:new(State)
     end,
     --
     --
@@ -337,6 +342,7 @@ State:implements {
         Heart:finish()
         DisplayHP:finish()
         DisplaySpell:finish()
+        DisplayBag:finish()
     end,
     --
     --
@@ -403,6 +409,7 @@ State:implements {
 
         display_hp:update(dt)
         display_spell:update(dt)
+        display_bag:update(dt)
     end,
 
     layers = {
@@ -508,19 +515,20 @@ State:implements {
 
                 font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
 
-                if player:bag_is_full() then
-                    font:printx("<effect=flickering, speed=0.8> <color, 0.9, 0.9, 0.9>Bag is full!",
-                        camera.viewport_w * 0.5, 8,
-                        camera.viewport_w * 0.5, "center")
-                else
-                    font:printf("BAG:\n " .. player.bag_count, camera.viewport_w * 0.5, 8, "center",
-                        camera.viewport_w * 0.5)
-                end
+                -- if player:bag_is_full() then
+                --     font:printx("<effect=flickering, speed=0.8> <color, 0.9, 0.9, 0.9>Bag is full!",
+                --         camera.viewport_w * 0.5, 8,
+                --         camera.viewport_w * 0.5, "center")
+                -- else
+                --     font:printf("BAG:\n " .. player.bag_count, camera.viewport_w * 0.5, 8, "center",
+                --         camera.viewport_w * 0.5)
+                -- end
 
                 -- font:printf("HP: " .. player.hp, 8, 8, "left", camera.viewport_w * 0.5)
 
                 display_hp:draw()
                 display_spell:draw()
+                display_bag:draw()
             end
         }
     }

@@ -36,18 +36,24 @@ function Cauldron:__constructor__(world, args)
     Phys:newBody(world, self.x + self.w, self.y, 3, 3, "static")
 
     local Anima = _G.JM_Anima
+    local color = _G.JM_Utils:get_rgba2(255, 252, 64)
+
     self.anim_down = Anima:new { img = imgs.down }
     self.anim_down:apply_effect("flickering", { speed = 0.15 })
+    self.anim_down:set_color(color)
+
 
     self.anim1 = Anima:new { img = imgs.cauldron }
 
     self.anim2 = Anima:new { img = imgs.down }
     self.anim2:apply_effect("float", { range = 1.4, speed = 0.6 })
+    self.anim2:set_color(color)
 end
 
 function Cauldron:load()
     imgs = imgs or {
         down = lgx.newImage("data/img/down.png"),
+        down_left = lgx.newImage("data/img/down-left.png"),
         cauldron = lgx.newImage("data/img/cauldron.png"),
     }
 end

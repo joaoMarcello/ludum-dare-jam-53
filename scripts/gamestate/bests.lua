@@ -10,7 +10,7 @@ local Affectable = Pack.Affectable
 ---@class LeaderBoard : JM.Scene
 local State = Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, nil,
     {
-        subpixel = 2.5,
+        subpixel = _G.SUB_PIXEL or 3,
         canvas_filter = 'linear',
 
     }
@@ -525,7 +525,7 @@ State:implements {
 
                 if rank_data then
                     font:push()
-                    font:set_font_size(10)
+                    font:set_font_size(9)
 
                     local py = fr_leader_py + fr_leader_h + tile
                     local px = tile
