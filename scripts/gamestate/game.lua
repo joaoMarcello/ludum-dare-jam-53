@@ -33,11 +33,12 @@ State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
 Leader:on_quit_action(function()
-    Leader:change_gamestate(State, {})
+    Leader:change_gamestate(require "scripts.gamestate.title", {})
+    -- love.event.quit()
 end)
 
 Leader:on_restart_action(function()
-    Leader:change_gamestate(State, {})
+    Leader:change_gamestate(require "scripts.gamestate.how_to_play", {})
 end)
 
 local lgx = love.graphics
