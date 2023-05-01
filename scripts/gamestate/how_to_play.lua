@@ -5,7 +5,7 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, ni
     canvas_filter = 'linear',
 })
 
-State:set_color(139 / 255, 147 / 255, 175 / 255, 1)
+State:set_color(121 / 255, 58 / 255, 128 / 255, 1)
 --============================================================================
 local Game = require "scripts.gamestate.game"
 --============================================================================
@@ -50,21 +50,30 @@ State:implements {
             draw = function(self, camera)
                 local font = _G.JM_Font.current
 
-                love.graphics.setColor(JM_Utils:get_rgba2(185, 191, 251))
+                local red = string.format("<color,%.2f,%.2f,%.2f>",
+                    180 / 255, 32 / 255, 42 / 255)
+                local black = string.format("<color,%.2f,%.2f,%.2f>",
+                    59 / 255, 23 / 255, 37 / 255)
+
+                love.graphics.setColor(JM_Utils:get_rgba2(188, 74, 155))
                 love.graphics.rectangle("fill", 8, 4, 320 - 16, 180 - 8)
 
                 font:push()
                 font:set_font_size(5)
                 font:set_line_space(4)
-                local red = string.format("<color,%.2f,%.2f,%.2f>", 180 / 255, 32 / 255, 42 / 255)
+                -- font:set_color(JM_Utils:get_rgba2(254, 243, 192))
+                font:set_color(JM_Utils:get_rgba2(59, 23, 37))
+
 
                 local str = string.format(
-                    "\t<bold>Objective:</bold>\n Fly around, catch items and throw them on cauldron. If you see some bats, just\nlaunch a spell on them.\n \n \t<bold>Controls:</bold>\n Move:\tA/D/Left/Right\n Launch Spell:\tF/J/E\n Drop item:\tV/K/Q\n Hover:\tSpace/Up/W\n Restart:\tP\n \n \t<bold> Hint:</bold>\n Try make the dropped item %s bounce in the ground</color> before enter the cauldron. You will\nearn much more points!",
-                    red)
+                    "\t %s <bold>Objective:</bold></color>\n Fly around, catch items and throw them on cauldron. If you see some bats, just\nlaunch a spell on them.\n \n \t %s <bold>Controls:</color></bold>\n Move:</color>\tA/D/Left/Right\n Launch Spell:</color>\tF/J/E\n Drop item:</color>\tV/K/Q\n Hover:</color>\tSpace/Up/W\n Restart:</color>\tP\n \n \t %s <bold> Hint:</bold></color>\n Try make the dropped item %s bounce in the ground</color> before enter the cauldron. You will\nearn much more points!",
+                    black, black, black, red)
                 font:printf(str, 24, 16, "left", 320 - 16)
 
                 font:set_font_size(6)
-                font:printx("<effect=ghost, speed=1.5, min=0.1>Press Enter/Space to start!", 0, 180 - 24, 320, "center")
+                str = string.format(" %s <effect=ghost, speed=1.5, min=0.1>Press Enter/Space to start!",
+                    "<color, 0.9, 0.9, 0.9>")
+                font:printx(str, 0, 180 - 24, 320, "center")
                 font:pop()
             end
         }

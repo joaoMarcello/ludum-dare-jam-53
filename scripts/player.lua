@@ -119,7 +119,7 @@ end
 local function move_atk(self, dt)
     move_default(self, dt)
 
-    if self.time_state >= 0.2 then
+    if self.time_state >= 0.3 then
         self:set_state(States.default)
     end
 end
@@ -196,7 +196,7 @@ function Player:__constructor__(state)
     self.anim = {
         [States.default] = Anima:new { img = imgs[States.default], frames = 2, duration = 0.3 },
         [States.dead] = Anima:new { img = imgs[States.dead] },
-        [States.atk] = Anima:new { img = imgs[States.atk] },
+        [States.atk] = Anima:new { img = imgs[States.atk], frames = 2, duration = 0.15 },
     }
 
     self.cur_anima = self.anim[States.default]
@@ -220,7 +220,7 @@ function Player:load()
     imgs = imgs or {
         [States.default] = newImage("data/img/brunette-fly-Sheet.png"),
         [States.dead] = newImage("/data/img/brunnette-die.png"),
-        [States.atk] = newImage("/data/img/brunnette-spell.png"),
+        [States.atk] = newImage("/data/img/brunnette-spell-Sheet.png"),
         skull = newImage("/data/img/skull.png"),
     }
 end
@@ -341,6 +341,7 @@ function Player:set_state(state)
         --
     end
 
+    self.cur_anima:reset()
     return true
 end
 
@@ -352,11 +353,16 @@ function Player:lauch_spell()
     local gamestate = self.gamestate
     local bd = self.body
 
-    local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
+    -- local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
 
     local tab = empty_table()
-    tab.x = px
-    tab.y = bd.y
+    -- if self.direction
+    if self.direction > 0 then
+        tab.x = bd.x + bd.w * 0.5 + 22
+    else
+        tab.x = bd.x + bd.w * 0.5 - 28
+    end
+    tab.y = bd.y + 6
     tab.direction = self.direction
 
     gamestate:game_add_component(Spell:new(gamestate, self.world, tab))

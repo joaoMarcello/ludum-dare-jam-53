@@ -34,7 +34,7 @@ SUB_PIXEL = 3
 
 DEVICE = "Android"
 
-local initial_state = 'game'
+local initial_state = 'how_to_play'
 
 --==================================================================
 
