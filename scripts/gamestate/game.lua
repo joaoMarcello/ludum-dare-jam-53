@@ -36,7 +36,7 @@ Leader:on_quit_action(function()
     if not Leader.transition then
         Leader:add_transition("curtain", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.title",
-                { skip_finish = true, transition = "curtain", transition_conf = { delay = 0.3, type = "left-right" } })
+                { skip_finish = false, transition = "curtain", transition_conf = { delay = 0.3, type = "left-right" } })
         end)
     end
     -- love.event.quit()
@@ -46,7 +46,7 @@ Leader:on_restart_action(function()
     if not Leader.transition then
         Leader:add_transition("cartoon", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.how_to_play",
-                { skip_finish = true, transition = "cartoon", transition_conf = { delay = 0.3, type = "left-right" } })
+                { skip_finish = false, transition = "cartoon", transition_conf = { delay = 0.3, type = "left-right" } })
         end)
     end
 end)
@@ -358,11 +358,11 @@ State:implements {
     --
     --
     keypressed = function(key)
-        if key == 'o' then
-            State.camera:toggle_grid()
-            State.camera:toggle_world_bounds()
-            -- State.camera:toggle_debug()
-        end
+        -- if key == 'o' then
+        --     State.camera:toggle_grid()
+        --     State.camera:toggle_world_bounds()
+        --     -- State.camera:toggle_debug()
+        -- end
 
         if key == 'p' then
             State:change_gamestate(State, {
@@ -407,7 +407,7 @@ State:implements {
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
         else
-            if player.time_state >= 4.0 and not State.transition then
+            if player.time_state >= 5.0 and not State.transition then
                 Leader:jgdr_pnt(score)
 
                 State:add_transition("door", "out", {}, nil, function()

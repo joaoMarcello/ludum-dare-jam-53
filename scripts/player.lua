@@ -114,6 +114,15 @@ local function move_dead(self, dt)
     bd.speed_x = 0
     bd.acc_x = 0
 end
+
+---@param self Player
+local function move_atk(self, dt)
+    move_default(self, dt)
+
+    if self.time_state >= 0.2 then
+        self:set_state(States.default)
+    end
+end
 --==========================================================================
 
 ---@class Player : BodyComponent
@@ -177,7 +186,7 @@ function Player:__constructor__(state)
     self:set_update_order(10)
 
     self.time_state = 0.0
-    self:set_state(States.default)
+
 
     self.time_smoke = 0.0
 
@@ -186,11 +195,18 @@ function Player:__constructor__(state)
     local Anima = _G.JM_Anima
     self.anim = {
         [States.default] = Anima:new { img = imgs[States.default], frames = 2, duration = 0.3 },
+        [States.dead] = Anima:new { img = imgs[States.dead] },
+        [States.atk] = Anima:new { img = imgs[States.atk] },
     }
 
     self.cur_anima = self.anim[States.default]
 
-    self:apply_effect("float", { range = 2 })
+    self.skull = Anima:new { img = imgs.skull }
+    self.skull:apply_effect("float", { speed = 0.6, range = 1.5 })
+
+    self:apply_effect("float", { range = 1, speed = 0.6 })
+
+    self:set_state(States.default)
 
     self.update = Player.update
     self.draw = Player.draw
@@ -202,7 +218,10 @@ function Player:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
-        [States.default] = newImage("/data/img/brunette-fly-Sheet.png"),
+        [States.default] = newImage("data/img/brunette-fly-Sheet.png"),
+        [States.dead] = newImage("/data/img/brunnette-die.png"),
+        [States.atk] = newImage("/data/img/brunnette-spell.png"),
+        skull = newImage("/data/img/skull.png"),
     }
 end
 
@@ -297,8 +316,14 @@ function Player:set_state(state)
     self.state = state
     self.time_state = 0.0
 
+    self.cur_anima = self.anim[States.default]
+
     if state == States.default then
         self.cur_movement = move_default
+        --
+    elseif state == States.atk then
+        self.cur_movement = move_atk
+        self.cur_anima = self.anim[state]
         --
     elseif state == States.dead then
         self.cur_movement = move_dead
@@ -311,6 +336,8 @@ function Player:set_state(state)
             eff.__remove = true
             self.eff_actives['float'] = nil
         end
+
+        self.cur_anima = self.anim[state]
         --
     end
 
@@ -341,6 +368,8 @@ function Player:lauch_spell()
     -- }))
 
     self.time_spell = 0.0
+
+    self:set_state(States.atk)
 
     return true
 end
@@ -412,6 +441,12 @@ function Player:update(dt)
                 self.y + 16
             ))
         end
+        --
+    else
+        --
+        -- if bd.ground then
+        self.skull:update(dt)
+        -- end
     end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
@@ -428,6 +463,10 @@ end
 
 function Player:draw()
     GC.draw(self, self.my_draw)
+
+    if self:is_dead() then
+        self.skull:draw(self.x + self.w * 0.5 - 16 * self.direction, self.y - 4)
+    end
 
     -- local font = JM_Font.current
     -- local t = self.hp
