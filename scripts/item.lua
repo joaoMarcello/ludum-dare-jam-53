@@ -137,6 +137,8 @@ function Item:drop()
     if col.n > 0 then
         bd:resolve_collisions_y(col)
     end
+
+    -- gamestate:display_text("grabbed", bd.x, bd.y)
 end
 
 function Item:deflick()
@@ -188,6 +190,9 @@ function Item:update(dt)
             local score = self.score
             score = self.bounce_count > 0 and (score * 5) or score
             gamestate:game_add_score(score)
+
+            gamestate:display_text(tostring(score), bd.x, bd.y)
+
             self.__remove = true
             return
         end

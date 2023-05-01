@@ -266,7 +266,9 @@ function Bat:set_state(state)
         bd:jump(16 * 1.5, -1)
         self:set_draw_order(16)
 
-        self.gamestate:game_add_score(self:get_score())
+        local pt = self:get_score()
+        self.gamestate:game_add_score(pt)
+        self.gamestate:display_text(tostring(pt), self.x, self.y - 20)
 
         --
     end

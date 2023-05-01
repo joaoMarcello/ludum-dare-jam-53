@@ -10,6 +10,9 @@ do
     Word.eff_scream_range_x = 0.8
 end
 
+_G.DisplayText = require "scripts.display_text"
+DisplayText:load()
+
 math.randomseed(os.time())
 lgx.setBackgroundColor(0, 0, 0, 1)
 lgx.setDefaultFilter("nearest", "nearest")

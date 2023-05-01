@@ -63,6 +63,7 @@ function Heart:update(dt)
         if player.body:check_collision(bd:rect()) then
             gamestate:game_add_score(score)
             player:hp_up(1)
+            gamestate:display_text(tostring(score) .. " pts\n +1 HP", bd.x, bd.y - 32, 2)
             self.__remove = true
             return
         end

@@ -213,6 +213,15 @@ local function respawn_mush(dt)
     end
 end
 
+function State:display_text(text, x, y, duration)
+    local tab = empty_table()
+    tab.text = text
+    tab.x = x
+    tab.y = y
+    tab.duration = duration
+    self:game_add_component(_G.DisplayText:new(self, tab))
+end
+
 --=============================================================================
 State:implements {
     load = function()
