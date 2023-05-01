@@ -166,7 +166,8 @@ function Player:__constructor__(state)
     self.max_spell = 3
     self.count_spell = self.max_spell
     self.time_spell = 0.0
-    self.time_reload_spell = 1.0
+    self.time_reload_spell = 0.7
+    self.time_reload_spell_slow = self.time_reload_spell * 3
 
     self.bag_count = 0
     self.bag_capacity = 5
@@ -210,12 +211,20 @@ function Player:hp_up(value)
     self.hp = Utils:clamp(self.hp + 1, 0, self.max_hp)
 end
 
+function Player:reload_spell_speed()
+    local rel_time = self.count_spell <= 0
+        and self.time_reload_spell_slow
+        or self.time_reload_spell
+
+    return rel_time
+end
+
 function Player:reload_spell(dt)
     if self.count_spell < self.max_spell then
         self.time_spell = self.time_spell + dt
 
         local rel_time = self.count_spell <= 0
-            and (self.time_reload_spell * 3.0)
+            and self.time_reload_spell_slow
             or self.time_reload_spell
 
         if self.time_spell >= rel_time then

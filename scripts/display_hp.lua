@@ -1,9 +1,9 @@
 local GC = require 'lib.component'
 
-local Palette = {
-    red = { 212 / 255, 113 / 255, 93 / 255, 1 },
-    purple = { 77 / 255, 35 / 255, 74 / 255, 1 },
-}
+-- local Palette = {
+--     red = { 212 / 255, 113 / 255, 93 / 255, 1 },
+--     purple = { 77 / 255, 35 / 255, 74 / 255, 1 },
+-- }
 
 local img
 
@@ -77,10 +77,10 @@ function Display:my_draw()
         local heart = self.hearts[i]
 
         if i <= player.hp then
-            love.graphics.setColor(Palette.red)
+            -- love.graphics.setColor(Palette.red)
             heart.current_frame = 1
         else
-            love.graphics.setColor(Palette.purple)
+            -- love.graphics.setColor(Palette.purple)
             heart.current_frame = 2
         end
 

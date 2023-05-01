@@ -9,6 +9,7 @@ local Item = require "scripts.item"
 local Leader = require "scripts.gamestate.bests"
 local Heart = require "scripts.heart"
 local DisplayHP = require "scripts.display_hp"
+local DisplaySpell = require "scripts.display_spell"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -58,6 +59,8 @@ local time_heart = 0.0
 
 ---@type DisplayHP
 local display_hp
+---@type DisplaySpell
+local display_spell
 
 ---@type JM.TileMap
 local ground_tilemap
@@ -244,6 +247,7 @@ State:implements {
         Item:load()
         Heart:load()
         DisplayHP:load()
+        DisplaySpell:load()
 
         ground_tilemap = TileMap:new(ground_map, "data/img/ground-tile.png", 16)
 
@@ -305,6 +309,7 @@ State:implements {
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
 
         display_hp = DisplayHP:new(State)
+        display_spell = DisplaySpell:new(State, world)
     end,
     --
     --
@@ -315,6 +320,7 @@ State:implements {
         Item:finish()
         Heart:finish()
         DisplayHP:finish()
+        DisplaySpell:finish()
     end,
     --
     --
@@ -380,6 +386,7 @@ State:implements {
         end
 
         display_hp:update(dt)
+        display_spell:update(dt)
     end,
 
     layers = {
@@ -479,6 +486,7 @@ State:implements {
                 -- font:printf("HP: " .. player.hp, 8, 8, "left", camera.viewport_w * 0.5)
 
                 display_hp:draw()
+                display_spell:draw()
             end
         }
     }

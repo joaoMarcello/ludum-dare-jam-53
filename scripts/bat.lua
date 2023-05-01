@@ -366,7 +366,7 @@ function Bat:update(dt)
             player:damage(self)
         end
 
-        if self.time_leave >= 20 then
+        if self.time_leave >= 15 then
             self:set_state(States.leave)
         end
 
