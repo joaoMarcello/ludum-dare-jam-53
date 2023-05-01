@@ -7,6 +7,7 @@ local Types = {
     wing = 2,
     fruit = 3,
     heart = 4,
+    mush_ex = 5,
 }
 
 ---@enum Item.Scores
@@ -15,6 +16,7 @@ local Scores = {
     [Types.wing] = 50,
     [Types.fruit] = 150,
     [Types.heart] = 100,
+    [Types.mush_ex] = 250,
 }
 
 local reuse_tab = {}
@@ -97,6 +99,7 @@ function Item:load()
     imgs = imgs or {
         [Types.wing] = newImage("data/img/bat-wing.png"),
         [Types.mush] = newImage("data/img/mushroom.png"),
+        [Types.mush_ex] = newImage("data/img/mush-ex.png"),
         ["mini-arrow"] = newImage("/data/img/mini-arrow.png"),
     }
 end

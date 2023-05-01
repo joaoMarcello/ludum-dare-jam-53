@@ -67,10 +67,10 @@ local ground_tilemap
 
 local bottom = State.camera.bounds_bottom - 32
 local mush_spot = {
-    { x = -16 * 10, bottom = bottom, time = 0.0, obj = nil },
-    { x = 16 * 7,   bottom = bottom, time = 0.0, obj = nil },
-    { x = 16 * 27,  bottom = bottom, time = 0.0, obj = nil },
-    { x = 16 * 40,  bottom = bottom, time = 0.0, obj = nil },
+    { x = -16 * 10, bottom = bottom, time = 0.0, obj = nil, type = Item.Types.mush_ex },
+    { x = 16 * 7,   bottom = bottom, time = 0.0, obj = nil, type = Item.Types.mush },
+    { x = 16 * 27,  bottom = bottom, time = 0.0, obj = nil, type = Item.Types.mush },
+    { x = 16 * 40,  bottom = bottom, time = 0.0, obj = nil, type = Item.Types.mush_ex },
 }
 
 local ground_map = function()
@@ -210,7 +210,13 @@ local function respawn_mush(dt)
 
                 ---@type Item
                 local obj = State:game_add_component(Item:new(State, world,
-                    { x = spot.x, bottom = spot.bottom, allowed_gravity = true, item_type = item.type }))
+                    {
+                        x = spot.x,
+                        bottom = spot.bottom,
+                        allowed_gravity = true,
+                        item_type = spot.type,
+                    }
+                ))
 
                 obj:apply_effect("popin", { speed = 0.3 })
 
@@ -300,7 +306,13 @@ State:implements {
             mush_spot[i].time = 0.0
 
             local obj = State:game_add_component(Item:new(State, world,
-                { x = mush_spot[i].x, bottom = mush_spot[i].bottom, allowed_gravity = true }))
+                {
+                    x = mush_spot[i].x,
+                    bottom = mush_spot[i].bottom,
+                    allowed_gravity = true,
+                    item_type = mush_spot[i].type,
+                }
+            ))
 
             mush_spot[i].obj = obj
         end

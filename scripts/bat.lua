@@ -330,7 +330,7 @@ function Bat:shoot(dt)
     if self.time_shoot >= speed_shoot
         and not gamestate:game_player():is_dead()
     then
-        self.time_shoot = self.time_shoot - speed_shoot - 3 * random()
+        self.time_shoot = self.time_shoot - speed_shoot - 4 * random()
         if self.time_shoot >= speed_shoot then self.time_shoot = 0.0 end
 
         local tab = empty_table()
