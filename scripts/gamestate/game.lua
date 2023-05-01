@@ -39,6 +39,8 @@ Leader:on_restart_action(function()
     Leader:change_gamestate(State, {})
 end)
 
+local lgx = love.graphics
+
 --=============================================================================
 ---@type JM.Physics.World
 local world
@@ -261,6 +263,8 @@ State:implements {
         imgs = imgs or {
             stars = newImage("data/img/sky.png"),
             night_sky = newImage("data/img/night-sky.png"),
+            trees = newImage("data/img/trees.png"),
+            mountain = newImage("data/img/mountain.png"),
         }
 
         local Anima = _G.JM_Anima
@@ -420,8 +424,8 @@ State:implements {
         {
             -- cam_px = -0.3,
             -- cam_py = 0.0,
-            factor_x = -0.8,
-            factor_y = -0.8,
+            factor_x = -0.95,
+            factor_y = -1,
             infinity_scroll_x = true,
             scroll_width = 320,
             infinity_scroll_y = true,
@@ -434,17 +438,33 @@ State:implements {
                 anima:draw(vw * 0.5, vh * 0.5)
             end
         },
+
+        {
+            factor_x = -0.95,
+            factor_y = -0.95,
+            infinity_scroll_x = true,
+            scroll_width = 320,
+
+            draw = function(self, camera)
+                lgx.setColor(1, 1, 1)
+                lgx.draw(imgs.mountain, 0, 0)
+            end
+        },
         --
         --================== TREES ========================
         {
-            factor_x = -0.6,
-            factor_y = -0.6,
+            factor_x = -0.5,
+            factor_y = -0.5,
             infinity_scroll_x = true,
             scroll_width = 32 * 6,
+            -- cam_py = -32,
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
-                love.graphics.setColor(0, 0, 1)
-                love.graphics.rectangle("fill", -16, camera.bounds_bottom - 16 * 7, 32, 16 * 7)
+                -- love.graphics.setColor(0, 0, 1)
+                -- love.graphics.rectangle("fill", -16, camera.bounds_bottom - 16 * 7, 32, 16 * 7)
+
+                lgx.setColor(1, 1, 1)
+                lgx.draw(imgs.trees, 0, 0)
             end
         },
         --

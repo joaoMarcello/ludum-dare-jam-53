@@ -209,8 +209,8 @@ function Bat:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
-        [States.idle] = newImage("data/img/bat-fly.png"),
-        [States.dead] = newImage("data/img/bat-fly.png"),
+        [States.idle] = newImage("/data/img/bat-fly-Sheet.png"),
+        -- [States.dead] = newImage("data/img/bat-fly.png"),
     }
 end
 
