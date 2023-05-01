@@ -1,6 +1,5 @@
 local love = _G.love
 local lgx = love.graphics
-
 local Pack = require "jm-love2d-package.init"
 local SceneManager = Pack.SceneManager
 do
@@ -35,7 +34,7 @@ SUB_PIXEL = 3
 
 DEVICE = "Android"
 
-local initial_state = 'how_to_play'
+local initial_state = 'title'
 
 --==================================================================
 
@@ -49,6 +48,8 @@ end
 
 --=========================================================================
 function love.load()
+    require "scripts.gamestate.game"
+
     SceneManager:change_gamestate(require("scripts.gamestate." .. initial_state))
 end
 

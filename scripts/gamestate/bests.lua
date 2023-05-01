@@ -55,7 +55,7 @@ local fr_leader_py = 4
 local label
 
 ---@type number|any
-local player_score = 4650
+local player_score = -4650
 ---@type number|any
 local player_sec
 ---@type string|any
@@ -232,15 +232,15 @@ local bt_restart_draw = function(self)
     end
 
     font:push()
-    font:set_font_size(6)
+    font:set_font_size(8)
     lgx.rectangle("fill", self.x, self.y, self.w, self.h)
-    font:printf("<color, 0.9, 0.9, 0.9>Play Again", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center",
+    font:printf("<color, 0.9, 0.9, 0.9>Play", self.x, self.y + self.h * 0.5 - font.__font_size * 0.5, "center",
         self.w)
     font:pop()
 end
 
 function State:jgdr_pnt(value)
-    player_score = math.abs(value)
+    player_score = value
 end
 
 local quit_action, quit_args
@@ -365,16 +365,16 @@ State:implements {
     end,
 
     keypressed = function(key)
-        if key == ';' then
-            State.camera:toggle_debug()
-        end
+        -- if key == ';' then
+        --     State.camera:toggle_debug()
+        -- end
 
-        if key == "up" then
-            player_score = player_score + 10
-            --
-        elseif key == "down" then
-            player_score = player_score - 10
-        end
+        -- if key == "up" then
+        --     player_score = player_score + 10
+        --     --
+        -- elseif key == "down" then
+        --     player_score = player_score - 10
+        -- end
 
         -- if key == 'r' then
         --     refresh()
@@ -654,8 +654,10 @@ State:implements {
                 btn_restart:set_position(btn_quit.x - btn_restart.w - tile * 0.5, label.y)
                 btn_restart:draw()
 
-                font:printx("<effect=flickering, speed=0.6>Score \n " .. tostring(player_score), 0, tile,
-                    camera.viewport_w - tile * 0.5, "right")
+                if player_score and player_score > 0 then
+                    font:printx("<effect=flickering, speed=0.6>Score \n " .. tostring(player_score), 0, tile,
+                        camera.viewport_w - tile * 0.5, "right")
+                end
             end
         },
         --

@@ -8,15 +8,27 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, ni
 State:set_color(74 / 255, 84 / 255, 98 / 255, 1)
 --============================================================================
 local HowToPlay = require "scripts.gamestate.how_to_play"
+local Bests = require "scripts.gamestate.bests"
+
+local lgx = love.graphics
 --============================================================================
+
+local imgs
 
 State:implements {
     load = function()
-
+        imgs = imgs or {
+            title = love.graphics.newImage("data/img/title.png"),
+            sky = love.graphics.newImage("/data/img/night-sky.png"),
+        }
     end,
 
     init = function()
 
+    end,
+
+    finish = function()
+        imgs = nil
     end,
 
     keypressed = function(key)
@@ -38,6 +50,22 @@ State:implements {
                 end)
             end
         end
+
+        if key == "l" then
+            if not State.transition then
+                Bests:jgdr_pnt(-100)
+
+                State:add_transition("door", "out", {}, nil, function()
+                    State:change_gamestate(Bests, {
+                        skip_finish = true,
+                        transition = "door",
+                        transition_conf = {
+                            delay = 0.3,
+                        }
+                    })
+                end)
+            end
+        end
     end,
 
     update = function(dt)
@@ -49,8 +77,27 @@ State:implements {
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
                 local font = _G.JM_Font.current
+                font:push()
 
-                font:print("WITCH BRUNNETTE", 100, 100)
+                local U = JM_Utils
+                local blue = U:get_rgba2(227, 230, 255)
+
+                lgx.setColor(1, 1, 1)
+                lgx.draw(imgs.sky, 0, 0)
+
+                -- lgx.setColor(0, 0, 0, 0.5)
+                -- lgx.draw(imgs.title, 0, 1)
+                lgx.setColor(blue)
+                lgx.draw(imgs.title, 0, 0)
+
+                font:printx("<effect=flickering, speed=0.6> <color, 0.9, 0.9, 0.9>Press Enter to Play", 0, 180 - 16 * 3,
+                    320,
+                    "center")
+
+                font:set_font_size(4)
+                font:printf("Press <bold>L</bold> to view leaderboard", 0, 180 - 16, "right", 320 - 16)
+
+                font:pop()
             end
         }
     }

@@ -33,12 +33,22 @@ State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
 Leader:on_quit_action(function()
-    Leader:change_gamestate(require "scripts.gamestate.title", {})
+    if not Leader.transition then
+        Leader:add_transition("curtain", "out", { type = "left-right" }, nil, function()
+            Leader:change_gamestate(require "scripts.gamestate.title",
+                { skip_finish = true, transition = "curtain", transition_conf = { delay = 0.3, type = "left-right" } })
+        end)
+    end
     -- love.event.quit()
 end)
 
 Leader:on_restart_action(function()
-    Leader:change_gamestate(require "scripts.gamestate.how_to_play", {})
+    if not Leader.transition then
+        Leader:add_transition("cartoon", "out", { type = "left-right" }, nil, function()
+            Leader:change_gamestate(require "scripts.gamestate.how_to_play",
+                { skip_finish = true, transition = "cartoon", transition_conf = { delay = 0.3, type = "left-right" } })
+        end)
+    end
 end)
 
 local lgx = love.graphics
