@@ -1,6 +1,7 @@
 local Pack = _G.JM_Love2D_Package
 local Phys = Pack.Physics
 local Utils = Pack.Utils
+local TileMap = Pack.TileMap
 local Player = require "scripts.player"
 local Bat = require "scripts.bat"
 local Cauldron = require "scripts.cauldron"
@@ -46,10 +47,16 @@ local cauldron
 
 local components, score, time
 
+local imgs
+local anim
+
 local time_spawn = 0.0
 local spawn_speed = 11.0
 local time_game = 0.0
 local time_heart = 0.0
+
+---@type JM.TileMap
+local ground_tilemap
 
 local bottom = State.camera.bounds_bottom - 32
 local mush_spot = {
@@ -58,6 +65,25 @@ local mush_spot = {
     { x = 16 * 27,  bottom = bottom, time = 0.0, obj = nil },
     { x = 16 * 40,  bottom = bottom, time = 0.0, obj = nil },
 }
+
+local ground_map = function()
+    local left = -16 * 20
+    local top = -16 * 5
+    local right = 16 * 50
+    local bottom = 16 * 12
+
+    local px, py = left, (bottom - 32)
+    local qx = _G.math.floor((right - left) / 16)
+    for i = 0, qx do
+        if i % 2 == 0 then
+            Entry(px + 16 * i, py, 1)
+            Entry(px + 16 * i, py + 16, 3)
+        else
+            Entry(px + 16 * i, py, 2)
+            Entry(px + 16 * i, py + 16, 4)
+        end
+    end
+end
 --=============================================================================
 local sort_update = function(a, b) return a.update_order > b.update_order end
 local sort_draw = function(a, b) return a.draw_order < b.draw_order end
@@ -99,7 +125,7 @@ end
 
 local function spawn_heart(dt)
     time_heart = time_heart + dt
-    if time_heart >= 25 then
+    if time_heart >= 25 then --25
         time_heart = 0
         local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
         vx = vx + 16
@@ -173,6 +199,20 @@ State:implements {
         Cauldron:load()
         Item:load()
         Heart:load()
+
+        ground_tilemap = TileMap:new(ground_map, "data/img/ground-tile.png", 16)
+
+        local newImage = love.graphics.newImage
+        imgs = imgs or {
+            stars = newImage("data/img/sky.png"),
+            night_sky = newImage("data/img/night-sky.png"),
+        }
+
+        local Anima = _G.JM_Anima
+        anim = anim or {
+            stars = Anima:new { img = imgs.stars },
+            night_sky = Anima:new { img = imgs.night_sky },
+        }
     end,
     --
     --
@@ -294,6 +334,38 @@ State:implements {
 
     layers = {
         --
+        --================== SKY ========================
+        {
+            cam_px = 0.0,
+            cam_py = 0.0,
+            --
+            draw = function(self, camera)
+                local vx, vy, vw, vh = State.camera:get_viewport()
+                ---@type JM.Anima
+                local anima = anim.night_sky
+                anima:draw(vw * 0.5, vh * 0.5)
+            end
+        },
+        --
+        --================== STARS ========================
+        {
+            -- cam_px = -0.3,
+            -- cam_py = 0.0,
+            factor_x = -0.8,
+            factor_y = -0.8,
+            infinity_scroll_x = true,
+            scroll_width = 320,
+            infinity_scroll_y = true,
+            scroll_height = 180,
+            --
+            draw = function(self, camera)
+                local vx, vy, vw, vh = State.camera:get_viewport()
+                ---@type JM.Anima
+                local anima = anim.stars
+                anima:draw(vw * 0.5, vh * 0.5)
+            end
+        },
+        --
         --================== TREES ========================
         {
             factor_x = -0.6,
@@ -315,6 +387,7 @@ State:implements {
                     local bd = world.bodies_static[i]
                     bd:draw()
                 end
+                ground_tilemap:draw(camera)
 
                 tab_sort(components, sort_draw)
                 for i = 1, #components do

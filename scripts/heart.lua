@@ -7,6 +7,8 @@ Heart.__index = Heart
 
 local score = 500
 
+local img
+
 function Heart:new(state, world, args)
     args = args or {}
     args.x = args.x or 32
@@ -33,10 +35,14 @@ function Heart:__constructor__(args)
     self.oy = self.h * 0.5
 
     self.duration = 10
+
+    self.anim = _G.JM_Anima:new { img = img }
+
+    self:apply_effect("pulse", { range = 0.1, speed = 1 })
 end
 
 function Heart:load()
-
+    img = img or love.graphics.newImage("data/img/heart.png")
 end
 
 function Heart:finish()
@@ -46,6 +52,7 @@ end
 local tab = { speed = 0.1 }
 function Heart:update(dt)
     GC.update(self, dt)
+    self.anim:update(dt)
 
     local gamestate = self.gamestate
     local player = gamestate:game_player()
@@ -69,8 +76,10 @@ function Heart:update(dt)
 end
 
 function Heart:my_draw()
-    lgx.setColor(1, 0, 0)
-    lgx.rectangle("fill", self.body:rect())
+    -- lgx.setColor(1, 0, 0)
+    -- lgx.rectangle("fill", self.body:rect())
+
+    self.anim:draw(self.x + self.w * 0.5, self.y + self.h * 0.5)
 end
 
 function Heart:draw()

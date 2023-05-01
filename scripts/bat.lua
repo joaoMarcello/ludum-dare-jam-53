@@ -13,6 +13,7 @@ local States = {
     chase = 1,
     dead = 2,
     atk = 3,
+    leave = 4,
 }
 
 ---@enum Bat.Modes
@@ -51,6 +52,10 @@ local chase = function(self, dt)
     end
 
     self:shoot(dt)
+
+    if bd.speed_x ~= 0 then
+        self.direction = bd.speed_x > 0 and 1 or -1
+    end
 end
 
 ---@param self Bat
@@ -78,6 +83,37 @@ local idle = function(self, dt)
     end
 
     self:shoot(dt)
+
+    local player = self.gamestate:game_player()
+    local player_bd = player.body
+
+    if player_bd.x + player_bd.w * 0.5 < bd.x + bd.w * 0.5 then
+        self.direction = 1
+    else
+        self.direction = -1
+    end
+end
+
+---@param self Bat
+local leave = function(self, dt)
+    local bd = self.body
+
+    local player = self.gamestate:game_player()
+    local player_bd = player.body
+
+    if player_bd.x + player_bd.w * 0.5 < bd.x + bd.w * 0.5 then
+        self.direction = -1
+    else
+        self.direction = 1
+    end
+
+    bd:apply_force(16 * 3 * self.direction, -bd:weight() - 16 * 3)
+
+    self:shoot(dt)
+
+    if not self.gamestate.camera:rect_is_on_view(bd:rect()) then
+        self.__remove = true
+    end
 end
 
 ---@param self Bat
@@ -137,8 +173,11 @@ function Bat:__constructor__(args)
 
     self.time_shoot = -5.0 * math.random()
     self.time_state = 0.0
+    self.time_leave = 0.0
     self.dur_idle = 3 * math.random()
     self.dur_chase = 4 + 3 * math.random()
+
+    self.direction = 1
 end
 
 function Bat:is_dead()
@@ -186,6 +225,12 @@ function Bat:set_state(state)
         --
     elseif state == States.idle then
         self.cur_movement = idle
+        --
+    elseif state == States.leave then
+        self.cur_movement = leave
+        bd.allowed_gravity = true
+        bd.mass = bd.world.default_mass
+        bd.max_speed_y = nil
         --
     elseif state == States.dead then
         self:drop_wing()
@@ -261,10 +306,16 @@ function Bat:update(dt)
     local bd = self.body
 
     if not self:is_dead() then
+        self.time_leave = self.time_leave + dt
+
         local player = self.gamestate:game_player()
         local player_bd = player.body
         if player_bd:check_collision(bd:rect()) then
             player:damage(self)
+        end
+
+        if self.time_leave >= 20 then
+            self:set_state(States.leave)
         end
     end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)

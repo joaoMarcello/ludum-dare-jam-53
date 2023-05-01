@@ -120,7 +120,7 @@ function Player:new(state, world, args)
     args.y = args.bottom and (args.bottom - args.h) or args.y
 
     args.acc = 16 * 12
-    args.max_speed = 16 * 5
+    args.max_speed = 16 * 6
     args.dacc = 16 * 4
 
     local obj = GC:new(state, world, args)
@@ -175,6 +175,8 @@ function Player:__constructor__(state)
     }
 
     self.cur_anima = self.anim[States.default]
+
+    self:apply_effect("float", { range = 1 })
 
     self.update = Player.update
     self.draw = Player.draw

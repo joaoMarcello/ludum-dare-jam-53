@@ -5,5 +5,11 @@
     },
     "Lua.workspace.library": [
         "${3rd}/love2d/library"
+    ],
+    "Lua.diagnostics.disable": [
+        "unused-function"
+    ],
+    "Lua.diagnostics.globals": [
+        "Entry"
     ]
 }

@@ -31,7 +31,7 @@ local chase = function(self, dt)
         bd.y - speed_chase * math.sin(angle) * dt
     )
 
-    if self.chase_obj:is_dead() then
+    if self.chase_obj:is_dead() or self.chase_obj.__remove then
         self.direction = bd.speed_x < 0 and -1 or 0
         self:set_state(States.straight)
     end
