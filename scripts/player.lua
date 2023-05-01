@@ -127,6 +127,7 @@ function Player:new(state, world, args)
     args.w = args.w or 12
     args.h = args.h or 24
     args.y = args.bottom and (args.bottom - args.h) or args.y
+    args.draw_order = 1
 
     args.acc = 16 * 12
     args.max_speed = 16 * 6

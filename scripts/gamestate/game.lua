@@ -501,14 +501,16 @@ State:implements {
                 if player:is_dead() and player.time_state >= 1.0 then
                     font:push()
                     font:set_font_size(22)
-                    font:printx("<effect=scream>YOU ARE \n DEAD", 0, 16 * 3, camera.viewport_w, "center")
+                    font:printx("<effect=scream> <color, 0.9, 0.9, 0.9>YOU ARE \n DEAD", 0, 16 * 3, camera.viewport_w,
+                        "center")
                     font:pop()
                 end
 
                 font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
 
                 if player:bag_is_full() then
-                    font:printx("<effect=flickering, speed=0.8> <color>Bag is full!", camera.viewport_w * 0.5, 8,
+                    font:printx("<effect=flickering, speed=0.8> <color, 0.9, 0.9, 0.9>Bag is full!",
+                        camera.viewport_w * 0.5, 8,
                         camera.viewport_w * 0.5, "center")
                 else
                     font:printf("BAG:\n " .. player.bag_count, camera.viewport_w * 0.5, 8, "center",
