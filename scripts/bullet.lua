@@ -1,12 +1,15 @@
 local GC = require "lib.bodyComponent"
 local lgx = love.graphics
 local atan2 = math.atan2
+local Anima = _G.JM_Anima
 
 ---@class Bullet : BodyComponent
 local Bullet = setmetatable({}, GC)
 Bullet.__index = Bullet
 
-local speed = 16 * 8.5
+local speed = 16 * 7
+
+local img
 
 function Bullet:new(state, world, args)
     args = args or {}
@@ -37,18 +40,22 @@ function Bullet:__constructor__(args)
     bd.dacc_y = 0
     bd.speed_x = -speed * math.cos(angle)
     bd.speed_y = -speed * math.sin(angle)
+
+    self.anim = Anima:new { img = img }
 end
 
 function Bullet:load()
-
+    img = img or love.graphics.newImage("data/img/bullet.png")
 end
 
 function Bullet:finish()
-
+    img = nil
 end
 
 function Bullet:update(dt)
     GC.update(self, dt)
+
+    self.anim:update(dt)
 
     ---@type GameState.Game | any
     local gamestate = self.gamestate
@@ -68,8 +75,9 @@ function Bullet:update(dt)
 end
 
 function Bullet:my_draw()
-    lgx.setColor(1, 1, 0)
-    lgx.rectangle("fill", self.x, self.y, self.w, self.h)
+    -- lgx.setColor(1, 1, 0)
+    -- lgx.rectangle("fill", self.x, self.y, self.w, self.h)
+    self.anim:draw(self.x + self.w * 0.5, self.y + self.h * 0.5)
 end
 
 function Bullet:draw()

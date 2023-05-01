@@ -31,7 +31,7 @@ function Display:__constructor__(state, args)
     self.time = 0
     self.duration = args.duration or 1
 
-    self:set_draw_order(15)
+    -- self:set_draw_order(15)
 end
 
 function Display:load()
