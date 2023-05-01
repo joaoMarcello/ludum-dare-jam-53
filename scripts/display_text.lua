@@ -25,11 +25,6 @@ function Display:__constructor__(state, args)
     self.text = "<bold>" .. self.text
     self.text_white = "<color, 1, 1, 1>" .. self.text
 
-    -- self.text_yellow = string.format("<color, %.2f, %.2f, %.2f>",
-    --         122 / 255,
-    --         130 / 255,
-    --         152 / 255) .. self.text
-
     self.x = self.x - self.w * 0.5
     self.acumulator = 0
     self.time = 0
