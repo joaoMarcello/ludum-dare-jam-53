@@ -2,6 +2,7 @@ local GC = require "lib.bodyComponent"
 local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
 local Item = require "scripts.item"
+local Smoke = require "scripts.smoke"
 
 local lgx = love.graphics
 local atan2, sqrt, cos, sin = math.atan2, math.sqrt, math.cos, math.sin
@@ -200,12 +201,15 @@ function Bat:__constructor__(args)
 
     self.cur_anima = self.anim[States.idle]
 
+    self.time_smoke = 0.0
+
     self.direction = 1
 end
 
 function Bat:load()
     Bullet:load()
     Item:load()
+    Smoke:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
@@ -217,6 +221,7 @@ end
 function Bat:finish()
     Bullet:finish()
     Item:finish()
+    Smoke:finish()
     imgs = nil
 end
 
@@ -371,6 +376,18 @@ function Bat:update(dt)
         end
 
         self.cur_anima:set_flip_x(player_bd.x > bd.x and true or false)
+
+        self.time_smoke = self.time_smoke + dt
+
+        if self.time_smoke >= 0.2 and bd.speed_y ~= 0 then
+            self.time_smoke = 0.0
+            local sk = Smoke:new(self.gamestate,
+                self.x + self.w * 0.5 - 1 * self.direction,
+                self.y + self.h * 0.5 - 1 * bd:direction_y(),
+                0.3
+            )
+            self.gamestate:game_add_component(sk)
+        end
         --
     else
         self.cur_anima.current_frame = 1

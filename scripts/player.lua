@@ -1,6 +1,7 @@
 local GC = require "lib.bodyComponent"
 local Utils = _G.JM_Utils
 local Spell = require "scripts.spell"
+local Smoke = require "scripts.smoke"
 
 local keys = {
     left = { 'left', 'a' },
@@ -178,6 +179,8 @@ function Player:__constructor__(state)
     self.time_state = 0.0
     self:set_state(States.default)
 
+    self.time_smoke = 0.0
+
     self.items = {}
 
     local Anima = _G.JM_Anima
@@ -195,6 +198,7 @@ end
 
 function Player:load()
     Spell:load()
+    Smoke:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
@@ -204,6 +208,7 @@ end
 
 function Player:finish()
     Spell:finish()
+    Smoke:finish()
     imgs = nil
 end
 
@@ -397,6 +402,17 @@ function Player:update(dt)
     self.cur_anima:update(dt)
     self.cur_anima:set_flip_x(self.direction < 0 and true or false)
 
+    if not self:is_dead() then
+        self.time_smoke = self.time_smoke + dt
+        if self.time_smoke >= 0.15 and bd.speed_y < 0 then
+            self.time_smoke = 0.0
+
+            self.gamestate:game_add_component(Smoke:new(self.gamestate,
+                self.x - 16 * self.direction,
+                self.y + 16
+            ))
+        end
+    end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 
