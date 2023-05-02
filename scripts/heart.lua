@@ -64,6 +64,7 @@ function Heart:update(dt)
             gamestate:game_add_score(score)
             player:hp_up(1)
             gamestate:display_text(tostring(score), bd.x, bd.y - 32, 2)
+            _G.PLAY_SFX("power_up", false)
             self.__remove = true
             return
         end

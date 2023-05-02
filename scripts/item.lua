@@ -139,6 +139,8 @@ function Item:drop()
     local col = bd:check(nil, bd.y + 2, bd.filter_col_y)
     if col.n > 0 then
         bd:resolve_collisions_y(col)
+    else
+        _G.PLAY_SFX("drop", true)
     end
 
     -- gamestate:display_text("grabbed", bd.x, bd.y)
@@ -162,6 +164,7 @@ function Item:grab()
         self.dropped = false
         self:deflick()
         self:set_visible(false)
+        _G.PLAY_SFX("collect", true)
     end
 end
 
@@ -189,13 +192,14 @@ function Item:update(dt)
         self.time_throw = self.time_throw + dt
 
         local cauldron = gamestate:game_cauldron()
+
         if cauldron:is_inside(bd) then
             local score = self.score
             score = self.bounce_count > 0 and (score * 5) or score
             gamestate:game_add_score(score)
 
             gamestate:display_text(tostring(score), bd.x, bd.y)
-
+            _G.PLAY_SFX("power_up", false)
             self.__remove = true
             return
         end

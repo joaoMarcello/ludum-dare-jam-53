@@ -34,6 +34,8 @@ State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
 Leader:on_quit_action(function()
     if not Leader.transition then
+        _G.PLAY_SFX("click")
+
         Leader:add_transition("curtain", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.title",
                 { skip_finish = false, transition = "curtain", transition_conf = { delay = 0.3, type = "left-right" } })
@@ -44,6 +46,8 @@ end)
 
 Leader:on_restart_action(function()
     if not Leader.transition then
+        _G.PLAY_SFX("click")
+
         Leader:add_transition("cartoon", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.how_to_play",
                 { skip_finish = false, transition = "cartoon", transition_conf = { delay = 0.3, type = "left-right" } })
@@ -235,6 +239,10 @@ local function respawn_mush(dt)
                 ))
 
                 obj:apply_effect("popin", { speed = 0.3 })
+
+                if State.camera:rect_is_on_view(obj.x, obj.y, obj.w, obj.h) then
+                    _G.PLAY_SFX("enemy_die", true)
+                end
 
                 spot.obj = obj
             end

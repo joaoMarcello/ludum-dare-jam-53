@@ -34,11 +34,11 @@ SUB_PIXEL = 3
 
 DEVICE = "Android"
 
-local initial_state = 'how_to_play'
+local initial_state = 'title'
 
 --==================================================================
 
-function PLAY_SFX(name, force, stop)
+function PLAY_SFX(name, force)
     Pack.Sound:play_sfx(name, force)
 end
 
@@ -48,6 +48,18 @@ end
 
 --=========================================================================
 function love.load()
+    local S = Pack.Sound
+    S:add_sfx("/data/sfx/spell.wav", "spell")
+    S:add_sfx("/data/sfx/bullet.wav", "bullet")
+    S:add_sfx("/data/sfx/drop.wav", "drop")
+    S:add_sfx("/data/sfx/power_up.wav", "power_up")
+    S:add_sfx("/data/sfx/collect.wav", "collect")
+    S:add_sfx("/data/sfx/fly.wav", "fly", 0.1)
+    S:add_sfx("/data/sfx/enemy_die.wav", "enemy_die")
+    S:add_sfx("/data/sfx/enemy_hit.wav", "enemy_hit")
+    S:add_sfx("/data/sfx/spell_fail.wav", "spell_fail", 0.25)
+    S:add_sfx("/data/sfx/click.wav", "click")
+
     require "scripts.gamestate.game"
 
     SceneManager:change_gamestate(require("scripts.gamestate." .. initial_state))

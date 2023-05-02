@@ -238,6 +238,9 @@ function Bat:damage(value)
 
     if self.hp == 0 then
         self:set_state(States.dead)
+        _G.PLAY_SFX("enemy_die", true)
+    else
+        _G.PLAY_SFX("enemy_hit", true)
     end
 
     return true
@@ -349,6 +352,10 @@ function Bat:shoot(dt)
         --         y = bd.y,
         --     }
         -- ))
+
+        if gamestate.camera:rect_is_on_view(bd:rect()) then
+            _G.PLAY_SFX("bullet", true)
+        end
     end
 end
 

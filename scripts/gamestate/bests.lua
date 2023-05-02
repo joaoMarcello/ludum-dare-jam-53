@@ -94,6 +94,8 @@ local thread
 thread = not WEB and love.thread.newThread(code)
 --=============================================================================
 local refresh = function()
+    _G.PLAY_SFX("click")
+
     if WEB then
         State:init()
     else
@@ -144,6 +146,8 @@ local send = function()
     if to_send then
         label.locked = true
     end
+
+    _G.PLAY_SFX("click")
 
     if WEB then
         if to_send then

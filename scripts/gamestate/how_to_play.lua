@@ -27,6 +27,8 @@ State:implements {
 
         if key == "space" or key == 'return' then
             if not State.transition then
+                _G.PLAY_SFX("click")
+
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Game, {
                         skip_finish = true,

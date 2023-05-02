@@ -346,7 +346,10 @@ function Player:set_state(state)
 end
 
 function Player:lauch_spell()
-    if self.count_spell <= 0 then return false end
+    if self.count_spell <= 0 then
+        _G.PLAY_SFX("spell_fail", false)
+        return false
+    end
 
     self.count_spell = self.count_spell - 1
 
@@ -377,6 +380,8 @@ function Player:lauch_spell()
 
     self:set_state(States.atk)
 
+    _G.PLAY_SFX("spell", true)
+
     return true
 end
 
@@ -387,6 +392,8 @@ function Player:drop_item()
     if item then
         item:drop()
         self.bag_count = self.bag_count - 1
+    else
+        _G.PLAY_SFX("spell_fail", false)
     end
 end
 
@@ -406,6 +413,12 @@ function Player:key_released(key)
     local bd = self.body
     if pressed('jump', key) and bd.speed_y < 0 then
         bd.speed_y = bd.speed_y * 0.5
+
+        -- local S = _G.JM_Love2D_Package.Sound
+        -- local audio = S:get_sfx("fly")
+        -- if audio then
+        --     if audio.source:isPlaying() then audio.source:stop() end
+        -- end
     end
 end
 
@@ -447,12 +460,24 @@ function Player:update(dt)
                 self.y + 16
             ))
         end
+
+        if bd.speed_y < 16 then
+            _G.PLAY_SFX("fly", false)
+        end
         --
     else
         --
         -- if bd.ground then
         self.skull:update(dt)
         -- end
+    end
+
+    if bd.speed_y >= 0 or self:is_dead() then
+        local S = _G.JM_Love2D_Package.Sound
+        local audio = S:get_sfx("fly")
+        if audio then
+            if audio.source:isPlaying() or true then audio.source:stop() end
+        end
     end
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end

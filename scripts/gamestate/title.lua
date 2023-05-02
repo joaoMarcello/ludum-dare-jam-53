@@ -39,6 +39,8 @@ State:implements {
 
         if key == "space" or key == 'return' then
             if not State.transition then
+                _G.PLAY_SFX("click")
+
                 State:add_transition("fade", "out", {}, nil, function()
                     State:change_gamestate(HowToPlay, {
                         skip_finish = true,
@@ -54,6 +56,7 @@ State:implements {
         if key == "l" then
             if not State.transition then
                 Bests:jgdr_pnt(-100)
+                _G.PLAY_SFX("click")
 
                 State:add_transition("door", "out", {}, nil, function()
                     State:change_gamestate(Bests, {
