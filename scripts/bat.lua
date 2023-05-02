@@ -229,6 +229,7 @@ function Bat:is_dead()
     return self.state == States.dead or self.hp <= 0
 end
 
+local eff_args = { duration = 1, speed = 1 / 12 }
 function Bat:damage(value)
     if self:is_dead() then return false end
 
@@ -241,7 +242,8 @@ function Bat:damage(value)
         _G.PLAY_SFX("enemy_die", true)
     else
         _G.PLAY_SFX("enemy_hit", true)
-        self:apply_effect("flash", { duration = 1, speed = 1 / 6, color = { 1, 1, 1, 1 }, max = 1.2 })
+        -- self:apply_effect("flash", { duration = 1, speed = 1 / 6, color = { 1, 1, 1, 1 }, max = 1.2 })
+        self:apply_effect("flickering", eff_args)
     end
 
     return true
