@@ -80,6 +80,7 @@ local aff_player
 
 local MAX = 5
 local WEB = _G.DEVICE == "Web" or false
+local OFFLINE = false
 
 local rank_data, rank_time, rank_cur_player
 local rank_speed = 0.4 / MAX
@@ -107,6 +108,12 @@ local refresh = function()
     end
 end
 
+---@return any name
+---@return any score
+---@return any time
+---@return any text
+---@return any date
+---@return any index
 local find_player = function(player_name)
     if not rank_data then return false end
 
@@ -115,7 +122,7 @@ local find_player = function(player_name)
     for i = 1, N do
         name, score, sec, text = Board:get_proper(rank_data[i])
         if name and name == player_name then
-            return name, score, sec, text, date
+            return name, score, sec, text, date, i
         end
     end
     return false
@@ -138,23 +145,29 @@ local ready_to_send = function(player_name)
     return false
 end
 
-Offline_send = function(name, score, time, text, date, __save__, __i__, __name__)
+Offline_send = function(name, score, time, text, date, __save__, __i__)
     local success = false
     __i__ = __i__ or 1
 
+    if __i__ == 1 then
+        local n, pt, s, t, i, ind = find_player(name)
+        if n then
+            rank_data[ind] = { name, score or 10, time or 0, text or "", date or "Sao luis" }
+            success = true
+        end
+    end
+
     for i = __i__, MAX do
+        if success then break end
+
         local n, PT, s, t, d = Board:get_proper(rank_data[i])
 
         if n and score > PT then
             --
 
-            rank_data[i] = { name or "noob", score or 10, time or 0, text or "", "Sao luis" }
+            rank_data[i] = { name or "noob", score or 10, time or 0, text or "", date or "Sao luis" }
 
-            -- if n == name then
-            --     Offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 2)
-            -- else
-            Offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 1, name)
-            -- end
+            Offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 1)
 
             success = true
             break
@@ -168,7 +181,7 @@ Offline_send = function(name, score, time, text, date, __save__, __i__, __name__
         for j = 1, MAX + 2 do
             local n, PT, s, t, d = Board:get_proper(rank_data[i])
             if n then
-                content = content .. string.format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
+                content = content .. format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
             end
             i = i + 1
         end
@@ -191,7 +204,7 @@ local send = function()
 
     _G.PLAY_SFX("click")
 
-    if WEB then
+    if WEB or OFFLINE then
         if to_send then
             -- local data = Board:env(player_name, player_score, player_sec, player_text)
 
@@ -318,7 +331,10 @@ State:implements {
     load = function(args)
         local cam = State.camera
 
-        local str = string.format("<effect=wave>%s", WEB and "LOCAL RANKING" or "LEADERBOARD")
+        local str = format("<effect=wave>%s",
+            ((WEB or OFFLINE) and "RANKING")
+            or "LEADERBOARD"
+        )
 
         fr_leader, fr_leader_w, fr_leader_h = font:generate_phrase(str, nil, nil, State.camera.viewport_w, "center")
         fr_leader_h = font.__font_size
@@ -336,7 +352,7 @@ State:implements {
         }
 
         local img_dir = "data/img/refresh_02.png"
-        img_btn_refresh = img_btn_refresh or (love.filesystem.getInfo(img_dir)
+        img_btn_refresh = img_btn_refresh or (lfs.getInfo(img_dir)
             and lgx.newImage(img_dir))
 
         if img_btn_refresh then
@@ -398,20 +414,20 @@ State:implements {
 
     init = function(data)
         rank_data = data
-            or (not WEB and Board:get_tab())
-            or (WEB and (
+            or ((not WEB and not OFFLINE) and Board:get_tab())
+            or ((WEB or OFFLINE) and (
                 lfs.getInfo("rank.txt")
                 and Board:get_tab(lfs.read("rank.txt"))
                 or Board:get_tab(lfs.read("data/rank.txt")))
             )
 
-        if WEB and not lfs.getInfo("rank.txt") then
+        if (WEB or OFFLINE) and not lfs.getInfo("rank.txt") then
             local content = ""
 
             for j = 1, MAX do
                 local n, PT, s, t, d = Board:get_proper(rank_data[j])
                 if n then
-                    content = content .. string.format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
+                    content = content .. format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
                 end
             end
 
@@ -490,7 +506,7 @@ State:implements {
         if not rank_data then
             local r
 
-            if not WEB then
+            if not WEB and not OFFLINE then
                 r = love.thread.getChannel('resp'):pop()
             else
                 r = lfs.read("rank.txt")
@@ -653,6 +669,9 @@ State:implements {
                             rank = format("%dTH", i)
                         end
 
+                        local mode = (label.locked and name == label.text and "printx") or "printf"
+                        local eff = "<effect=flickering>"
+
                         font:set_color(font_color)
 
                         lgx.setColor(shadow_color)
@@ -661,7 +680,7 @@ State:implements {
                         lgx.rectangle("fill", px, py - 2, tile * 2, rect_height)
                         lgx.setColor(1, 1, 1)
                         lgx.rectangle("line", px, py - 2, tile * 2, rect_height)
-                        font:printf(rank, px, py, "center", tile * 2)
+                        font[mode](font, eff .. rank, px, py, "center", tile * 2)
                         px = px + tile * 2 + offset
 
                         lgx.setColor(shadow_color)
@@ -670,7 +689,7 @@ State:implements {
                         lgx.rectangle("fill", px, py - 2, rect_name_w, rect_height)
                         lgx.setColor(1, 1, 1)
                         lgx.rectangle("line", px, py - 2, rect_name_w, rect_height)
-                        font:printf(name, px, py, "center", rect_name_w)
+                        font[mode](font, eff .. name, px, py, "center", rect_name_w)
                         px = px + rect_name_w + offset
 
                         lgx.setColor(shadow_color)
@@ -679,7 +698,7 @@ State:implements {
                         lgx.rectangle("fill", px, py - 2, tile * 4, rect_height)
                         lgx.setColor(1, 1, 1)
                         lgx.rectangle("line", px, py - 2, tile * 4, rect_height)
-                        font:printf(tostring(score), px, py, "center", tile * 4)
+                        font[mode](font, eff .. tostring(score), px, py, "center", tile * 4)
 
                         py = py + line_space
                     end -- End For
@@ -690,8 +709,16 @@ State:implements {
                             local size = font.__font_size
 
                             font:set_font_size(size - 2)
+
                             font:set_color(def_rect_color)
-                            font:print("Enter your name:", label.x - tile / 2, label.y - font.__font_size - 4, math.huge)
+
+                            if not label.locked then
+                                font:print("Enter your name:",
+                                    label.x - tile / 2,
+                                    label.y - font.__font_size - 4,
+                                    math.huge)
+                            end
+
                             label:draw()
 
                             font:set_font_size(size)

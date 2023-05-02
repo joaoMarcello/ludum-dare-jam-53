@@ -46,7 +46,7 @@ SCREEN_HEIGHT = Pack.Utils:round(180) -- 384 32*15
 SCREEN_WIDTH = Pack.Utils:round(320)  --576 *1.5
 SUB_PIXEL = 3
 
-DEVICE = "Web"
+DEVICE = "Web_"
 
 local initial_state = 'title'
 
