@@ -241,6 +241,7 @@ function Bat:damage(value)
         _G.PLAY_SFX("enemy_die", true)
     else
         _G.PLAY_SFX("enemy_hit", true)
+        self:apply_effect("flash", { duration = 1, speed = 1 / 6, color = { 1, 1, 1, 1 }, max = 1.2 })
     end
 
     return true
