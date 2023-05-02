@@ -183,7 +183,7 @@ function Item:update(dt)
     if not self.grabbed then
         local player = gamestate:game_player()
 
-        if bd:check_collision(player.body:rect()) then
+        if player.body:check_collision(self.x, self.y - 4, self.w, self.h + 8) then
             self:grab()
         end
     end
@@ -222,7 +222,8 @@ function Item:update(dt)
 
         if bd.ground or self.time_throw >= 1.5 then
             local player = gamestate:game_player()
-            if bd:check_collision(player.body:rect()) then
+            -- if bd:check_collision(player.body:rect()) then
+            if player.body:check_collision(self.x, self.y - 8, self.w, self.h + 16) then
                 self:grab()
             end
         end

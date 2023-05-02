@@ -80,7 +80,7 @@ local aff_player
 
 local MAX = 5
 local WEB = _G.DEVICE == "Web" or false
-local OFFLINE = false
+local OFFLINE = true
 
 local rank_data, rank_time, rank_cur_player
 local rank_speed = 0.4 / MAX
@@ -98,7 +98,8 @@ thread = not WEB and love.thread.newThread(code)
 local refresh = function()
     _G.PLAY_SFX("click")
 
-    if WEB then
+    if WEB or OFFLINE then
+        rank_data = nil
         State:init()
     else
         rank_data = nil
@@ -186,7 +187,8 @@ Offline_send = function(name, score, time, text, date, __save__, __i__)
             i = i + 1
         end
 
-        lfs.write("rank.txt", content)
+        -- lfs.write("rank.txt", content)
+        Loader.save(rank_data, "rank.dat")
     end
 
     return success
@@ -416,12 +418,13 @@ State:implements {
         rank_data = data
             or ((not WEB and not OFFLINE) and Board:get_tab())
             or ((WEB or OFFLINE) and (
-                lfs.getInfo("rank.txt")
-                and Board:get_tab(lfs.read("rank.txt"))
+                lfs.getInfo("rank.dat")
+                and Loader.load("rank.dat")
+                -- and Board:get_tab(lfs.read("rank.txt"))
                 or Board:get_tab(lfs.read("data/rank.txt")))
             )
 
-        if (WEB or OFFLINE) and not lfs.getInfo("rank.txt") then
+        if (WEB or OFFLINE) and not lfs.getInfo("rank.dat") then
             local content = ""
 
             for j = 1, MAX do
@@ -431,11 +434,12 @@ State:implements {
                 end
             end
 
-            lfs.write("rank.txt", content)
+            -- lfs.write("rank.txt", content)
+            Loader.save(rank_data, "rank.dat")
         end
 
         rank_time = 0.0
-        rank_cur_player = 1
+        rank_cur_player = 0
         love.mouse.setVisible(true)
         love.keyboard.setKeyRepeat(true)
     end,
@@ -509,11 +513,13 @@ State:implements {
             if not WEB and not OFFLINE then
                 r = love.thread.getChannel('resp'):pop()
             else
-                r = lfs.read("rank.txt")
+                -- r = lfs.read("rank.txt")
+                r = Loader.load("rank.dat")
+                rank_data = r
             end
 
             if r then
-                rank_data = Board:get_tab(r)
+                rank_data = rank_data or Board:get_tab(r)
                 State:init(rank_data)
             end
         end

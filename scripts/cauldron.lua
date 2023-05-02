@@ -30,10 +30,10 @@ end
 function Cauldron:__constructor__(world, args)
     self.world = world
 
-    Phys:newBody(world, self.x, self.y, 1, self.h, "static")
-    Phys:newBody(world, self.x + self.w - 1, self.y, 1, self.h, "static")
     Phys:newBody(world, self.x - 3, self.y, 3, 3, "static")
     Phys:newBody(world, self.x + self.w, self.y, 3, 3, "static")
+    Phys:newBody(world, self.x, self.y, 1, self.h, "static")
+    Phys:newBody(world, self.x + self.w - 1, self.y, 1, self.h, "static")
 
     local Anima = _G.JM_Anima
     local color = _G.JM_Utils:get_rgba2(255, 252, 64)
@@ -88,8 +88,8 @@ function Cauldron:update(dt)
 end
 
 function Cauldron:my_draw()
-    lgx.setColor(0, 0, 0)
-    lgx.rectangle("line", self.x, self.y, self.w, self.h)
+    -- lgx.setColor(0, 0, 0)
+    -- lgx.rectangle("line", self.x, self.y, self.w, self.h)
 
     self.anim1:draw_rec(self.x, self.y, self.w, self.h)
 end
@@ -98,6 +98,7 @@ function Cauldron:draw()
     GC.draw(self, self.my_draw)
 
     local camera = self.gamestate.camera
+
     if not camera:rect_is_on_view(self.x, self.y, self.w, self.h) then
         local vx, vy, vw, vh = camera:get_viewport_in_world_coord()
         local rot = self.anim_down.rotation
