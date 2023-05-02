@@ -55,7 +55,8 @@ State:implements {
 
         if key == "l" then
             if not State.transition then
-                Bests:jgdr_pnt(-100)
+                Bests:jgdr_pnt(100)
+
                 _G.PLAY_SFX("click")
 
                 State:add_transition("door", "out", {}, nil, function()

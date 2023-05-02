@@ -62,16 +62,16 @@ State:implements {
                 love.graphics.rectangle("fill", 8, 4, 320 - 16, 180 - 8)
 
                 font:push()
-                font:set_font_size(6)
+                font:set_font_size(7)
                 -- font:set_line_space(4)
                 -- font:set_color(JM_Utils:get_rgba2(254, 243, 192))
                 font:set_color(JM_Utils:get_rgba2(59, 23, 37))
 
 
                 local str = string.format(
-                    "\t %s <bold>Objective:</bold></color>\n Fly around, catch items and throw them on cauldron. If you see some bats, just\nlaunch a spell on them.\n \n \t %s <bold>Controls:</color></bold>\n Move:</color>\tA/D/Left/Right\n Launch Spell:</color>\tF/J/E\n Drop item:</color>\tV/K/Q\n Hover:</color>\tSpace/Up/W\n Restart:</color>\tP\n \n \t %s <bold> Hint:</bold></color>\n Try make the dropped item %s bounce in the ground</color> before enter the cauldron. You will\nearn much more points!",
+                    "\t %s <bold>Objective:</bold></color>\n Fly around, catch items and throw them on cauldron.\n If you see some bats, just launch a spell on them.\n \n \t %s <bold>Controls:</color></bold>\n Move:</color>\tA/D/Left/Right\n Launch Spell:</color>\tF/J/E\n Drop item:</color>\tV/K/Q\n Hover:</color>\tSpace/Up/W\n Restart:</color>\tP\n \n \t %s <bold> Hint:</bold></color>\n Try make the dropped item %s bounce in the \n ground</color> before enter the cauldron. You will\n earn much more points!",
                     black, black, black, red)
-                font:printf(str, 24, 16, "left", 320 - 16)
+                font:printf(str, 16, 16, "left", 320 - 16)
 
                 font:set_font_size(6)
                 str = string.format(" %s <effect=ghost, speed=1.5, min=0.1>Press Enter/Space to start!",

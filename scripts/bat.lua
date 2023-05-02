@@ -399,7 +399,9 @@ function Bat:update(dt)
     else
         self.cur_anima.current_frame = 1
         self.cur_anima:set_rotation(math.pi)
+        --
     end
+
     self.x, self.y = Utils:round(bd.x), Utils:round(bd.y)
 end
 

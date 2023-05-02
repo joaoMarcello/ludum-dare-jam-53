@@ -1,0 +1,5 @@
+Mario, 50, 1, Amazing, "DDD"
+Luigi, 40, 1, Outstanding, "DDD"
+Peach, 30, 1, Awesome, "DDD"
+Bowser, 20, 1, Great, "DDD"
+Wario, 10, 1, Good, "DDD"

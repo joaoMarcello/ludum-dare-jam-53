@@ -36,6 +36,7 @@ Board:init(Loader.load("data/dummy1.dat"))
 --=============================================================================
 local lgx = love.graphics
 local format = string.format
+local lfs = love.filesystem
 
 local font = _G.JM_Font.current
 
@@ -137,6 +138,46 @@ local ready_to_send = function(player_name)
     return false
 end
 
+
+
+offline_send = function(name, score, time, text, date, __save__, __i__)
+    local success = false
+    __i__ = __i__ or 1
+
+    for i = __i__, MAX do
+        local n, PT, s, t, d = Board:get_proper(rank_data[i])
+        if n and score > PT then
+            -- table.insert(rank_data, {})
+            rank_data[i] = { name or "noob", score or 10, time or 0, text or "", "Sao luis" }
+
+            offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 1)
+            -- love.filesystem.write("rank.txt", Loader.ser.pack(rank_data))
+            success = true
+            break
+        end
+    end
+
+    if success and __save__ then
+        local content = ""
+
+        for j = 1, MAX do
+            if love.filesystem.getInfo("rank.txt") then
+                -- love.filesystem.write("rank.txt", "")
+                -- love.filesystem.createDirectory("tt.txt")
+            end
+
+            local n, PT, s, t, d = Board:get_proper(rank_data[j])
+            if n then
+                content = content .. string.format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
+            end
+        end
+
+        lfs.write("rank.txt", content)
+    end
+
+    return success
+end
+
 local send = function()
     local player_name = label.text
     if player_name == "" then return false end
@@ -151,11 +192,13 @@ local send = function()
 
     if WEB then
         if to_send then
-            local data = Board:env(player_name, player_score, player_sec, player_text)
+            -- local data = Board:env(player_name, player_score, player_sec, player_text)
 
-            if data then
-                rank_data = Board:get_tab(data)
-            end
+            -- if data then
+            --     rank_data = Board:get_tab(data)
+            -- end
+
+            offline_send(player_name, player_score, player_sec, player_text, "Date", true)
         end
         --
     else
@@ -353,7 +396,14 @@ State:implements {
     end,
 
     init = function(data)
-        rank_data = data or Board:get_tab()
+        rank_data = data
+            or (not WEB and Board:get_tab())
+            or (WEB and (
+                lfs.getInfo("rank.txt")
+                and Board:get_tab(lfs.read("rank.txt"))
+                or Board:get_tab(lfs.read("data/rank.txt")))
+            )
+
         rank_time = 0.0
         rank_cur_player = 1
         love.mouse.setVisible(true)
@@ -424,7 +474,14 @@ State:implements {
         end
 
         if not rank_data then
-            local r = love.thread.getChannel('resp'):pop()
+            local r
+
+            if not WEB then
+                r = love.thread.getChannel('resp'):pop()
+            else
+                r = love.filesystem.read("rank.txt")
+            end
+
             if r then
                 rank_data = Board:get_tab(r)
                 State:init(rank_data)

@@ -17,13 +17,14 @@ function love.conf(t)
     -- local scale = 2
     -- local width = 320
     -- local height = 160
-    t.window.width = 800                -- The window width (number)
-    t.window.height = 600               -- The window height (number)
+    -- 948x533
+    t.window.width = 948                -- The window width (number)
+    t.window.height = 533               -- The window height (number)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.resizable = false          -- Let the window be user-resizable (boolean)
     t.window.minwidth = 1               -- Minimum window width if the window is resizable (number)
     t.window.minheight = 1              -- Minimum window height if the window is resizable (number)
-    t.window.fullscreen = true          -- Enable fullscreen (boolean)
+    t.window.fullscreen = false         -- Enable fullscreen (boolean)
     t.window.fullscreentype = "desktop" -- Choose between "desktop" fullscreen or "exclusive" fullscreen mode (string)
     t.window.vsync = 1                  -- Vertical sync mode (number)
     t.window.msaa = 0                   -- The number of samples to use with multi-sampled antialiasing (number)
@@ -32,8 +33,8 @@ function love.conf(t)
     t.window.display = 1                -- Index of the monitor to show the window in (number)
     t.window.highdpi = false            -- Enable high-dpi mode for the window on a Retina display (boolean)
     t.window.usedpiscale = true         -- Enable automatic DPI scaling when highdpi is set to true as well (boolean)
-    t.window.x = 200                    -- The x-coordinate of the window's position in the specified display (number)
-    t.window.y = 64                     -- The y-coordinate of the window's position in the specified display (number)
+    t.window.x = 0                      -- The x-coordinate of the window's position in the specified display (number)
+    t.window.y = 0                      -- The y-coordinate of the window's position in the specified display (number)
 
     t.modules.audio = true              -- Enable the audio module (boolean)
     t.modules.data = true               -- Enable the data module (boolean)
