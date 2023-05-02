@@ -326,7 +326,7 @@ State:implements {
 
         State.camera.x = 0
         State.camera.y = 0
-        State.camera:set_position(player.x - camera.focus_x)
+        State.camera:set_position(player.x + player.w * 0.5 - camera.focus_x)
 
 
         for i = 1, #mush_spot do

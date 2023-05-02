@@ -44,9 +44,11 @@ State:implements {
                 State:add_transition("fade", "out", {}, nil, function()
                     State:change_gamestate(HowToPlay, {
                         skip_finish = true,
-                        transition = "door",
+                        skip_transition = true,
+                        transition = "fade",
                         transition_conf = {
                             delay = 0.6,
+                            duration = 0.15,
                             axis = "y",
                             -- type=""
                         }
