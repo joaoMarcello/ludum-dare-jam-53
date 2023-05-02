@@ -9,8 +9,7 @@ do
     Word.eff_scream_range_x = 0.8
 end
 
-_G.DisplayText = require "scripts.display_text"
-DisplayText:load()
+
 
 math.randomseed(os.time())
 lgx.setBackgroundColor(0, 0, 0, 1)
@@ -18,8 +17,23 @@ lgx.setDefaultFilter("nearest", "nearest")
 lgx.setLineStyle("rough")
 love.mouse.setVisible(false)
 
+local font = Pack.FontGenerator:new_by_ttf {
+    path = "data/font/PressStart2P-Regular.ttf",
+    dpi = 48,
+    name = "press start",
+    font_size = 12,
+    tab_size = 4,
+    character_space = 0,
+    min_filter = "linear",
+    max_filter = "nearest"
+}
+JM_Font.current = font
 JM_Font.current:set_font_size(8)
 JM_Font.current:set_line_space(2)
+
+_G.DisplayText = require "scripts.display_text"
+DisplayText:load()
+
 -- JM_Font.current.__imgs[0]:setFilter("nearest", "nearest")
 -- love.mouse.setRelativeMode(true)
 

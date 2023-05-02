@@ -497,11 +497,6 @@ State:implements {
         --================== MAIN LAYER ========================
         {
             draw = function(self, camera)
-                for i = 1, #world.bodies_static do
-                    ---@type JM.Physics.Body
-                    local bd = world.bodies_static[i]
-                    -- bd:draw()
-                end
                 ground_tilemap:draw(camera)
 
                 tab_sort(components, sort_draw)
@@ -510,6 +505,12 @@ State:implements {
                     local gc = components[i]
                     local r = gc.draw and gc:draw()
                 end
+
+                -- for i = 1, #world.bodies_static do
+                --     ---@type JM.Physics.Body
+                --     local bd = world.bodies_static[i]
+                --     bd:draw()
+                -- end
             end
         },
         --

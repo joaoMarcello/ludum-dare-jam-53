@@ -29,12 +29,13 @@ State:implements {
             if not State.transition then
                 _G.PLAY_SFX("click")
 
-                State:add_transition("door", "out", {}, nil, function()
+                State:add_transition("door", "out", nil, nil, function()
                     State:change_gamestate(Game, {
                         skip_finish = true,
                         transition = "door",
                         transition_conf = {
                             delay = 0.3,
+                            axis = "x",
                         }
                     })
                 end)
@@ -61,8 +62,8 @@ State:implements {
                 love.graphics.rectangle("fill", 8, 4, 320 - 16, 180 - 8)
 
                 font:push()
-                font:set_font_size(5)
-                font:set_line_space(4)
+                font:set_font_size(6)
+                -- font:set_line_space(4)
                 -- font:set_color(JM_Utils:get_rgba2(254, 243, 192))
                 font:set_color(JM_Utils:get_rgba2(59, 23, 37))
 
