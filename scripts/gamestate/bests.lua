@@ -138,20 +138,24 @@ local ready_to_send = function(player_name)
     return false
 end
 
-
-
-offline_send = function(name, score, time, text, date, __save__, __i__)
+Offline_send = function(name, score, time, text, date, __save__, __i__, __name__)
     local success = false
     __i__ = __i__ or 1
 
     for i = __i__, MAX do
         local n, PT, s, t, d = Board:get_proper(rank_data[i])
+
         if n and score > PT then
-            -- table.insert(rank_data, {})
+            --
+
             rank_data[i] = { name or "noob", score or 10, time or 0, text or "", "Sao luis" }
 
-            offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 1)
-            -- love.filesystem.write("rank.txt", Loader.ser.pack(rank_data))
+            -- if n == name then
+            --     Offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 2)
+            -- else
+            Offline_send(n, PT, s, t, date or "Sao Luis", nil, i + 1, name)
+            -- end
+
             success = true
             break
         end
@@ -160,16 +164,13 @@ offline_send = function(name, score, time, text, date, __save__, __i__)
     if success and __save__ then
         local content = ""
 
-        for j = 1, MAX do
-            if love.filesystem.getInfo("rank.txt") then
-                -- love.filesystem.write("rank.txt", "")
-                -- love.filesystem.createDirectory("tt.txt")
-            end
-
-            local n, PT, s, t, d = Board:get_proper(rank_data[j])
+        local i = 1
+        for j = 1, MAX + 2 do
+            local n, PT, s, t, d = Board:get_proper(rank_data[i])
             if n then
                 content = content .. string.format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
             end
+            i = i + 1
         end
 
         lfs.write("rank.txt", content)
@@ -198,7 +199,7 @@ local send = function()
             --     rank_data = Board:get_tab(data)
             -- end
 
-            offline_send(player_name, player_score, player_sec, player_text, "Date", true)
+            Offline_send(player_name, player_score, player_sec, player_text, "Date", true)
         end
         --
     else
@@ -317,9 +318,9 @@ State:implements {
     load = function(args)
         local cam = State.camera
 
-        fr_leader, fr_leader_w, fr_leader_h = font:generate_phrase("<effect=wave>LEADERBOARD", nil, nil,
-            State.camera.viewport_w,
-            "center")
+        local str = string.format("<effect=wave>%s", WEB and "LOCAL RANKING" or "LEADERBOARD")
+
+        fr_leader, fr_leader_w, fr_leader_h = font:generate_phrase(str, nil, nil, State.camera.viewport_w, "center")
         fr_leader_h = font.__font_size
 
         label = Label:new {
@@ -404,6 +405,19 @@ State:implements {
                 or Board:get_tab(lfs.read("data/rank.txt")))
             )
 
+        if WEB and not lfs.getInfo("rank.txt") then
+            local content = ""
+
+            for j = 1, MAX do
+                local n, PT, s, t, d = Board:get_proper(rank_data[j])
+                if n then
+                    content = content .. string.format("%s, %s, %s, %s, %s,\n", n, PT, s, t, "DDD")
+                end
+            end
+
+            lfs.write("rank.txt", content)
+        end
+
         rank_time = 0.0
         rank_cur_player = 1
         love.mouse.setVisible(true)
@@ -479,7 +493,7 @@ State:implements {
             if not WEB then
                 r = love.thread.getChannel('resp'):pop()
             else
-                r = love.filesystem.read("rank.txt")
+                r = lfs.read("rank.txt")
             end
 
             if r then

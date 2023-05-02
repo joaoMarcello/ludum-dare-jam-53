@@ -44,9 +44,11 @@ State:implements {
                 State:add_transition("fade", "out", {}, nil, function()
                     State:change_gamestate(HowToPlay, {
                         skip_finish = true,
-                        transition = "fade",
+                        transition = "door",
                         transition_conf = {
-                            delay = 0.3,
+                            delay = 0.6,
+                            axis = "y",
+                            -- type=""
                         }
                     })
                 end)
@@ -55,7 +57,7 @@ State:implements {
 
         if key == "l" then
             if not State.transition then
-                Bests:jgdr_pnt(100)
+                Bests:jgdr_pnt(-100)
 
                 _G.PLAY_SFX("click")
 

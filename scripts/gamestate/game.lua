@@ -38,7 +38,7 @@ Leader:on_quit_action(function()
 
         Leader:add_transition("curtain", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.title",
-                { skip_finish = false, transition = "curtain", transition_conf = { delay = 0.3, type = "left-right" } })
+                { skip_finish = false, transition = "pass", transition_conf = { delay = 0.3, type = "left-right" } })
         end)
     end
     -- love.event.quit()
