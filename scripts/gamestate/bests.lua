@@ -165,19 +165,19 @@ for (int step = 1; step < size; step++) {
 
 }
 ]]
-local insert_sort = function(arr, size)
-    for step = 2, size do
-        local key = arr[step]
-        local j = step - 1
+-- local insert_sort = function(arr, size)
+--     for step = 2, size do
+--         local key = arr[step]
+--         local j = step - 1
 
-        while (j >= 1 and tonumber(key[2]) > tonumber(arr[j][2])) do
-            arr[j + 1] = arr[j]
-            j = j - 1
-        end
+--         while (j >= 1 and tonumber(key[2]) > tonumber(arr[j][2])) do
+--             arr[j + 1] = arr[j]
+--             j = j - 1
+--         end
 
-        arr[j + 1] = key
-    end
-end
+--         arr[j + 1] = key
+--     end
+-- end
 
 Offline_send = function(name, score, time, text, date, __save__, __i__)
     local success = false
