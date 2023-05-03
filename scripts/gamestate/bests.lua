@@ -190,7 +190,19 @@ Offline_send = function(name, score, time, text, date, __save__, __i__)
             -- table.sort(rank_data, function(a, b)
             --     return tonumber(a[2] or -1) > tonumber(b[2] or -1)
             -- end)
-            insert_sort(rank_data, #rank_data)
+            -- insert_sort(rank_data, #rank_data)
+
+            for j = ind - 1, 1, -1 do
+                local nn, pp, ss, tt, dd = Board:get_proper(rank_data[j])
+                if nn then
+                    if pp < score then
+                        rank_data[j], rank_data[ind] = rank_data[ind], rank_data[j]
+
+                        ind = j
+                    end
+                end
+            end
+
             success = true
         end
     end

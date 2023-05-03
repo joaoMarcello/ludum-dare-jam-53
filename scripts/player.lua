@@ -163,7 +163,7 @@ function Player:__constructor__(state)
     self.direction = 1
 
     --=======   STATS ============
-    self.max_hp = 5
+    self.max_hp = 2
     self.hp = self.max_hp
     self.atk = 1
     self.max_atk = 3
