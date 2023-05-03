@@ -104,6 +104,7 @@ State:implements {
 
                 font:set_font_size(4)
                 font:printf("Press <bold>L</bold> to view leaderboard", 0, 180 - 16, "right", 320 - 16)
+                font:printf("Made by João Moreira.", 8, 180 - 16, SCREEN_WIDTH, "left")
 
                 font:pop()
             end

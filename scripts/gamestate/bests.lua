@@ -145,6 +145,39 @@ local ready_to_send = function(player_name)
 
     return false
 end
+--[[
+   void insertion_sort(int arr[]) {
+int size = arr.length;
+
+for (int step = 1; step < size; step++) {
+    int key = arr[step];
+    int j = step - 1;
+
+    while (j >= 0 && key > arr[j]) {
+
+        // For ascending order, change key> arr[j] to key< arr[j].
+    arr[j + 1] = arr[j];
+    --j;
+    }
+
+    arr[j + 1] = key;
+}
+
+}
+]]
+local insert_sort = function(arr, size)
+    for step = 2, size do
+        local key = arr[step]
+        local j = step - 1
+
+        while (j >= 1 and tonumber(key[2]) > tonumber(arr[j][2])) do
+            arr[j + 1] = arr[j]
+            j = j - 1
+        end
+
+        arr[j + 1] = key
+    end
+end
 
 Offline_send = function(name, score, time, text, date, __save__, __i__)
     local success = false
@@ -154,6 +187,10 @@ Offline_send = function(name, score, time, text, date, __save__, __i__)
         local n, pt, s, t, i, ind = find_player(name)
         if n then
             rank_data[ind] = { name, score or 10, time or 0, text or "", date or "Sao luis" }
+            -- table.sort(rank_data, function(a, b)
+            --     return tonumber(a[2] or -1) > tonumber(b[2] or -1)
+            -- end)
+            insert_sort(rank_data, #rank_data)
             success = true
         end
     end
