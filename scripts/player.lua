@@ -417,9 +417,9 @@ end
 
 function Player:mouse_pressed(x, y, button, istouch, presses)
     if self.state ~= States.dead then
-        if button == 1 then
+        if button == 2 then
             self:key_pressed(keys.atk[1])
-        elseif button == 2 then
+        elseif button == 1 then
             self:key_pressed(keys.drop[2])
         end
     end
