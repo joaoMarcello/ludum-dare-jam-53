@@ -241,6 +241,7 @@ function Item:my_draw()
 end
 
 function Item:draw()
+    if self.grabbed and not self.dropped then return end
     GC.draw(self, self.my_draw)
     -- local font = JM_Font.current
     -- font:print(tostring(self.bounce_count), self.x, self.y - 10)
