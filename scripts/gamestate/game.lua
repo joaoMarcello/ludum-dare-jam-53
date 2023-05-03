@@ -389,6 +389,14 @@ State:implements {
         player:key_pressed(key)
     end,
 
+    mousepressed = function(x, y, button, istouch, presses)
+        player:mouse_pressed(x, y, button, istouch, presses)
+    end,
+
+    mousereleased = function(x, y, button, istouch, presses)
+
+    end,
+
     keyreleased = function(key)
         player:key_released(key)
     end,

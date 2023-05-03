@@ -415,6 +415,16 @@ function Player:key_pressed(key)
     end
 end
 
+function Player:mouse_pressed(x, y, button, istouch, presses)
+    if self.state ~= States.dead then
+        if button == 1 then
+            self:key_pressed(keys.atk[1])
+        elseif button == 2 then
+            self:key_pressed(keys.drop[2])
+        end
+    end
+end
+
 function Player:key_released(key)
     local bd = self.body
     if pressed('jump', key) and bd.speed_y < 0 then
