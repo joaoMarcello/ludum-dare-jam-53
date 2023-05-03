@@ -69,7 +69,7 @@ State:implements {
 
 
                 local str = string.format(
-                    "\t %s <bold>Objective:</bold></color>\n Fly around, catch items and throw them on cauldron.\n If you see some bats, just launch a spell on them.\n \n \t %s <bold>Controls:</color></bold>\n Move:</color>\tA/D/Left/Right\n Launch Spell:</color>\tF/J/E\n Drop item:</color>\tV/K/Q\n Hover:</color>\tSpace/Up/W\n Restart:</color>\tP\n \n \t %s <bold> Hint:</bold></color>\n Try make the dropped item %s bounce in the \n ground</color> before enter the cauldron. You will\n earn much more points!",
+                    "\t %s <bold>Objective:</bold></color>\n Fly around, catch items and throw them on cauldron.\n If you see some bats, just launch a spell on them.\n \n \t %s <bold>Controls:</color></bold>\n Move:</color>\tA/D/Left/Right\n Launch Spell:</color>\tF/J/E/Mouse's right button\n Drop item:</color>\tV/K/Q/Mouse's left button\n Hover:</color>\tSpace/Up/W\n Restart:</color>\tP\n \n \t %s <bold> Hint:</bold></color>\n Try make the dropped item %s bounce in the \n ground</color> before enter the cauldron. You will\n earn much more points!",
                     black, black, black, red)
                 font:printf(str, 16, 16, "left", 320 - 16)
 
