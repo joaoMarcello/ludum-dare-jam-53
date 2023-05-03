@@ -80,7 +80,7 @@ local aff_player
 
 local MAX = 5
 local WEB = _G.DEVICE == "Web" or false
-local OFFLINE = true
+local OFFLINE = false
 
 local rank_data, rank_time, rank_cur_player
 local rank_speed = 0.4 / MAX
