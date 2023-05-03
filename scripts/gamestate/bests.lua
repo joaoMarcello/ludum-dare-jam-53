@@ -21,7 +21,7 @@ local State = Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, nil,
 Board:init(Loader.load("data/dummy1.dat"))
 
 -- local http = require "socket.http"
--- http.request("http://dreamlo.com/lb/ENIIH2BoRkG30ewXF2HHKQXqsst4hqDk2nMtrwAI7pGA/delete/JM-Dev")
+-- http.request("http://dreamlo.com/lb/ENIIH2BoRkG30ewXF2HHKQXqsst4hqDk2nMtrwAI7pGA/delete/Simpsom")
 
 --[[
     marco, joana, bruno, sarah, peter

@@ -133,7 +133,7 @@ local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.
 
 local function spawn_enemy(dt)
     if time_game >= 140 then
-        spawn_speed = 4.0
+        spawn_speed = 2.0 -- 4
     elseif time_game >= 100 then
         spawn_speed = 5.0
     elseif time_game >= 80 then
@@ -170,7 +170,9 @@ end
 
 local function spawn_heart(dt)
     time_heart = time_heart + dt
-    if time_heart >= 25 then --25
+    local sp = time_game >= 100 and 35 or 25
+
+    if time_heart >= sp then --25
         time_heart = 0
         local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
         vx = vx + 16
