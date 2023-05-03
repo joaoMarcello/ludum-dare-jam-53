@@ -88,6 +88,10 @@ local function move_default(self, dt)
         end
     end
 
+    if pressing('down') then
+        bd:apply_force(nil, bd:weight() * 3)
+    end
+
     local last_px, last_py = bd.x, bd.y
 
     bd:refresh(
@@ -156,9 +160,11 @@ function Player:__constructor__(state)
     local bd = self.body
     bd.allowed_air_dacc = true
     bd.max_speed_x = self.max_speed
+    bd.dacc_x = 16 * 25
     bd.mass = bd.mass * 0.25
 
     self.max_speed_ground = self.max_speed * 0.4
+    self.max_speed_y = self.max_speed
 
     self.direction = 1
 
