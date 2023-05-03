@@ -145,7 +145,7 @@ function Player:new(state, world, args)
 
     args.acc = 16 * 12
     args.max_speed = 16 * 6
-    args.dacc = 16 * 4
+    args.dacc = 16 * 25
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
@@ -160,7 +160,7 @@ function Player:__constructor__(state)
     local bd = self.body
     bd.allowed_air_dacc = true
     bd.max_speed_x = self.max_speed
-    bd.dacc_x = 16 * 25
+    bd.dacc_x = self.dacc
     bd.mass = bd.mass * 0.25
 
     self.max_speed_ground = self.max_speed * 0.4
