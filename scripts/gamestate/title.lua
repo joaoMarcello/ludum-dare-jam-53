@@ -19,8 +19,11 @@ State:implements {
     load = function()
         imgs = imgs or {
             title = love.graphics.newImage("data/img/title.png"),
-            sky = love.graphics.newImage("/data/img/night-sky.png"),
+            sky = love.graphics.newImage("data/img/night-sky.png"),
+            logo = love.graphics.newImage("data/img/logo-game.png"),
         }
+
+        imgs.logo:setFilter("nearest", "nearest")
     end,
 
     init = function()
@@ -93,10 +96,11 @@ State:implements {
                 lgx.setColor(1, 1, 1)
                 lgx.draw(imgs.sky, 0, 0)
 
-                -- lgx.setColor(0, 0, 0, 0.5)
-                -- lgx.draw(imgs.title, 0, 1)
-                lgx.setColor(blue)
-                lgx.draw(imgs.title, 0, 0)
+                lgx.setColor(1, 1, 1)
+                lgx.draw(imgs.logo, camera.viewport_w * 0.5 - imgs.logo:getWidth() * 0.5, 8)
+
+                -- lgx.setColor(blue)
+                -- lgx.draw(imgs.title, 0, 0)
 
                 font:printx("<effect=flickering, speed=0.6> <color, 0.9, 0.9, 0.9>Press Enter to Play", 0, 180 - 16 * 3,
                     320,

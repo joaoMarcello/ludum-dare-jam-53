@@ -133,13 +133,15 @@ local insert, remove, tab_sort, random, abs = table.insert, table.remove, table.
 
 local function spawn_enemy(dt)
     if time_game >= 140 then
-        spawn_speed = 2.0 -- 4
+        spawn_speed = 3.0 -- 4
     elseif time_game >= 100 then
         spawn_speed = 5.0
     elseif time_game >= 80 then
         spawn_speed = 7.0
     elseif time_game >= 50 then
         spawn_speed = 9.0
+    else
+        spawn_speed = 11
     end
 
     time_spawn = time_spawn + dt

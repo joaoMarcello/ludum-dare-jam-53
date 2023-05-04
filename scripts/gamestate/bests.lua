@@ -18,6 +18,9 @@ local State = Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT, nil,
 
 -- local dm2 = love.filesystem.read("/data/dymmy2.txt")
 -- Loader.save(dm2, "dummy1.dat")
+do
+    local path = string.char(100, 97, 116, 97, 47, 100, 117, 109, 109, 79, 49, 46, 100, 97, 116)
+end
 Board:init(Loader.load("data/dummy1.dat"))
 
 -- local http = require "socket.http"

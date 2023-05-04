@@ -98,16 +98,27 @@ function Cauldron:draw()
     GC.draw(self, self.my_draw)
 
     local camera = self.gamestate.camera
+    local font = _G.JM_Font.current
 
-    if not camera:rect_is_on_view(self.x, self.y, self.w, self.h) then
+    if not self.gamestate:rect_is_on_view(self.x, self.y, self.w, self.h) then
         local vx, vy, vw, vh = camera:get_viewport_in_world_coord()
         local rot = self.anim_down.rotation
 
         if self.x > vx + vw then
             self.anim_down:set_rotation(-math.pi / 2)
+            --
         elseif self.x < vx then
             self.anim_down:set_rotation(math.pi / 2)
+            --
         end
+
+        local player_bd = self.gamestate:game_player().body
+        local dist = math.abs(self.x + self.w * 0.5 - player_bd.x + player_bd.w * 0.5)
+
+        font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
+            Utils:clamp(self.x, vx, vx + vw - self.w),
+            Utils:clamp(self.y - 15, vy, vy + vh - self.h - 10), "center", 32
+        )
 
         self.anim_down:draw_rec(
             Utils:clamp(self.x, vx, vx + vw - self.w),

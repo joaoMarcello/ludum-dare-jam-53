@@ -373,7 +373,10 @@ function Bat:update(dt)
     local bd = self.body
 
     if not self:is_dead() then
-        self.time_leave = self.time_leave + dt
+        if self.gamestate.camera:rect_is_on_view(self.x, self.y, self.w, self.h)
+        then
+            self.time_leave = self.time_leave + dt
+        end
 
         local player = self.gamestate:game_player()
         local player_bd = player.body
