@@ -79,7 +79,7 @@ local btn_restart
 local aff_player
 
 local MAX = 5
-local WEB = _G.DEVICE == "Web" or false
+local WEB = _G.TARGET == "Web" or false
 local OFFLINE = false
 
 local rank_data, rank_time, rank_cur_player

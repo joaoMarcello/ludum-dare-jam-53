@@ -79,6 +79,7 @@ local function move_default(self, dt)
     elseif pressing('right') and bd.speed_x >= 0.0 then
         bd:apply_force(self.acc)
         self.direction = 1
+        --
     end
 
     if pressing('jump') then
@@ -145,7 +146,7 @@ function Player:new(state, world, args)
 
     args.acc = 16 * 12
     args.max_speed = 16 * 6
-    args.dacc = 16 * 25
+    args.dacc = 16 * 25 -- 25
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
