@@ -48,6 +48,9 @@ function Cauldron:__constructor__(world, args)
     self.anim2 = Anima:new { img = imgs.down }
     self.anim2:apply_effect("float", { range = 1.4, speed = 0.6 })
     self.anim2:set_color(color)
+
+    self.ox = self.w * 0.5
+    self.oy = self.h
 end
 
 function Cauldron:load()
@@ -60,6 +63,13 @@ end
 
 function Cauldron:finish()
     imgs = nil
+end
+
+function Cauldron:shake()
+    local sp = 0.2
+    self:apply_effect("jelly", { duration = sp, speed = sp, range = 0.15 }, true)
+    -- self:apply_effect("stretchVertical", { duration = sp, range = 0.2 }, true)
+    -- self:apply_effect("stretchHorizontal", { duration = sp, __rad__ = math.pi / 2 }, true)
 end
 
 ---@param bd JM.Physics.Body
@@ -119,7 +129,7 @@ function Cauldron:draw(cam)
             --
         end
 
-        local dist = math.abs(self.x + self.w * 0.5 - player_bd.x + player_bd.w * 0.5)
+        local dist --= math.abs(self.x + self.w * 0.5 - player_bd.x + player_bd.w * 0.5)
 
         local fx, fy
         if self.x < vx then
@@ -138,7 +148,7 @@ function Cauldron:draw(cam)
             dist = math.abs(self.y - (vy + vh))
         end
 
-        if fx and fy then
+        if fx and fy and dist then
             font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
                 Utils:clamp(fx, vx, vx + vw - self.w),
                 Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 38

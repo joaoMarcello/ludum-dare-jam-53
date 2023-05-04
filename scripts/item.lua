@@ -200,6 +200,9 @@ function Item:update(dt)
 
             gamestate:display_text(tostring(score), bd.x, bd.y)
             _G.PLAY_SFX("power_up", false)
+
+            cauldron:shake()
+
             self.__remove = true
             return
         end
