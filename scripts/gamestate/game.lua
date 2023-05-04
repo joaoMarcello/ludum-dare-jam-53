@@ -32,16 +32,16 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
-State:add_camera {
-    name = "cam2",
-    x = State.screen_w * 0.5,
-    y = State.screen_h * 0.5,
-    w = State.screen_w * 0.5,
-    h = State.screen_h * 0.5,
-    scale = 0.5,
-    type = "metroid",
-}
-State:get_camera("cam2"):set_focus_x(State.screen_w * 0.5)
+-- State:add_camera {
+--     name = "cam2",
+--     x = State.screen_w * 0.5,
+--     y = State.screen_h * 0.5,
+--     w = State.screen_w * 0.5,
+--     h = State.screen_h * 0.5,
+--     scale = 1.2,
+--     type = "metroid",
+-- }
+-- State:get_camera("cam2"):set_focus_x(State.screen_w * 0.25)
 
 Leader:on_quit_action(function()
     if not Leader.transition then
@@ -368,7 +368,7 @@ State:implements {
 
         local cam2 = State:get_camera("cam2")
         if cam2 then
-            cam2:set_position(cauldron.x + cauldron.w * 0.5 - cam2.focus_x, cauldron.y - cam2.focus_y)
+            cam2:set_position(cauldron.x - cam2.focus_x * 0, cauldron.y - cam2.focus_y * 0)
         end
 
         display_hp = DisplayHP:new(State)
@@ -390,11 +390,16 @@ State:implements {
     --
     --
     keypressed = function(key)
-        -- if key == 'o' then
-        --     State.camera:toggle_grid()
-        --     State.camera:toggle_world_bounds()
-        --     -- State.camera:toggle_debug()
-        -- end
+        if key == 'o' then
+            for i = 1, State.amount_cameras do
+                local cam = State:get_camera(i)
+                if cam then
+                    cam:toggle_grid()
+                    cam:toggle_world_bounds()
+                    cam:toggle_debug()
+                end
+            end
+        end
 
         if key == 'p' then
             State:change_gamestate(State, {
@@ -446,6 +451,11 @@ State:implements {
             spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
+
+            local cam2 = State:get_camera("cam2")
+            if cam2 then
+                cam2:follow(player.x, player.y)
+            end
         else
             if player.time_state >= 5.0 and not State.transition then
                 Leader:jgdr_pnt(score)
