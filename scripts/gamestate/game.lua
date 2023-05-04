@@ -32,16 +32,19 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
--- State:add_camera {
---     name = "cam2",
---     x = State.screen_w * 0.5,
---     y = State.screen_h * 0.5,
---     w = State.screen_w * 0.5,
---     h = State.screen_h * 0.5,
---     scale = 1.2,
---     type = "metroid",
--- }
--- State:get_camera("cam2"):set_focus_x(State.screen_w * 0.25)
+State:add_camera {
+    name = "cam2",
+    x = State.screen_w * 0.7,
+    y = State.screen_h * 0.6,
+    w = State.screen_w * 0.3,
+    h = State.screen_h * 0.3,
+    scale = 0.4,
+    type = "metroid",
+}
+do
+    local cam2 = State:get_camera("cam2")
+    cam2:set_focus_x(cam2.viewport_w * 0.5)
+end
 
 Leader:on_quit_action(function()
     if not Leader.transition then
@@ -280,8 +283,15 @@ function State:display_text(text, x, y, duration)
     tab.duration = duration
 
     if not self.camera:rect_is_on_view(x, y, 0, 0) then
-        tab.x = player.x
-        tab.y = player.y - 32
+        local cam2 = State:get_camera("cam2")
+
+        if cam2 then
+            tab.x = cauldron.x + cauldron.w * 0.5
+            tab.y = cauldron.y
+        else
+            tab.x = player.x
+            tab.y = player.y - 32
+        end
     end
 
     self:game_add_component(_G.DisplayText:new(self, tab))
@@ -454,7 +464,7 @@ State:implements {
 
             local cam2 = State:get_camera("cam2")
             if cam2 then
-                cam2:follow(player.x, player.y)
+                cam2:follow(cauldron.x + cauldron.w * 0.5, cauldron.y)
             end
         else
             if player.time_state >= 5.0 and not State.transition then
@@ -506,12 +516,15 @@ State:implements {
                 anima:draw(vw * 0.5, vh * 0.5)
             end
         },
-
+        --
+        --================== MOUNTAIN ========================
         {
             factor_x = -0.95,
             factor_y = -0.95,
             infinity_scroll_x = true,
             scroll_width = 320,
+            fixed_on_ground = true,
+            top = 0,
 
             draw = function(self, camera)
                 lgx.setColor(1, 1, 1)
@@ -525,6 +538,8 @@ State:implements {
             factor_y = -0.5,
             infinity_scroll_x = true,
             scroll_width = 32 * 6,
+            fixed_on_ground = true,
+            top = 0,
             -- cam_py = -32,
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
@@ -564,6 +579,7 @@ State:implements {
             --
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
+                if camera == State:get_camera("cam2") then return end
                 local font = JM_Font.current
 
                 local vx, vy, vw, vh = camera:get_viewport_in_world_coord()

@@ -52,7 +52,11 @@ function Display:update(dt)
     if self.acumulator <= tile or true then
         local vx, vy, vw, vh = self.gamestate.camera:get_viewport_in_world_coord()
 
-        self.y = Utils:clamp(self.y - tile * 2 * dt, vy + 4, vy + vh - tile * 1.5)
+        if not self.gamestate:get_camera("cam2") then
+            self.y = Utils:clamp(self.y - tile * 2 * dt, vy + 4, vy + vh - tile * 1.5)
+        else
+            self.y = self.y - tile * 2 * dt
+        end
         self.acumulator = self.acumulator + math.abs(last - self.y)
     end
 
