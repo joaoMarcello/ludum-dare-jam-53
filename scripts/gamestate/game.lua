@@ -32,19 +32,20 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
-State:add_camera {
-    name = "cam2",
-    x = State.screen_w * 0.7,
-    y = State.screen_h * 0.6,
-    w = State.screen_w * 0.3,
-    h = State.screen_h * 0.3,
-    scale = 0.4,
-    type = "metroid",
-}
-do
-    local cam2 = State:get_camera("cam2")
-    cam2:set_focus_x(cam2.viewport_w * 0.5)
-end
+-- State:add_camera {
+--     name = "cam2",
+--     x = State.screen_w * 0.7,
+--     y = State.screen_h * 0.6,
+--     w = State.screen_w * 0.3,
+--     h = State.screen_h * 0.3,
+--     scale = 0.4,
+--     type = "metroid",
+-- }
+-- do
+--     local cam2 = State:get_camera("cam2")
+--     cam2:set_viewport(nil, nil, State.screen_w * 0.3, State.screen_h * 0.3)
+--     cam2:set_focus_x(cam2.viewport_w * 0.5)
+-- end
 
 Leader:on_quit_action(function()
     if not Leader.transition then
@@ -282,6 +283,8 @@ function State:display_text(text, x, y, duration)
     tab.y = y
     tab.duration = duration
 
+    local cam = self.camera
+
     if not self.camera:rect_is_on_view(x, y, 0, 0) then
         local cam2 = State:get_camera("cam2")
 
@@ -291,6 +294,13 @@ function State:display_text(text, x, y, duration)
         else
             tab.x = player.x
             tab.y = player.y - 32
+
+            if not cam:rect_is_on_view(tab.x, tab.y, 0, 0) then
+                -- tab.x = cam
+                local vx, vy, vw, vh = cam:get_viewport_in_world_coord()
+                tab.x = vx + vw * 0.5
+                tab.y = vy + vh * 0.5
+            end
         end
     end
 

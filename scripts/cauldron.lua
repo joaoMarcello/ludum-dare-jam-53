@@ -131,12 +131,13 @@ function Cauldron:draw(cam)
         elseif self.y > vy + vh then
             fx = self.x + self.w * 0.5 - 16
             fy = self.y - 16
+            dist = math.abs(self.y + self.h * 0.5 - player_bd.y + player_bd.h * 0.5)
         end
 
         if fx and fy then
             font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
                 Utils:clamp(fx, vx, vx + vw - self.w),
-                Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 32
+                Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 38
             )
         end
 
