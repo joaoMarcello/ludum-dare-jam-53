@@ -48,7 +48,7 @@ SUB_PIXEL = 3
 
 TARGET = "Web_"
 
-local initial_state = 'game'
+local initial_state = 'title'
 
 --==================================================================
 

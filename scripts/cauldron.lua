@@ -125,13 +125,17 @@ function Cauldron:draw(cam)
         if self.x < vx then
             fx = vx + 8
             fy = self.y - 16
+            dist = math.abs(self.x + self.w - vx)
+            --
         elseif self.x > vx + vw then
             fx = vx + vw - 8
             fy = self.y - 16
+            dist = math.abs(self.x - (vx + vw))
+            --
         elseif self.y > vy + vh then
             fx = self.x + self.w * 0.5 - 16
             fy = self.y - 16
-            dist = math.abs(self.y + self.h * 0.5 - player_bd.y + player_bd.h * 0.5)
+            dist = math.abs(self.y - (vy + vh))
         end
 
         if fx and fy then
