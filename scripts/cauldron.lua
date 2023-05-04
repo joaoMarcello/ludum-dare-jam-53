@@ -94,31 +94,51 @@ function Cauldron:my_draw()
     self.anim1:draw_rec(self.x, self.y, self.w, self.h)
 end
 
-function Cauldron:draw()
+function Cauldron:draw(cam)
     GC.draw(self, self.my_draw)
+
+    if cam and cam == self.gamestate:get_camera("cam2") then return end
 
     local camera = self.gamestate.camera
     local font = _G.JM_Font.current
 
-    if not self.gamestate:rect_is_on_view(self.x, self.y, self.w, self.h) then
+    local player_bd = self.gamestate:game_player().body
+
+
+    if not camera:rect_is_on_view(self.x - 1, self.y, self.w + 2, self.h) then
+        --
         local vx, vy, vw, vh = camera:get_viewport_in_world_coord()
         local rot = self.anim_down.rotation
+        local half_pi = math.pi * 0.5
 
         if self.x > vx + vw then
-            self.anim_down:set_rotation(-math.pi / 2)
+            self.anim_down:set_rotation(-half_pi)
             --
         elseif self.x < vx then
-            self.anim_down:set_rotation(math.pi / 2)
+            self.anim_down:set_rotation(half_pi)
             --
         end
 
-        local player_bd = self.gamestate:game_player().body
         local dist = math.abs(self.x + self.w * 0.5 - player_bd.x + player_bd.w * 0.5)
 
-        font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
-            Utils:clamp(self.x, vx, vx + vw - self.w),
-            Utils:clamp(self.y - 15, vy, vy + vh - self.h - 10), "center", 32
-        )
+        local fx, fy
+        if self.x < vx then
+            fx = vx + 8
+            fy = self.y - 16
+        elseif self.x > vx + vw then
+            fx = vx + vw - 8
+            fy = self.y - 16
+        elseif self.y > vy + vh then
+            fx = self.x + self.w * 0.5 - 16
+            fy = self.y - 16
+        end
+
+        if fx and fy then
+            font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
+                Utils:clamp(fx, vx, vx + vw - self.w),
+                Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 32
+            )
+        end
 
         self.anim_down:draw_rec(
             Utils:clamp(self.x, vx, vx + vw - self.w),
@@ -130,8 +150,6 @@ function Cauldron:draw()
         self.anim_down:set_rotation(rot)
         --
     else
-        local player_bd = self.gamestate:game_player().body
-
         if not player_bd:check_collision(self.x - 16, self.y - 32, self.w + 32, self.h + 64) then
             self.anim2:draw_rec(self.x, self.y - 35, self.w, self.h)
         end

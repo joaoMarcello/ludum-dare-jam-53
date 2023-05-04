@@ -22,6 +22,7 @@ local States = {
     damage = 5,
     move = 6,
     up = 7,
+    dummy = 8,
 }
 
 local imgs
@@ -385,6 +386,7 @@ function Player:lauch_spell()
 
     self.time_spell = 0.0
 
+    self.state = States.dummy
     self:set_state(States.atk)
 
     _G.PLAY_SFX("spell", true)

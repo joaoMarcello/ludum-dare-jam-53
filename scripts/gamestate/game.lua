@@ -32,6 +32,17 @@ local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
+State:add_camera {
+    name = "cam2",
+    x = State.screen_w * 0.5,
+    y = State.screen_h * 0.5,
+    w = State.screen_w * 0.5,
+    h = State.screen_h * 0.5,
+    scale = 0.5,
+    type = "metroid",
+}
+State:get_camera("cam2"):set_focus_x(State.screen_w * 0.5)
+
 Leader:on_quit_action(function()
     if not Leader.transition then
         _G.PLAY_SFX("click")
@@ -355,6 +366,11 @@ State:implements {
 
         cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
 
+        local cam2 = State:get_camera("cam2")
+        if cam2 then
+            cam2:set_position(cauldron.x + cauldron.w * 0.5 - cam2.focus_x, cauldron.y - cam2.focus_y)
+        end
+
         display_hp = DisplayHP:new(State)
         display_spell = DisplaySpell:new(State, world)
         display_bag = DisplayBag:new(State)
@@ -519,7 +535,7 @@ State:implements {
                 for i = 1, #components do
                     ---@type GameComponent
                     local gc = components[i]
-                    local r = gc.draw and gc:draw()
+                    local r = gc.draw and gc:draw(camera)
                 end
 
                 -- for i = 1, #world.bodies_static do
@@ -539,7 +555,8 @@ State:implements {
             ---@param camera JM.Camera.Camera
             draw = function(self, camera)
                 local font = JM_Font.current
-                -- font:print(tostring(#components) .. "-" .. tostring(world.bodies_number), 16, 64)
+
+                local vx, vy, vw, vh = camera:get_viewport_in_world_coord()
 
                 if player:is_dead() and player.time_state >= 1.0 then
                     font:push()
@@ -549,7 +566,7 @@ State:implements {
                     font:pop()
                 end
 
-                font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), 0, 8, "center", camera.viewport_w)
+                font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), vx, 8, "center", vw)
 
                 -- if player:bag_is_full() then
                 --     font:printx("<effect=flickering, speed=0.8> <color, 0.9, 0.9, 0.9>Bag is full!",
