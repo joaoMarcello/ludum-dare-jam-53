@@ -19,9 +19,9 @@ love.mouse.setVisible(false)
 
 local font = Pack.FontGenerator:new_by_ttf {
     path = "data/font/PressStart2P-Regular.ttf",
-    dpi = 48,
+    dpi = 24,
     name = "press start",
-    font_size = 12,
+    font_size = 8,
     tab_size = 4,
     character_space = 0,
     min_filter = "linear",

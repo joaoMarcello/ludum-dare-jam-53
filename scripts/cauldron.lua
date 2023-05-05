@@ -65,11 +65,10 @@ function Cauldron:finish()
     imgs = nil
 end
 
+local shake_tab = { duration = 0.2, speed = 0.2, range = 0.15 }
 function Cauldron:shake()
-    local sp = 0.2
-    self:apply_effect("jelly", { duration = sp, speed = sp, range = 0.15 }, true)
-    -- self:apply_effect("stretchVertical", { duration = sp, range = 0.2 }, true)
-    -- self:apply_effect("stretchHorizontal", { duration = sp, __rad__ = math.pi / 2 }, true)
+    -- local sp = 0.2
+    self:apply_effect("jelly", shake_tab, true)
 end
 
 ---@param bd JM.Physics.Body

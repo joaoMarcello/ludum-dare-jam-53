@@ -295,7 +295,7 @@ function State:display_text(text, x, y, duration)
             tab.x = player.x
             tab.y = player.y - 32
 
-            if not cam:rect_is_on_view(tab.x, tab.y, 0, 0) then
+            if true or not cam:rect_is_on_view(tab.x, tab.y, 0, 0) then
                 -- tab.x = cam
                 local vx, vy, vw, vh = cam:get_viewport_in_world_coord()
                 tab.x = vx + vw * 0.5

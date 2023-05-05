@@ -249,6 +249,11 @@ end
 function Player:hp_up(value)
     value = value or 1
     self.hp = Utils:clamp(self.hp + 1, 0, self.max_hp)
+    self:pulse()
+end
+
+function Player:pulse()
+    self:apply_effect("pulse", { duration = 0.25, speed = 0.25, range = 0.2 }, true)
 end
 
 function Player:reload_spell_speed()
