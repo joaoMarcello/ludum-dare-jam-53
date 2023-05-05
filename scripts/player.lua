@@ -234,9 +234,9 @@ function Player:load()
     local newImage = lgx.newImage
     imgs = imgs or {
         [States.default] = newImage("data/img/brunette-fly-Sheet.png"),
-        [States.dead] = newImage("/data/img/brunnette-die.png"),
-        [States.atk] = newImage("/data/img/brunnette-spell-Sheet.png"),
-        skull = newImage("/data/img/skull.png"),
+        [States.dead] = newImage("data/img/brunnette-die.png"),
+        [States.atk] = newImage("data/img/brunnette-spell-Sheet.png"),
+        skull = newImage("data/img/skull.png"),
     }
 end
 
@@ -252,8 +252,9 @@ function Player:hp_up(value)
     self:pulse()
 end
 
+local eff_tab = { duration = 0.3, speed = 0.3, range = 0.25 }
 function Player:pulse()
-    self:apply_effect("pulse", { duration = 0.25, speed = 0.25, range = 0.2 }, true)
+    self:apply_effect("stretchVertical", eff_tab, true)
 end
 
 function Player:reload_spell_speed()

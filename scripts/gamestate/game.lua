@@ -50,6 +50,7 @@ State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 Leader:on_quit_action(function()
     if not Leader.transition then
         _G.PLAY_SFX("click")
+        love.mouse.setVisible(false)
 
         Leader:add_transition("curtain", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.title",
@@ -66,6 +67,7 @@ end)
 Leader:on_restart_action(function()
     if not Leader.transition then
         _G.PLAY_SFX("click")
+        love.mouse.setVisible(false)
 
         Leader:add_transition("cartoon", "out", { type = "left-right" }, nil, function()
             Leader:change_gamestate(require "scripts.gamestate.how_to_play",
