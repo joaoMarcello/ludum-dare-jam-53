@@ -81,6 +81,13 @@ local function move_default(self, dt)
         bd:apply_force(self.acc)
         self.direction = 1
         --
+    elseif bd.speed_x ~= 0 then
+        if bd.speed_x > 0 and pressing('left')
+            or bd.speed_x < 0 and pressing('right')
+        then
+            bd.speed_x = 0.0
+        end
+        --
     end
 
     if pressing('jump') then
