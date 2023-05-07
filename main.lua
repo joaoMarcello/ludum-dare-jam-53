@@ -42,13 +42,14 @@ DisplayText:load()
 
 --==================================================================
 
-SCREEN_HEIGHT = Pack.Utils:round(180) -- 384 32*15
 SCREEN_WIDTH = Pack.Utils:round(320)  --576 *1.5
+SCREEN_HEIGHT = Pack.Utils:round(180) -- 384 32*15
 SUB_PIXEL = 3
+CANVAS_FILTER = 'linear'
 
-TARGET = "Web__"
+TARGET = "Web_"
 
-local initial_state = 'title'
+local initial_state = 'game'
 
 --==================================================================
 

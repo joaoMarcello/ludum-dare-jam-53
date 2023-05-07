@@ -12,22 +12,41 @@ local DisplayHP = require "scripts.display_hp"
 local DisplaySpell = require "scripts.display_spell"
 local DisplayBag = require "scripts.display_bag"
 
+-- ---@class GameState.Game : JM.Scene
+-- local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
+--     {
+--         left = -16 * 20,
+--         top = -16 * 5,
+--         right = 16 * 50,
+--         bottom = 16 * 12,
+--     },
+--     --
+--     {
+--         subpixel = _G.SUB_PIXEL or 3,
+--         canvas_filter = _G.CANVAS_FILTER or 'linear',
+--         tile = 16,
+--         cam_tile = 16,
+--     }
+-- )
+
 ---@class GameState.Game : JM.Scene
-local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
-    {
-        left = -16 * 20,
-        top = -16 * 5,
-        right = 16 * 50,
-        bottom = 16 * 12,
-    },
-    --
-    {
-        subpixel = _G.SUB_PIXEL or 3,
-        canvas_filter = 'linear',
-        tile = 16,
-        cam_tile = 16,
-    }
-)
+local State = Pack.Scene:new {
+    y = 64,
+    h = 180 * 3,
+    x = 64,
+    w = 320 * 3,
+    canvas_w = SCREEN_WIDTH,
+    canvas_h = SCREEN_HEIGHT,
+    bound_left = -16 * 20,
+    bound_top = -16 * 5,
+    bound_right = 16 * 50,
+    bound_bottom = 16 * 12,
+    subpixel = _G.SUB_PIXEL or 3,
+    canvas_filter = _G.CANVAS_FILTER or 'linear',
+    tile = 16,
+    cam_tile = 16,
+    show_border = true,
+}
 
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
