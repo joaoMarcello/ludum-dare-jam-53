@@ -387,6 +387,7 @@ State:implements {
 
         world = Phys:newWorld {
             tile = 16,
+            cellsize = 16 * 4,
         }
 
         local camera = State.camera
@@ -503,18 +504,27 @@ State:implements {
             ---@type GameComponent
             local gc = components[i]
 
-            local r = gc.update and gc.is_enable
-                and not gc.__remove and gc:update(dt)
-
             if gc.__remove then
                 State:game_remove_component(i)
+                --
+            else
+                -- local r = gc.update and gc.is_enable
+                --     and not gc.__remove and gc:update(dt)
+                if gc.update and gc.is_enable then
+                    gc:update(dt)
+                end
+
+                if gc.__remove then
+                    gc.update_order = -100000
+                end
+                --
             end
         end
 
         if not player:is_dead() then
-            -- spawn_enemy(dt)
-            -- respawn_mush(dt)
-            -- spawn_heart(dt)
+            spawn_enemy(dt)
+            respawn_mush(dt)
+            spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
 
