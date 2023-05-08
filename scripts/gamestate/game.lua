@@ -31,10 +31,10 @@ local DisplayBag = require "scripts.display_bag"
 
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new {
-    y = 64,
-    h = 180 * 2,
-    x = 64,
-    w = 320 * 3,
+    x = nil,
+    w = nil,
+    y = 100,
+    h = 768 - 200,
     canvas_w = SCREEN_WIDTH,
     canvas_h = SCREEN_HEIGHT,
     bound_left = -16 * 20,
@@ -45,25 +45,43 @@ local State = Pack.Scene:new {
     canvas_filter = _G.CANVAS_FILTER or 'linear',
     tile = 16,
     cam_tile = 16,
-    show_border = true,
+    show_border = false,
 }
 
+
+do
+    -- local Camera = State.camera
+    -- State.camera.movement_x = Camera.MoveTypes.dynamic_x_offset
+    -- State.camera.movement_y = Camera.MoveTypes.chase_target_y
+    -- State.camera:set_focus_y(State.camera.viewport_h * 0.25)
+
+    -- State.camera.deadzone_h = 16 * 6
+    -- State.camera.deadzone_w = 8
+
+    -- State.camera.desired_left_focus = State.camera.viewport_w * 0.3
+    -- State.camera.desired_right_focus = State.camera.viewport_w * 0.7
+    -- State.camera:set_focus_x(State.camera.desired_left_focus)
+    -- -- State.camera.use_deadzone = true
+end
 State.camera:set_focus_y(State.camera.viewport_h * 0.25)
+
+
 State:set_color(unpack(Utils:get_rgba2(64, 51, 83)))
 
--- State:add_camera {
---     name = "cam2",
---     x = State.screen_w * 0.7,
---     y = State.screen_h * 0.6,
---     w = State.screen_w * 0.3,
---     h = State.screen_h * 0.3,
---     scale = 0.4,
---     type = "metroid",
--- }
 -- do
+--     State:add_camera {
+--         name = "cam2",
+--         x = State.screen_w * 0.7,
+--         y = State.screen_h * 0.6,
+--         w = State.screen_w * 0.3,
+--         h = State.screen_h * 0.3,
+--         scale = 0.4,
+--         type = "metroid",
+--     }
 --     local cam2 = State:get_camera("cam2")
 --     cam2:set_viewport(nil, nil, State.screen_w * 0.3, State.screen_h * 0.3)
 --     cam2:set_focus_x(cam2.viewport_w * 0.5)
+--     cam2.is_visible = false
 -- end
 
 Leader:on_quit_action(function()
@@ -415,6 +433,8 @@ State:implements {
         display_hp = DisplayHP:new(State)
         display_spell = DisplaySpell:new(State, world)
         display_bag = DisplayBag:new(State)
+
+        -- _G.PLAY_SONG("game")
     end,
     --
     --
@@ -468,6 +488,11 @@ State:implements {
     end,
 
     update = function(dt)
+        -- local audio = Pack.Sound:get_song("game")
+        -- if audio and not audio.source:isPlaying() then
+        _G.PLAY_SONG("game")
+        -- end
+
         time_game = time_game + dt
 
         world:update(dt)
@@ -487,17 +512,28 @@ State:implements {
         end
 
         if not player:is_dead() then
-            spawn_enemy(dt)
-            respawn_mush(dt)
-            spawn_heart(dt)
+            -- spawn_enemy(dt)
+            -- respawn_mush(dt)
+            -- spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
 
             local cam2 = State:get_camera("cam2")
             if cam2 then
+                if State.camera:rect_is_on_view(cauldron.x, cauldron.y, cauldron.w, cauldron.h) then
+                    cam2.is_visible = false
+                else
+                    cam2.is_visible = true
+                end
+
                 cam2:follow(cauldron.x + cauldron.w * 0.5, cauldron.y)
             end
         else
+            local audio = _G.JM_Package.Sound:get_current_song()
+            if audio and audio.source:isPlaying() then
+                audio.source:stop()
+            end
+
             if player.time_state >= 5.0 and not State.transition then
                 Leader:jgdr_pnt(score)
 

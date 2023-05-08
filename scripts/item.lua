@@ -136,7 +136,8 @@ function Item:drop()
 
     bd:refresh(player_bd.x, player_bd:bottom())
 
-    local col = bd:check(nil, bd.y + 2, bd.filter_col_y)
+    local col = bd:check(nil, bd.y + 2, bd.filter_col_y, bd.empty_table(), bd.empty_table_for_coll())
+
     if col.n > 0 then
         bd:resolve_collisions_y(col)
     else

@@ -55,7 +55,9 @@ local straight = function(self, dt)
 
     box:refresh(bd.x + bd.w * 0.5 - box.w * 0.5, bd.y + bd.h * 0.5 - box.h * 0.5)
 
-    local col = box:check(nil, nil, filter_to_chase)
+    local col = box:check(nil, nil, filter_to_chase,
+        box.empty_table(), box.empty_table_for_coll()
+    )
     if col.n > 0 then
         local index = math.random(1, col.n)
         self.chase_obj = col.items[index].holder
@@ -123,7 +125,7 @@ end
 
 function Spell:destroy_bat()
     local bd = self.body
-    local col = bd:check(nil, nil, filter_to_chase)
+    local col = bd:check(nil, nil, filter_to_chase, bd.empty_table(), bd.empty_table_for_coll())
 
     if col.n > 0 then
         for i = 1, col.n do

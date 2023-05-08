@@ -11,6 +11,7 @@ local HowToPlay = require "scripts.gamestate.how_to_play"
 local Bests = require "scripts.gamestate.bests"
 
 local lgx = love.graphics
+
 --============================================================================
 
 local imgs

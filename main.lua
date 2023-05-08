@@ -45,11 +45,11 @@ DisplayText:load()
 SCREEN_WIDTH = Pack.Utils:round(320)  --576 *1.5
 SCREEN_HEIGHT = Pack.Utils:round(180) -- 384 32*15
 SUB_PIXEL = 3
-CANVAS_FILTER = 'nearest'
+CANVAS_FILTER = 'linear'
 
 TARGET = "Web_"
 
-local initial_state = 'game'
+local initial_state = 'title'
 
 --==================================================================
 
@@ -68,12 +68,14 @@ function love.load()
     S:add_sfx("/data/sfx/bullet.wav", "bullet")
     S:add_sfx("/data/sfx/drop.wav", "drop")
     S:add_sfx("/data/sfx/power_up.wav", "power_up")
-    S:add_sfx("/data/sfx/collect.wav", "collect")
+    S:add_sfx("/data/sfx/collect.wav", "collect", 0.75)
     S:add_sfx("/data/sfx/fly.wav", "fly", 0.1)
     S:add_sfx("/data/sfx/enemy_die.wav", "enemy_die")
     S:add_sfx("/data/sfx/enemy_hit.wav", "enemy_hit")
     S:add_sfx("/data/sfx/spell_fail.wav", "spell_fail", 0.25)
     S:add_sfx("/data/sfx/click.wav", "click")
+
+    -- S:add_song("/data/song/Whimsical-Popsicle.mp3", "game", 0.3)
 
     require "scripts.gamestate.game"
 
@@ -133,7 +135,7 @@ end
 
 local km = 0
 function love.update(dt)
-    -- km = collectgarbage("count") / 1024.0
+    km = collectgarbage("count") / 1024.0
     Pack:update(dt)
     SceneManager.scene:update(dt)
 end
@@ -141,13 +143,13 @@ end
 function love.draw()
     SceneManager.scene:draw()
 
-    -- lgx.setColor(0, 0, 0, 0.7)
-    -- lgx.rectangle("fill", 0, 0, 80, 120)
-    -- lgx.setColor(1, 1, 0, 1)
-    -- lgx.print(string.format("Memory:\n\t%.2f Mb", km), 5, 10)
-    -- lgx.print("FPS: " .. tostring(love.timer.getFPS()), 5, 50)
-    -- local maj, min, rev, code = love.getVersion()
-    -- lgx.print(string.format("Version:\n\t%d.%d.%d", maj, min, rev), 5, 75)
+    lgx.setColor(0, 0, 0, 0.7)
+    lgx.rectangle("fill", 0, 0, 80, 120)
+    lgx.setColor(1, 1, 0, 1)
+    lgx.print(string.format("Memory:\n\t%.2f Mb", km), 5, 10)
+    lgx.print("FPS: " .. tostring(love.timer.getFPS()), 5, 50)
+    local maj, min, rev, code = love.getVersion()
+    lgx.print(string.format("Version:\n\t%d.%d.%d", maj, min, rev), 5, 75)
 
     -- local stats = love.graphics.getStats()
     -- local font = _G.JM_Font
