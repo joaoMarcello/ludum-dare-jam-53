@@ -32,7 +32,7 @@ local DisplayBag = require "scripts.display_bag"
 ---@class GameState.Game : JM.Scene
 local State = Pack.Scene:new {
     y = 64,
-    h = 180 * 3,
+    h = 180 * 2,
     x = 64,
     w = 320 * 3,
     canvas_w = SCREEN_WIDTH,
