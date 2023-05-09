@@ -394,7 +394,7 @@ function Bat:update(dt)
 
         if self.time_smoke >= 0.2 and bd.speed_y ~= 0 and self.state ~= States.idle then
             self.time_smoke = 0.0
-            local sk = Smoke:new(self.gamestate,
+            local sk = Smoke:new(
                 self.x + self.w * 0.5 - 1 * self.direction,
                 self.y + self.h * 0.5 - 1 * bd:direction_y(),
                 0.3

@@ -487,7 +487,7 @@ function Player:update(dt)
         if self.time_smoke >= 0.15 and bd.speed_y < 0 then
             self.time_smoke = 0.0
 
-            self.gamestate:game_add_component(Smoke:new(self.gamestate,
+            self.gamestate:game_add_component(Smoke:new(
                 self.x - 16 * self.direction,
                 self.y + 16
             ))

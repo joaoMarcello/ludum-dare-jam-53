@@ -390,6 +390,9 @@ State:implements {
             cellsize = 16 * 4,
         }
 
+        local GameObject = require "jm-love2d-package.modules.gamestate.game_object"
+        GameObject:init_state(State, world)
+
         local camera = State.camera
 
         local ground = Phys:newBody(world,
@@ -637,7 +640,7 @@ State:implements {
                 for i = 1, #components do
                     ---@type GameComponent
                     local gc = components[i]
-                    local r = gc.draw and gc:draw(camera)
+                    local r = gc.draw and not gc.__remove and gc:draw(camera)
                 end
 
                 -- for i = 1, #world.bodies_static do
