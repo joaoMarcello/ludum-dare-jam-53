@@ -49,7 +49,7 @@ CANVAS_FILTER = 'linear'
 
 TARGET = "Web_"
 
-local initial_state = 'title'
+local initial_state = 'game'
 
 --==================================================================
 
@@ -134,10 +134,19 @@ function love.touchreleased(id, x, y, dx, dy, pressure)
 end
 
 local km = 0
+local tm = 0.0
+local fr = 5.0
 function love.update(dt)
     km = collectgarbage("count") / 1024.0
     Pack:update(dt)
     SceneManager.scene:update(dt)
+
+    tm = tm + dt
+    if tm >= fr then
+        tm = tm - fr
+        if tm >= fr then tm = 0 end
+        collectgarbage("step")
+    end
 end
 
 function love.draw()

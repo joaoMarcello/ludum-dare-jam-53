@@ -379,23 +379,16 @@ function Player:lauch_spell()
 
     -- local px = self.direction > 0 and (bd.x + 5) or (bd.x - 5 - 8)
 
-    local tab = empty_table()
-    -- if self.direction
+    local x, y
+
     if self.direction > 0 then
-        tab.x = bd.x + bd.w * 0.5 + 22
+        x = bd.x + bd.w * 0.5 + 22
     else
-        tab.x = bd.x + bd.w * 0.5 - 28
+        x = bd.x + bd.w * 0.5 - 28
     end
-    tab.y = bd.y + 6
-    tab.direction = self.direction
+    y = bd.y + 6
 
-    gamestate:game_add_component(Spell:new(gamestate, self.world, tab))
-
-    -- gamestate:game_add_component(Spell:new(gamestate, self.world, {
-    --     x = px,
-    --     y = bd.y,
-    --     direction = self.direction,
-    -- }))
+    gamestate:game_add_component(Spell:new(x, y, self.direction))
 
     self.time_spell = 0.0
 

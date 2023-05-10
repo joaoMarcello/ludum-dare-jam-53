@@ -1,4 +1,5 @@
 local GC = require "lib.bodyComponent"
+-- local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local lgx = love.graphics
 local atan2 = math.atan2
 local Anima = _G.JM_Anima
@@ -20,11 +21,11 @@ function Bullet:new(state, world, args)
 
     local obj = GC:new(state, world, args)
     setmetatable(obj, self)
-    Bullet.__constructor__(obj, args)
+    Bullet.__constructor__(obj)
     return obj
 end
 
-function Bullet:__constructor__(args)
+function Bullet:__constructor__()
     ---@type GameState.Game | any
     local gamestate = self.gamestate
     local player_bd = gamestate:game_player().body

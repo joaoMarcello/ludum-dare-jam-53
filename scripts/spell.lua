@@ -1,4 +1,5 @@
-local GC = require "lib.bodyComponent"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local lgx = love.graphics
 local Phys = _G.JM_Love2D_Package.Physics
 
@@ -13,6 +14,9 @@ local speed_chase = 16 * 3
 local dacc = 16 * 3
 
 local imgs
+
+---@type GameState.Game | JM.Scene | any
+local gamestate
 
 ---@param self Spell
 local chase = function(self, dt)
@@ -71,32 +75,26 @@ local straight = function(self, dt)
     self:destroy_bat()
 end
 
----@class Spell : BodyComponent
+---@class Spell : BodyObject
 local Spell = setmetatable({}, GC)
 Spell.__index = Spell
 
-function Spell:new(state, world, args)
-    args = args or {}
-    args.type = "ghost"
-    args.w = 10
-    args.h = 10
-    args.draw_order = 15
-    args.direction = args.direction or 1
-
-    local obj = GC:new(state, world, args)
+function Spell:new(x, y, direction)
+    --
+    local obj = GC:new(x, y, 10, 10, 15, 0, "ghost")
     setmetatable(obj, self)
-    Spell.__constructor__(obj, args)
+    Spell.__constructor__(obj, direction)
     return obj
 end
 
-function Spell:__constructor__(args)
+function Spell:__constructor__(direction)
     local bd = self.body
     bd.allowed_gravity = false
     bd.allowed_air_dacc = true
     bd.max_speed_x = speed
     bd.id = "spell"
 
-    self.direction = args.direction
+    self.direction = direction or 1
 
     self.strength = 1
 
@@ -164,13 +162,19 @@ function Spell:update(dt)
 
     self.anim:update(dt)
 
-    local player = self.gamestate:game_player()
+    ---@type GameState.Game
+    ---@diagnostic disable-next-line: assign-type-mismatch
+    gamestate = self.gamestate
+
+    local player = gamestate:game_player()
 
     if player:is_dead() then
         self:remove()
     else
         self:cur_movement(dt)
     end
+
+    gamestate = nil
 end
 
 function Spell:my_draw()

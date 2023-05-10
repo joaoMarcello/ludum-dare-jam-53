@@ -3,7 +3,8 @@ local Affectable = _G.JM_Love2D_Package.Affectable
 local GC = require "lib.component"
 
 ---@class BodyComponent: JM.Template.Affectable, GameComponent
-local Component = JM_Utils:create_class(Affectable, GC)
+local Component = setmetatable({}, GC) --JM_Utils:create_class(Affectable, GC)
+Component.__index = Component
 
 ---@param game JM.Scene
 ---@param world JM.Physics.World
@@ -13,7 +14,7 @@ function Component:new(game, world, args)
     local obj = GC:new(game, args)
 
     setmetatable(obj, self)
-    Affectable.__constructor__(obj)
+    -- Affectable.__constructor__(obj)
     Component.__constructor__(obj, world, args)
     return obj
 end

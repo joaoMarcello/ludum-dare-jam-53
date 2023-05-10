@@ -198,6 +198,8 @@ local function spawn_enemy(dt)
         spawn_speed = 11
     end
 
+    spawn_speed = 3
+
     time_spawn = time_spawn + dt
     if time_spawn >= spawn_speed then
         time_spawn = time_spawn - spawn_speed

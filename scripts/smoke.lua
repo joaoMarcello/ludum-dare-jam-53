@@ -17,9 +17,9 @@ end
 
 local function smoke_pop()
     for obj, _ in pairs(smoke_obj) do
-        for _, v in pairs(obj) do
-            obj[_] = nil
-        end
+        -- for _, v in pairs(obj) do
+        --     obj[_] = nil
+        -- end
 
         smoke_obj[obj] = nil
 
