@@ -1,4 +1,5 @@
-local GC = require "lib.bodyComponent"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local lgx = love.graphics
 
 ---@enum Item.Types
@@ -32,21 +33,21 @@ local imgs
 
 local arrow_color = _G.JM_Utils:get_rgba2(180, 32, 42)
 
----@class Item : BodyComponent
+---@class Item : BodyObject
 local Item = setmetatable({}, GC)
 Item.__index = Item
 Item.Types = Types
 Item.Scores = Scores
 
-function Item:new(state, world, args)
+function Item:new(args)
     args = args or {}
-    args.type = "dynamic"
-    args.w = 12
-    args.h = 12
-    args.draw_order = -1
-    args.y = args.bottom and (args.bottom - args.h) or args.y
+    -- args.type = "dynamic"
+    -- args.w = 12
+    -- args.h = 12
+    -- args.draw_order = -1
+    args.y = args.bottom and (args.bottom - 12) or args.y
 
-    local obj = GC:new(state, world, args)
+    local obj = GC:new(args.x, args.y, 12, 12, -1, 0, "dynamic")
     setmetatable(obj, self)
     Item.__constructor__(obj, args)
     return obj
@@ -81,13 +82,15 @@ function Item:__constructor__(args)
     self.ox = self.w * 0.5
     self.oy = self.h * 0.5
 
+    local Anima = _G.JM_Anima
+
     local tab = empty_table()
     tab.img = imgs[self.type]
-    self.anim = _G.JM_Anima:new(tab)
+    self.anim = Anima:new(tab)
 
     tab = empty_table()
     tab.img = imgs["mini-arrow"]
-    self.anim_arrow = _G.JM_Anima:new(tab)
+    self.anim_arrow = Anima:new(tab)
     self.anim_arrow:apply_effect("float", eff_tab)
     self.anim_arrow:set_color(arrow_color)
 
@@ -157,7 +160,9 @@ function Item:deflick()
 end
 
 function Item:grab()
-    local player = self.gamestate:game_player()
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+    local player = gamestate:game_player()
     local success = player:insert_item(self)
 
     if success then

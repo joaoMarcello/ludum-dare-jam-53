@@ -1,4 +1,5 @@
-local GC = require "lib.component"
+-- local GC = require "lib.component"
+local GC = require "jm-love2d-package.modules.gamestate.game_object"
 local Utils = _G.JM_Utils
 
 ---@type JM.Font.Font
@@ -6,30 +7,30 @@ local font
 
 local tile = 16
 
----@class DisplayText : GameComponent
+---@class DisplayText : GameObject
 local Display = setmetatable({}, GC)
 Display.__index = Display
 
 ---@return DisplayText
-function Display:new(state, args)
-    args = args or {}
-    args.w = args.w or 64
-    args.draw_order = 50
+function Display:new(x, y, text, duration)
+    -- args = args or {}
+    -- args.w = args.w or 64
+    -- args.draw_order = 50
 
-    local obj = setmetatable(GC:new(state, args), self)
-    Display.__constructor__(obj, state, args)
+    local obj = setmetatable(GC:new(x, y, 64, nil, 50, 0), self)
+    Display.__constructor__(obj, text, duration)
     return obj
 end
 
-function Display:__constructor__(state, args)
-    self.text = args.text and tostring(args.text) or "None"
+function Display:__constructor__(text, duration)
+    self.text = text and tostring(text) or "None"
     self.text = "<bold>" .. self.text
     self.text_white = "<color, 1, 1, 1>" .. self.text
 
     self.x = self.x - self.w * 0.5
     self.acumulator = 0
     self.time = 0
-    self.duration = args.duration or 1
+    self.duration = duration or 1
 
     -- self:set_draw_order(15)
 end

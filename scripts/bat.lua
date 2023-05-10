@@ -1,4 +1,5 @@
-local GC = require "lib.bodyComponent"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
 local Item = require "scripts.item"
@@ -96,7 +97,7 @@ local idle = function(self, dt)
 
     self:shoot(dt)
 
-    local player = self.gamestate:game_player()
+    local player = gamestate:game_player()
     local player_bd = player.body
 
     if player_bd.x + player_bd.w * 0.5 < bd.x + bd.w * 0.5 then
@@ -110,7 +111,10 @@ end
 local leave = function(self, dt)
     local bd = self.body
 
-    local player = self.gamestate:game_player()
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+
+    local player = gamestate:game_player()
     local player_bd = player.body
 
     if player_bd.x + player_bd.w * 0.5 < bd.x + bd.w * 0.5 then
@@ -123,7 +127,7 @@ local leave = function(self, dt)
 
     self:shoot(dt)
 
-    if not self.gamestate.camera:rect_is_on_view(bd:rect()) then
+    if not gamestate.camera:rect_is_on_view(bd:rect()) then
         self.__remove = true
     end
 end
@@ -138,35 +142,40 @@ local dead = function(self, dt)
     end
 end
 
----@class Bat : BodyComponent
+---@class Bat : BodyObject
 local Bat = setmetatable({}, GC)
 Bat.__index = Bat
 Bat.States = States
 Bat.Modes = Modes
 
-function Bat:new(state, world, args)
-    args = args or empty_table()
-    args.type = "dynamic"
-    args.x = args.x or (16 * 5)
-    args.y = args.y or (16 * 2)
-    args.w = 12
-    args.h = 12
-    args.y = args.bottom and (args.bottom - args.h) or args.y
-    args.draw_order = -1
+function Bat:new(x, y, bottom, mode)
+    -- args = args or empty_table()
+    -- args.type = "dynamic"
+    -- args.x = args.x or (16 * 5)
+    -- args.y = args.y or (16 * 2)
+    -- args.w = 12
+    -- args.h = 12
+    -- args.y = args.bottom and (args.bottom - args.h) or args.y
+    -- args.draw_order = -1
+    x = x or (16 * 5)
+    y = y or (16 * 2)
+    if bottom then
+        y = bottom - 12
+    end
 
-    local obj = GC:new(state, world, args)
+    local obj = GC:new(x, y, 12, 12, -1, 0, "dynamic")
     setmetatable(obj, self)
-    Bat.__constructor__(obj, args)
+    Bat.__constructor__(obj, mode)
     return obj
 end
 
-function Bat:__constructor__(args)
+function Bat:__constructor__(mode)
     local bd = self.body
 
     bd.allowed_gravity = false
     bd.allowed_air_dacc = true
 
-    self.mode = args.mode or Modes.normal
+    self.mode = mode or Modes.normal
 
     bd.max_speed_x = max_speed
     bd.max_speed_y = max_speed
@@ -262,7 +271,7 @@ function Bat:drop_wing()
     tab.speed_x = bd.speed_x
     tab.auto_remove = true
 
-    local wing = Item:new(self.gamestate, self.body.world, tab)
+    local wing = Item:new(tab)
     -- local wing = Item:new(self.gamestate, self.body.world, {
     --     x = bd.x,
     --     bottom = bd:bottom(),
@@ -272,7 +281,9 @@ function Bat:drop_wing()
     --     speed_x = bd.speed_x,
     --     auto_remove = true,
     -- })
-    self.gamestate:game_add_component(wing)
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+    gamestate:game_add_component(wing)
     return true
 end
 
@@ -281,6 +292,9 @@ function Bat:set_state(state)
     local bd = self.body
     local last = self.state
     self.state = state
+
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
 
     if state == States.chase then
         self.cur_movement = chase
@@ -309,8 +323,8 @@ function Bat:set_state(state)
         self:set_draw_order(16)
 
         local pt = self:get_score()
-        self.gamestate:game_add_score(pt)
-        self.gamestate:display_text(tostring(pt), self.x, self.y - 20)
+        gamestate:game_add_score(pt)
+        gamestate:display_text(tostring(pt), self.x, self.y - 20)
 
         --
     end
@@ -366,13 +380,16 @@ function Bat:update(dt)
 
     local bd = self.body
 
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+
     if not self:is_dead() then
-        if self.gamestate.camera:rect_is_on_view(self.x, self.y, self.w, self.h)
+        if gamestate.camera:rect_is_on_view(self.x, self.y, self.w, self.h)
         then
             self.time_leave = self.time_leave + dt
         end
 
-        local player = self.gamestate:game_player()
+        local player = gamestate:game_player()
         local player_bd = player.body
         if player_bd:check_collision(bd:rect()) then
             player:damage(self)
@@ -393,7 +410,7 @@ function Bat:update(dt)
                 self.y + self.h * 0.5 - 1 * bd:direction_y(),
                 0.3
             )
-            self.gamestate:game_add_component(sk)
+            gamestate:game_add_component(sk)
         end
         --
     else

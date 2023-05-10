@@ -136,6 +136,8 @@ end
 local km = 0
 local tm = 0.0
 local fr = 5.0
+local collectgarbage = collectgarbage
+
 function love.update(dt)
     km = collectgarbage("count") / 1024.0
     Pack:update(dt)
@@ -145,7 +147,9 @@ function love.update(dt)
     if tm >= fr then
         tm = tm - fr
         if tm >= fr then tm = 0 end
-        collectgarbage("step")
+        if not collectgarbage("isrunning") then
+            collectgarbage("step")
+        end
     end
 end
 

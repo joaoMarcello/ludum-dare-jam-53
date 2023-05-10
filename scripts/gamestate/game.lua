@@ -217,11 +217,11 @@ local function spawn_enemy(dt)
             px = vx + vw + 32
         end
 
-        local tab = empty_table()
-        tab.x = px
-        tab.bottom = py
+        -- local tab = empty_table()
+        -- tab.x = px
+        -- tab.bottom = py
 
-        State:game_add_component(Bat:new(State, world, tab))
+        State:game_add_component(Bat:new(px, nil, py))
         -- State:game_add_component(Bat:new(State, world, { x = px, bottom = py }))
     end
 end
@@ -230,18 +230,20 @@ local function spawn_heart(dt)
     time_heart = time_heart + dt
     local sp = time_game >= 100 and 35 or 25
 
+    -- sp = 2
+
     if time_heart >= sp then --25
         time_heart = 0
         local vx, vy, vw, vh = State.camera:get_viewport_in_world_coord()
         vx = vx + 16
         vw = vw - 16
 
-        local tab = empty_table()
-        tab.x = (vx + vw * random())
-        tab.y = vy - 32
+        -- local tab = empty_table()
+        -- tab.x = (vx + vw * random())
+        -- tab.y = vy - 32
 
         State:game_add_component(
-            Heart:new(State, world, tab)
+            Heart:new((vx + vw * random()), vy - 32)
         )
         -- State:game_add_component(
         --     Heart:new(State, world, { x = (vx + vw * random()), y = vy - 32 })
@@ -293,7 +295,7 @@ local function respawn_mush(dt)
                 spot.time = 0.0
 
                 ---@type Item
-                local obj = State:game_add_component(Item:new(State, world,
+                local obj = State:game_add_component(Item:new(
                     {
                         x = spot.x,
                         bottom = spot.bottom,
@@ -345,7 +347,7 @@ function State:display_text(text, x, y, duration)
         end
     end
 
-    self:game_add_component(_G.DisplayText:new(self, tab))
+    self:game_add_component(_G.DisplayText:new(tab.x, tab.y, tab.text, tab.duration))
 end
 
 --=============================================================================
@@ -416,7 +418,7 @@ State:implements {
         for i = 1, #mush_spot do
             mush_spot[i].time = 0.0
 
-            local obj = State:game_add_component(Item:new(State, world,
+            local obj = State:game_add_component(Item:new(
                 {
                     x = mush_spot[i].x,
                     bottom = mush_spot[i].bottom,
@@ -429,7 +431,7 @@ State:implements {
         end
 
 
-        cauldron = State:game_add_component(Cauldron:new(State, world, { x = 16 * 16, bottom = ground.y }))
+        cauldron = State:game_add_component(Cauldron:new(16 * 16, nil, ground.y))
 
         local cam2 = State:get_camera("cam2")
         if cam2 then

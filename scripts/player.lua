@@ -208,7 +208,7 @@ function Player:__constructor__()
     self.bag_count = 0
     self.bag_capacity = 5
 
-    self:set_update_order(10)
+    self:set_update_order(-10)
 
     self.time_state = 0.0
 

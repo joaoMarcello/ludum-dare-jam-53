@@ -1,34 +1,40 @@
-local GC = require "lib.component"
+-- local GC = require "lib.component"
+local GC = require "jm-love2d-package.modules.gamestate.game_object"
 local lgx = love.graphics
 local Phys = _G.JM_Love2D_Package.Physics
 local Utils = _G.JM_Utils
 
 local imgs
 
----@class Cauldron : GameComponent
+---@class Cauldron : GameObject
 local Cauldron = setmetatable({}, GC)
 Cauldron.__index = Cauldron
 
----@param world JM.Physics.World
-function Cauldron:new(state, world, args)
-    args = args or {}
-    args.type = "dynamic"
-    args.y = args.y or 64
-    args.x = args.x or 96
-    args.w = 48
-    args.h = 24
-    args.y = args.bottom and (args.bottom - args.h) or args.y
-    args.draw_order = 0
+function Cauldron:new(x, y, bottom)
+    -- args = args or {}
+    -- args.type = "dynamic"
+    -- args.y = args.y or 64
+    -- args.x = args.x or 96
+    -- args.w = 48
+    -- args.h = 24
+    -- args.y = args.bottom and (args.bottom - args.h) or args.y
+    -- args.draw_order = 0
 
-    local obj = GC:new(state, args)
+    x = x or 96
+    y = y or 64
+    if bottom then
+        y = bottom - 24
+    end
+
+    local obj = GC:new(x, y, 48, 24, 0, 0)
     setmetatable(obj, self)
-    Cauldron.__constructor__(obj, world, args)
+    Cauldron.__constructor__(obj)
     return obj
 end
 
----@param world JM.Physics.World
-function Cauldron:__constructor__(world, args)
-    self.world = world
+function Cauldron:__constructor__()
+    -- self.world = world
+    local world = self.world
 
     Phys:newBody(world, self.x - 3, self.y, 3, 3, "static")
     Phys:newBody(world, self.x + self.w, self.y, 3, 3, "static")
@@ -110,8 +116,9 @@ function Cauldron:draw(cam)
 
     local camera = self.gamestate.camera
     local font = _G.JM_Font.current
-
-    local player_bd = self.gamestate:game_player().body
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+    local player_bd = gamestate:game_player().body
 
 
     if not camera:rect_is_on_view(self.x - 1, self.y, self.w + 2, self.h) then

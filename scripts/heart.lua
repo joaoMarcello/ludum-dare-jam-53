@@ -1,7 +1,8 @@
-local GC = require "lib.bodyComponent"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local lgx = love.graphics
 
----@class Heart : BodyComponent
+---@class Heart : BodyObject
 local Heart = setmetatable({}, GC)
 Heart.__index = Heart
 
@@ -9,22 +10,27 @@ local score = 500
 
 local img
 
-function Heart:new(state, world, args)
-    args = args or {}
-    args.x = args.x or 32
-    args.y = args.y or 0
-    args.w = 14
-    args.h = 14
-    args.type = "dynamic"
-    args.draw_order = -2
+function Heart:new(x, y, bottom)
+    -- args = args or {}
+    -- args.x = args.x or 32
+    -- args.y = args.y or 0
+    -- args.w = 14
+    -- args.h = 14
+    -- args.type = "dynamic"
+    -- args.draw_order = -2
+    x = x or 32
+    y = y or 0
+    if bottom then
+        y = bottom - 14
+    end
 
-    local obj = GC:new(state, world, args)
+    local obj = GC:new(x, y, 14, 14, -2, 0, "dynamic")
     setmetatable(obj, self)
-    Heart.__constructor__(obj, args)
+    Heart.__constructor__(obj)
     return obj
 end
 
-function Heart:__constructor__(args)
+function Heart:__constructor__()
     local bd = self.body
     bd.allowed_gravity = true
     bd.bouncing_y = 0.9
@@ -55,6 +61,7 @@ function Heart:update(dt)
     GC.update(self, dt)
     self.anim:update(dt)
 
+    ---@type GameState.Game | any
     local gamestate = self.gamestate
     local player = gamestate:game_player()
     local bd = self.body
