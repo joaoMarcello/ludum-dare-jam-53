@@ -1,4 +1,5 @@
-local GC = require "lib.bodyComponent"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local Utils = _G.JM_Utils
 local Spell = require "scripts.spell"
 local Smoke = require "scripts.smoke"
@@ -138,33 +139,42 @@ local function move_atk(self, dt)
 end
 --==========================================================================
 
----@class Player : BodyComponent
+---@class Player : BodyObject
 local Player = setmetatable({}, GC)
 Player.__index = Player
 
-function Player:new(state, world, args)
-    args = args or {}
-    args.type = "dynamic"
-    args.x = args.x or (16 * 5)
-    args.y = args.y or (0)
-    args.w = args.w or 12
-    args.h = args.h or 24
-    args.y = args.bottom and (args.bottom - args.h) or args.y
-    args.draw_order = 1
+function Player:new(x, y, bottom)
+    -- args = args or {}
+    -- args.type = "dynamic"
+    -- args.x = args.x or (16 * 5)
+    -- args.y = args.y or (0)
+    -- args.w = args.w or 12
+    -- args.h = args.h or 24
+    -- args.y = args.bottom and (args.bottom - args.h) or args.y
+    -- args.draw_order = 1
 
-    args.acc = 16 * 12
-    args.max_speed = 16 * 6
-    args.dacc = 16 * 25 -- 25
+    x = x or (16 * 5)
+    y = y or 0
+    if bottom then
+        y = bottom - 24
+    end
+    -- args.acc = 16 * 12
+    -- args.max_speed = 16 * 6
+    -- args.dacc = 16 * 25 -- 25
 
-    local obj = GC:new(state, world, args)
+    local obj = GC:new(x, y, 12, 24, 1, 0, "dynamic")
     setmetatable(obj, self)
-    Player.__constructor__(obj, state)
+    Player.__constructor__(obj)
     return obj
 end
 
-function Player:__constructor__(state)
+function Player:__constructor__()
     self.ox = self.w * 0.5
     self.oy = self.h * 0.5
+
+    self.acc = 16 * 12
+    self.max_speed = 16 * 6
+    self.dacc = 16 * 25
 
     local bd = self.body
     bd.allowed_air_dacc = true
@@ -374,6 +384,7 @@ function Player:lauch_spell()
 
     self.count_spell = self.count_spell - 1
 
+    ---@type GameState.Game | any
     local gamestate = self.gamestate
     local bd = self.body
 
@@ -451,6 +462,8 @@ function Player:update(dt)
     local bd = self.body
     GC.update(self, dt)
 
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
 
     self:reload_spell(dt)
 
@@ -480,7 +493,7 @@ function Player:update(dt)
         if self.time_smoke >= 0.15 and bd.speed_y < 0 then
             self.time_smoke = 0.0
 
-            self.gamestate:game_add_component(Smoke:new(
+            gamestate:game_add_component(Smoke:new(
                 self.x - 16 * self.direction,
                 self.y + 16
             ))

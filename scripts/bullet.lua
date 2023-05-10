@@ -1,10 +1,10 @@
-local GC = require "lib.bodyComponent"
--- local GC = require "jm-love2d-package.modules.gamestate.body_object"
+-- local GC = require "lib.bodyComponent"
+local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local lgx = love.graphics
 local atan2 = math.atan2
 local Anima = _G.JM_Anima
 
----@class Bullet : BodyComponent
+---@class Bullet : BodyObject
 local Bullet = setmetatable({}, GC)
 Bullet.__index = Bullet
 
@@ -12,19 +12,15 @@ local speed = 16 * 7
 
 local img
 
-function Bullet:new(state, world, args)
-    args = args or {}
-    args.w = 10
-    args.h = 10
-    args.draw_order = 15
-    args.type = "ghost"
-
-    local obj = GC:new(state, world, args)
+function Bullet:new(x, y)
+    local obj = GC:new(x, y, 10, 10, 15, 0, "ghost")
     setmetatable(obj, self)
     Bullet.__constructor__(obj)
     return obj
 end
 
+local anim_arg = { img = img }
+--
 function Bullet:__constructor__()
     ---@type GameState.Game | any
     local gamestate = self.gamestate
@@ -42,7 +38,12 @@ function Bullet:__constructor__()
     bd.speed_x = -speed * math.cos(angle)
     bd.speed_y = -speed * math.sin(angle)
 
-    self.anim = Anima:new { img = img }
+    anim_arg.img = img
+    self.anim = Anima:new(anim_arg)
+
+    if not anim_arg.__frame_obj_list__ then
+        anim_arg.__frame_obj_list__ = self.anim.frames_list
+    end
 end
 
 function Bullet:load()

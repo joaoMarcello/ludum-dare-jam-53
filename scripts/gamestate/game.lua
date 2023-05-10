@@ -405,7 +405,7 @@ State:implements {
             "static"
         )
 
-        player = Player:new(State, world, { x = 16 * 0, bottom = ground.y })
+        player = Player:new(0, nil, ground.y)
         State:game_add_component(player)
 
         State.camera.x = 0

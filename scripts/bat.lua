@@ -344,17 +344,11 @@ function Bat:shoot(dt)
         self.time_shoot = self.time_shoot - speed_shoot - 4 * random()
         if self.time_shoot >= speed_shoot then self.time_shoot = 0.0 end
 
-        local tab = empty_table()
-        tab.x = bd.x
-        tab.y = bd.y
+        -- local tab = empty_table()
+        -- tab.x = bd.x
+        -- tab.y = bd.y
 
-        gamestate:game_add_component(Bullet:new(gamestate, bd.world, tab))
-        -- gamestate:game_add_component(Bullet:new(gamestate, bd.world,
-        --     {
-        --         x = bd.x,
-        --         y = bd.y,
-        --     }
-        -- ))
+        gamestate:game_add_component(Bullet:new(bd.x, bd.y))
 
         if gamestate.camera:rect_is_on_view(bd:rect()) then
             _G.PLAY_SFX("bullet", true)
