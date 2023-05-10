@@ -36,7 +36,7 @@ function Smoke:new(x, y, wait)
 end
 
 local arg = { img = img, frames = 4, stop_at_the_end = true, duration = 1 }
-local anim_quad
+-- local anim_quad
 local anim_frames_obj
 local animas = setmetatable({}, { __mode = 'k' })
 
@@ -58,14 +58,14 @@ function Smoke:__constructor__(wait)
 
     arg.img = img
     arg.__frame_obj_list__ = anim_frames_obj
-    arg.__quad__ = anim_quad
+    -- arg.__quad__ = anim_quad
 
     local anima = anim_pop()
     self.anim = anima or Anima:new(arg)
 
-    if not anim_quad then
-        anim_quad = self.anim.quad
-    end
+    -- if not anim_quad then
+    --     anim_quad = self.anim.quad
+    -- end
     if not anim_frames_obj then
         anim_frames_obj = self.anim.frames_list
     end
