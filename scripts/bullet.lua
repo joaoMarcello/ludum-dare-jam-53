@@ -11,6 +11,8 @@ Bullet.__index = Bullet
 local speed = 16 * 7
 
 local img
+---@type JM.Anima
+local anima
 
 function Bullet:new(x, y)
     local obj = GC:new(x, y, 10, 10, 15, 0, "ghost")
@@ -19,7 +21,7 @@ function Bullet:new(x, y)
     return obj
 end
 
-local anim_arg = { img = img }
+-- local anim_arg = { img = img }
 --
 function Bullet:__constructor__()
     ---@type GameState.Game | any
@@ -38,16 +40,20 @@ function Bullet:__constructor__()
     bd.speed_x = -speed * math.cos(angle)
     bd.speed_y = -speed * math.sin(angle)
 
-    anim_arg.img = img
-    self.anim = Anima:new(anim_arg)
+    -- anim_arg.img = img
+    self.anim = anima:copy() --Anima:new(anim_arg)
 
-    if not anim_arg.__frame_obj_list__ then
-        anim_arg.__frame_obj_list__ = self.anim.frames_list
-    end
+    -- if not anim_arg.__frame_obj_list__ then
+    --     anim_arg.__frame_obj_list__ = self.anim.frames_list
+    -- end
+
+    self.update = Bullet.update
+    self.draw = Bullet.draw
 end
 
 function Bullet:load()
     img = img or love.graphics.newImage("data/img/bullet.png")
+    anima = anima or Anima:new { img = img }
 end
 
 function Bullet:finish()
@@ -55,7 +61,8 @@ function Bullet:finish()
 end
 
 function Bullet:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.anim:update(dt)
 

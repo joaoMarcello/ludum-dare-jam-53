@@ -176,7 +176,8 @@ end
 
 local tab = { speed = 0.06 }
 function Item:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.anim:update(dt)
     self.anim_arrow:update(dt)

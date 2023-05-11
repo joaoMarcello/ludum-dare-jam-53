@@ -14,6 +14,8 @@ local speed_chase = 16 * 3
 local dacc = 16 * 3
 
 local imgs
+---@type JM.Anima
+local anima
 
 ---@type GameState.Game | JM.Scene | any
 local gamestate
@@ -87,7 +89,7 @@ function Spell:new(x, y, direction)
     return obj
 end
 
-local anim_args = { img = imgs }
+-- local anim_args = { img = imgs }
 function Spell:__constructor__(direction)
     local bd = self.body
     bd.allowed_gravity = false
@@ -108,9 +110,9 @@ function Spell:__constructor__(direction)
     )
     self.hit_box.allowed_gravity = false
 
-    anim_args.img = imgs
-    self.anim = _G.JM_Anima:new(anim_args)
-    anim_args.__frame_obj_list__ = self.anim.frames_list
+    -- anim_args.img = imgs
+    self.anim = anima:copy() --_G.JM_Anima:new(anim_args)
+    -- anim_args.__frame_obj_list__ = self.anim.frames_list
 
     ---@type Bat | any
     self.chase_obj = nil
@@ -118,6 +120,7 @@ end
 
 function Spell:load()
     imgs = imgs or lgx.newImage("data/img/spell.png")
+    anima = anima or _G.JM_Anima:new { img = imgs }
 end
 
 function Spell:finish()
@@ -161,7 +164,8 @@ function Spell:set_state(state)
 end
 
 function Spell:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.anim:update(dt)
 

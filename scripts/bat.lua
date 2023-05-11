@@ -5,6 +5,8 @@ local Utils = _G.JM_Utils
 local Item = require "scripts.item"
 local Smoke = require "scripts.smoke"
 
+local Anima = _G.JM_Anima
+
 local lgx = love.graphics
 local atan2, sqrt, cos, sin = math.atan2, math.sqrt, math.cos, math.sin
 local random = love.math.random
@@ -148,6 +150,9 @@ Bat.__index = Bat
 Bat.States = States
 Bat.Modes = Modes
 
+---@type JM.Anima | any
+local anima
+
 function Bat:new(x, y, bottom, mode)
     -- args = args or empty_table()
     -- args.type = "dynamic"
@@ -188,9 +193,8 @@ function Bat:__constructor__(mode)
     self.hp = 2
     self.max_hp = 4
 
-    local Anima = _G.JM_Anima
     self.anim = {
-        [States.idle] = Anima:new { img = imgs[States.idle], frames = 2, duration = 0.3 },
+        [States.idle] = anima:copy(),
         -- [States.dead] = Anima:new { img = imgs[States.dead], frames = 1 },
     }
     self.anim[States.chase] = self.anim[States.idle]
@@ -213,6 +217,9 @@ function Bat:__constructor__(mode)
     self.time_smoke = 0.0
 
     self.direction = 1
+
+    self.update = Bat.update
+    self.draw = Bat.draw
 end
 
 function Bat:load()
@@ -225,6 +232,8 @@ function Bat:load()
         [States.idle] = newImage("/data/img/bat-fly-Sheet.png"),
         -- [States.dead] = newImage("data/img/bat-fly.png"),
     }
+
+    anima = anima or Anima:new { img = imgs[States.idle], frames = 2, duration = 0.3 }
 end
 
 function Bat:finish()
@@ -371,7 +380,8 @@ function Bat:shoot(dt)
 end
 
 function Bat:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.cur_anima:update(dt)
 

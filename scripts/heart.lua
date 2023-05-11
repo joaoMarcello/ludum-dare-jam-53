@@ -58,7 +58,8 @@ end
 
 local tab = { speed = 0.1 }
 function Heart:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
     self.anim:update(dt)
 
     ---@type GameState.Game | any

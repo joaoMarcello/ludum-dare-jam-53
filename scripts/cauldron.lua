@@ -83,7 +83,8 @@ function Cauldron:is_inside(bd)
 end
 
 function Cauldron:update(dt)
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.anim_down:update(dt)
     self.anim1:update(dt)

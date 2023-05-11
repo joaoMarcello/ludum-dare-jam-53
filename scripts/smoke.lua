@@ -71,6 +71,9 @@ function Smoke:__constructor__(wait)
     end
 
     self.wait = wait
+
+    self.update = Smoke.update
+    self.draw = Smoke.draw
 end
 
 function Smoke:load()
@@ -91,7 +94,8 @@ function Smoke:update(dt)
         end
     end
 
-    GC.update(self, dt)
+    -- GC.update(self, dt)
+    self.__effect_manager:update(dt)
 
     self.anim:update(dt)
 
