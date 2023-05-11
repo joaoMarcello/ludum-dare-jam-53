@@ -139,30 +139,31 @@ local fr = 5.0
 local collectgarbage = collectgarbage
 
 function love.update(dt)
-    km = collectgarbage("count") / 1024.0
+    -- km = collectgarbage("count") / 1024.0
+
     Pack:update(dt)
     SceneManager.scene:update(dt)
 
-    tm = tm + dt
-    if tm >= fr then
-        tm = tm - fr
-        if tm >= fr then tm = 0 end
-        if not collectgarbage("isrunning") then
-            collectgarbage("step")
-        end
-    end
+    -- tm = tm + dt
+    -- if tm >= fr then
+    --     tm = tm - fr
+    --     if tm >= fr then tm = 0 end
+    --     if not collectgarbage("isrunning") then
+    --         collectgarbage("step")
+    --     end
+    -- end
 end
 
 function love.draw()
     SceneManager.scene:draw()
 
-    lgx.setColor(0, 0, 0, 0.7)
-    lgx.rectangle("fill", 0, 0, 80, 120)
-    lgx.setColor(1, 1, 0, 1)
-    lgx.print(string.format("Memory:\n\t%.2f Mb", km), 5, 10)
-    lgx.print("FPS: " .. tostring(love.timer.getFPS()), 5, 50)
-    local maj, min, rev, code = love.getVersion()
-    lgx.print(string.format("Version:\n\t%d.%d.%d", maj, min, rev), 5, 75)
+    -- lgx.setColor(0, 0, 0, 0.7)
+    -- lgx.rectangle("fill", 0, 0, 80, 120)
+    -- lgx.setColor(1, 1, 0, 1)
+    -- lgx.print(string.format("Memory:\n\t%.2f Mb", km), 5, 10)
+    -- lgx.print("FPS: " .. tostring(love.timer.getFPS()), 5, 50)
+    -- local maj, min, rev, code = love.getVersion()
+    -- lgx.print(string.format("Version:\n\t%d.%d.%d", maj, min, rev), 5, 75)
 
     -- local stats = love.graphics.getStats()
     -- local font = _G.JM_Font

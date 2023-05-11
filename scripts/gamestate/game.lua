@@ -377,6 +377,11 @@ State:implements {
             stars = Anima:new { img = imgs.stars },
             night_sky = Anima:new { img = imgs.night_sky },
         }
+
+        -- if not JM_Font.current:__get_char_equals("--a--") then
+        --     JM_Font.current:add_nickname_animated("--a--",
+        --         { img = "/data/img/bat-fly-Sheet.png", frames = 2, speed = 0.15 })
+        -- end
     end,
     --
     --
@@ -676,7 +681,7 @@ State:implements {
                     font:pop()
                 end
 
-                font:printf("<color, 0.9, 0.9, 0.9>SCORE\n" .. tostring(score), vx, 8, "center", vw)
+                font:printf("<color, 0.9, 0.9, 0.9>SCORE \n " .. tostring(score), vx, 8, "center", vw)
 
                 -- if player:bag_is_full() then
                 --     font:printx("<effect=flickering, speed=0.8> <color, 0.9, 0.9, 0.9>Bag is full!",
