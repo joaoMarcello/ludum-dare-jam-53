@@ -53,7 +53,7 @@ end
 
 function Bullet:load()
     img = img or love.graphics.newImage("data/img/bullet.png")
-    anima = anima or Anima:new { img = img }
+    anima = anima or Anima:new { img = img, frames = 2, speed = 0.08 }
 end
 
 function Bullet:finish()
