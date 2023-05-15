@@ -156,7 +156,7 @@ function Cauldron:draw(cam)
         end
 
         if fx and fy and dist then
-            font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter * 1),
+            font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter),
                 Utils:clamp(fx, vx, vx + vw - self.w),
                 Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 38
             )

@@ -11,6 +11,8 @@ local Heart = require "scripts.heart"
 local DisplayHP = require "scripts.display_hp"
 local DisplaySpell = require "scripts.display_spell"
 local DisplayBag = require "scripts.display_bag"
+local Emitter = require "jm-love2d-package.modules.particle.emitter"
+local Particle = require "jm-love2d-package.modules.particle.particle"
 
 -- ---@class GameState.Game : JM.Scene
 -- local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -399,6 +401,19 @@ State:implements {
             cellsize = 16 * 4,
         }
 
+        Particle:init_module({ "data/img/smoke-Sheet.png" }, world, State, Emitter)
+
+        Emitter:init_module(world, State)
+        Emitter:register_anima(
+            JM_Anima:new {
+                img = Particle.IMG["data/img/smoke-Sheet.png"],
+                frames = 4,
+                stop_at_the_end = true,
+                duration = 1
+            },
+            "smoke"
+        )
+
         local GameObject = require "jm-love2d-package.modules.gamestate.game_object"
         GameObject:init_state(State, world)
 
@@ -446,6 +461,7 @@ State:implements {
         display_hp = DisplayHP:new(State)
         display_spell = DisplaySpell:new(State, world)
         display_bag = DisplayBag:new(State)
+
 
         -- _G.PLAY_SONG("game")
     end,
@@ -534,9 +550,9 @@ State:implements {
         end
 
         if not player:is_dead() then
-            spawn_enemy(dt)
-            respawn_mush(dt)
-            spawn_heart(dt)
+            -- spawn_enemy(dt)
+            -- respawn_mush(dt)
+            -- spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
 

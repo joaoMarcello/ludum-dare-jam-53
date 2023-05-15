@@ -3,6 +3,8 @@ local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local Utils = _G.JM_Utils
 local Spell = require "scripts.spell"
 local Smoke = require "scripts.smoke"
+local Emitter = require "jm-love2d-package.modules.particle.emitter"
+local Particle = require "jm-love2d-package.modules.particle.particle"
 
 local keys = {
     left = { 'left', 'a' },
@@ -114,7 +116,7 @@ local function move_default(self, dt)
     end
 
     if bd.y ~= last_py then
-        bd.speed_y = bd.world.meter * 1.5
+        bd.speed_y = bd.world.meter * 2.5 --1.5
     end
 
     if bd.speed_y > 0 and bd.speed_y > self.max_speed then
@@ -135,6 +137,28 @@ local function move_atk(self, dt)
 
     if self.time_state >= 0.3 then
         self:set_state(States.default)
+    end
+end
+
+
+---@param self JM.Emitter
+local function smoke_emitter_update(self, dt, args)
+    self.time = self.time + dt
+    ---@type Player
+    local player = args
+
+    if self.time >= 0.15 and not player:is_dead() and player.body.speed_y < 0 then
+        self.time = 0.0
+
+        self:add_particle(Particle:newAnimated(
+            self:pop_anima('smoke'),
+            -- self.Animas['smoke']:copy(),
+            self.x,
+            self.y,
+            7, 7,
+            1, nil, nil, nil, nil, nil, nil, nil, nil, self.draw_order,
+            "smoke"
+        ))
     end
 end
 --==========================================================================
@@ -232,6 +256,13 @@ function Player:__constructor__()
     self:apply_effect("float", { range = 1, speed = 0.6 })
 
     self:set_state(States.default)
+
+    self.smoke_emitter = Emitter:new(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update, self)
+
+
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+    gamestate:game_add_component(self.smoke_emitter)
 
     self.update = Player.update
     self.draw = Player.draw
@@ -433,6 +464,10 @@ function Player:key_pressed(key)
             --
         end
     end
+
+    if key == 'z' then
+        Emitter:flush()
+    end
 end
 
 function Player:mouse_pressed(x, y, button, istouch, presses)
@@ -489,15 +524,18 @@ function Player:update(dt)
     self.cur_anima:set_flip_x(self.direction < 0 and true or false)
 
     if not self:is_dead() then
-        self.time_smoke = self.time_smoke + dt
-        if self.time_smoke >= 0.15 and bd.speed_y < 0 then
-            self.time_smoke = 0.0
+        -- self.time_smoke = self.time_smoke + dt
+        -- if self.time_smoke >= 0.15 and bd.speed_y < 0 then
+        --     self.time_smoke = 0.0
 
-            gamestate:game_add_component(Smoke:new(
-                self.x - 16 * self.direction,
-                self.y + 16
-            ))
-        end
+        --     gamestate:game_add_component(Smoke:new(
+        --         self.x - 16 * self.direction,
+        --         self.y + 16
+        --     ))
+        -- end
+
+        self.smoke_emitter.x = self.x - 16 * self.direction
+        self.smoke_emitter.y = self.y + 16
 
         if bd.speed_y < 16 then
             _G.PLAY_SFX("fly", false)
@@ -537,9 +575,14 @@ function Player:draw()
         self.skull:draw(self.x + self.w * 0.5 - 16 * self.direction, self.y - 4)
     end
 
-    -- local font = JM_Font.current
-    -- local t = self.hp
-    -- font:print(tostring(t), self.x, self.y - 10)
+    local font = JM_Font.current
+
+    local N = 0
+    for _, __ in pairs(self.smoke_emitter.ParticleRecycler) do
+        N = N + 1
+    end
+
+    font:print(tostring(N), self.x, self.y - 10)
 end
 
 return Player
