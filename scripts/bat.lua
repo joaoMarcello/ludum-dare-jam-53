@@ -4,6 +4,8 @@ local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
 local Item = require "scripts.item"
 local Smoke = require "scripts.smoke"
+local Particle = require "jm-love2d-package.modules.particle.particle"
+local Emitter = require "jm-love2d-package.modules.particle.emitter"
 
 local Anima = _G.JM_Anima
 
@@ -131,6 +133,7 @@ local leave = function(self, dt)
 
     if not gamestate.camera:rect_is_on_view(bd:rect()) then
         self.__remove = true
+        self.smoke_emitter.lifetime = -100000
     end
 end
 
@@ -141,6 +144,27 @@ local dead = function(self, dt)
     if self.time_state >= 5
     then
         self.__remove = true
+        self.smoke_emitter.lifetime = -100000
+    end
+end
+
+---@param self JM.Emitter
+---@param dt any
+---@param args Bat
+local function smoke_emitter_update(self, dt, args)
+    self.time = self.time + dt
+
+    if self.time >= 0.2 and args.body.speed_y ~= 0
+        and args.state ~= States.idle and not args:is_dead()
+    then
+        self.time = 0.0
+
+        self:add_particle(Particle:newAnimated(
+            Emitter:pop_anima('smoke'),
+            self.x, self.y, 7, 7, 1,
+            nil, nil, nil, nil, nil, nil, 0.15, nil,
+            self.draw_order, 'smoke'
+        ))
     end
 end
 
@@ -217,6 +241,12 @@ function Bat:__constructor__(mode)
     self.time_smoke = 0.0
 
     self.direction = 1
+
+    self.smoke_emitter = Emitter:new(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update, self)
+
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+    gamestate:game_add_component(self.smoke_emitter)
 
     self.update = Bat.update
     self.draw = Bat.draw
@@ -335,6 +365,7 @@ function Bat:set_state(state)
         gamestate:game_add_score(pt)
         gamestate:display_text(tostring(pt), self.x, self.y - 20)
 
+        self.smoke_emitter.lifetime = -100000
         --
     end
 
@@ -411,17 +442,19 @@ function Bat:update(dt)
 
         self.cur_anima:set_flip_x(player_bd.x > bd.x and true or false)
 
-        self.time_smoke = self.time_smoke + dt
+        self.smoke_emitter.x = self.x + self.w * 0.5 - 1 * self.direction
+        self.smoke_emitter.y = self.y + self.h * 0.5 - 1 * bd:direction_y()
 
-        if self.time_smoke >= 0.2 and bd.speed_y ~= 0 and self.state ~= States.idle then
-            self.time_smoke = 0.0
-            local sk = Smoke:new(
-                self.x + self.w * 0.5 - 1 * self.direction,
-                self.y + self.h * 0.5 - 1 * bd:direction_y(),
-                0.3
-            )
-            gamestate:game_add_component(sk)
-        end
+        -- self.time_smoke = self.time_smoke + dt
+        -- if self.time_smoke >= 0.2 and bd.speed_y ~= 0 and self.state ~= States.idle then
+        --     self.time_smoke = 0.0
+        --     local sk = Smoke:new(
+        --         self.x + self.w * 0.5 - 1 * self.direction,
+        --         self.y + self.h * 0.5 - 1 * bd:direction_y(),
+        --         0.3
+        --     )
+        --     gamestate:game_add_component(sk)
+        -- end
         --
     else
         self.cur_anima.current_frame = 1

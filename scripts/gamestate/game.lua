@@ -550,9 +550,9 @@ State:implements {
         end
 
         if not player:is_dead() then
-            -- spawn_enemy(dt)
-            -- respawn_mush(dt)
-            -- spawn_heart(dt)
+            spawn_enemy(dt)
+            respawn_mush(dt)
+            spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
 

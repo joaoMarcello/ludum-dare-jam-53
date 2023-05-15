@@ -468,6 +468,10 @@ function Player:key_pressed(key)
     if key == 'z' then
         Emitter:flush()
     end
+
+    if key == 'm' then
+        collectgarbage()
+    end
 end
 
 function Player:mouse_pressed(x, y, button, istouch, presses)
