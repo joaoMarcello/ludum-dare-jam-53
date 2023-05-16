@@ -3,8 +3,9 @@ local GC = require "jm-love2d-package.modules.gamestate.body_object"
 local Utils = _G.JM_Utils
 local Spell = require "scripts.spell"
 local Smoke = require "scripts.smoke"
-local Emitter = require "jm-love2d-package.modules.particle.emitter"
-local Particle = require "jm-love2d-package.modules.particle.particle"
+-- local Emitter = require "jm-love2d-package.modules.particle.emitter"
+-- local Particle = require "jm-love2d-package.modules.particle.particle"
+local PS = require "jm-love2d-package.modules.jm_ps"
 
 local keys = {
     left = { 'left', 'a' },
@@ -150,15 +151,17 @@ local function smoke_emitter_update(self, dt, args)
     if self.time >= 0.15 and not player:is_dead() and player.body.speed_y < 0 then
         self.time = 0.0
 
-        self:add_particle(Particle:newAnimated(
-            self:pop_anima('smoke'),
-            -- self.Animas['smoke']:copy(),
-            self.x,
-            self.y,
-            7, 7,
-            1, nil, nil, nil, nil, nil, nil, nil, nil, self.draw_order,
-            "smoke"
-        ))
+        -- self:add_particle(PS.Particle:newAnimated(
+        --     self:pop_anima('smoke'),
+        --     -- self.Animas['smoke']:copy(),
+        --     self.x,
+        --     self.y,
+        --     7, 7,
+        --     1, nil, nil, nil, nil, nil, nil, nil, nil, self.draw_order,
+        --     "smoke"
+        -- ))
+
+        self:add_particle(PS:newAnimatedParticle("smoke", self.x, self.y))
     end
 end
 --==========================================================================
@@ -257,7 +260,8 @@ function Player:__constructor__()
 
     self:set_state(States.default)
 
-    self.smoke_emitter = Emitter:new(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update, self)
+    self.smoke_emitter = PS:newEmitter(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update,
+        self)
 
 
     ---@type GameState.Game | any
@@ -466,7 +470,7 @@ function Player:key_pressed(key)
     end
 
     if key == 'z' then
-        Emitter:flush()
+        PS.Emitter:flush()
     end
 
     if key == 'm' then

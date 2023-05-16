@@ -4,8 +4,9 @@ local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
 local Item = require "scripts.item"
 local Smoke = require "scripts.smoke"
-local Particle = require "jm-love2d-package.modules.particle.particle"
-local Emitter = require "jm-love2d-package.modules.particle.emitter"
+-- local Particle = require "jm-love2d-package.modules.particle.particle"
+-- local Emitter = require "jm-love2d-package.modules.particle.emitter"
+local PS = require "jm-love2d-package.modules.jm_ps"
 
 local Anima = _G.JM_Anima
 
@@ -159,12 +160,14 @@ local function smoke_emitter_update(self, dt, args)
     then
         self.time = 0.0
 
-        self:add_particle(Particle:newAnimated(
-            Emitter:pop_anima('smoke'),
-            self.x, self.y, 7, 7, 1,
-            nil, nil, nil, nil, nil, nil, 0.15, nil,
-            self.draw_order, 'smoke'
-        ))
+        -- self:add_particle(PS.Particle:newAnimated(
+        --     PS.Emitter:pop_anima('smoke'),
+        --     self.x, self.y, 7, 7, 1,
+        --     nil, nil, nil, nil, nil, nil, 0.15, nil,
+        --     self.draw_order, 'smoke'
+        -- ))
+
+        self:add_particle(PS:newAnimatedParticle("smoke", self.x, self.y, self.draw_order, 0.15))
     end
 end
 
@@ -242,7 +245,8 @@ function Bat:__constructor__(mode)
 
     self.direction = 1
 
-    self.smoke_emitter = Emitter:new(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update, self)
+    self.smoke_emitter = PS:newEmitter(self.x, self.y, 16, 16, self.draw_order - 1, math.huge, smoke_emitter_update,
+        self)
 
     ---@type GameState.Game | any
     local gamestate = self.gamestate

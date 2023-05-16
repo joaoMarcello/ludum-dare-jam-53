@@ -134,8 +134,6 @@ function love.touchreleased(id, x, y, dx, dy, pressure)
 end
 
 local km = 0
-local tm = 0.0
-local fr = 5.0
 local collectgarbage = collectgarbage
 
 local start = love.timer.getTime()
@@ -144,11 +142,13 @@ local function collect()
     for i = 1, 100 do
         collectgarbage("step", 5)
         if timer_getTime() - start > 0.001 then
-            break
+            return
         end
     end
 end
 
+-- local tm = 0.0
+-- local fr = 5.0
 function love.update(dt)
     km = collectgarbage("count") / 1024.0
 

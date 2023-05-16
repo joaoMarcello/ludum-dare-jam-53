@@ -11,8 +11,7 @@ local Heart = require "scripts.heart"
 local DisplayHP = require "scripts.display_hp"
 local DisplaySpell = require "scripts.display_spell"
 local DisplayBag = require "scripts.display_bag"
-local Emitter = require "jm-love2d-package.modules.particle.emitter"
-local Particle = require "jm-love2d-package.modules.particle.particle"
+local ParticleSystem = require "jm-love2d-package.modules.jm_ps"
 
 -- ---@class GameState.Game : JM.Scene
 -- local State = Pack.Scene:new(nil, nil, nil, nil, SCREEN_WIDTH, SCREEN_HEIGHT,
@@ -380,6 +379,9 @@ State:implements {
             night_sky = Anima:new { img = imgs.night_sky },
         }
 
+        ParticleSystem:register_img("data/img/smoke-Sheet.png", "smoke")
+        ParticleSystem:register_animated_particle("smoke", "smoke", 7, 7, 1, -2)
+
         -- if not JM_Font.current:__get_char_equals("--a--") then
         --     JM_Font.current:add_nickname_animated("--a--",
         --         { img = "/data/img/bat-fly-Sheet.png", frames = 2, speed = 0.15 })
@@ -401,12 +403,15 @@ State:implements {
             cellsize = 16 * 4,
         }
 
-        Particle:init_module({ "data/img/smoke-Sheet.png" }, world, State, Emitter)
+        -- Particle:init_module(world, State)
 
-        Emitter:init_module(world, State)
-        Emitter:register_anima(
+        -- Emitter:init_module(world, State)
+
+        ParticleSystem:init_module(world, State)
+
+        ParticleSystem:register_anima(
             JM_Anima:new {
-                img = Particle.IMG["data/img/smoke-Sheet.png"],
+                img = ParticleSystem.IMG["smoke"],
                 frames = 4,
                 stop_at_the_end = true,
                 duration = 1
