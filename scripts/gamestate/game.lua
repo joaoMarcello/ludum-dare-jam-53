@@ -380,6 +380,26 @@ State:implements {
         }
 
         ParticleSystem:register_img("data/img/smoke-Sheet.png", "smoke")
+        ParticleSystem:register_img("data/img/bubble.png", "bubble")
+
+        ParticleSystem:register_anima(
+            _G.JM_Anima:new {
+                img = ParticleSystem.IMG["smoke"],
+                frames = 4,
+                stop_at_the_end = true,
+                duration = 1
+            },
+            "smoke"
+        )
+
+        ParticleSystem:register_anima(
+            JM_Anima:new {
+                img = ParticleSystem.IMG["bubble"],
+                bottom = 10,
+            },
+            "bubble"
+        )
+
         ParticleSystem:register_animated_particle("smoke", "smoke", 7, 7, 1, -2)
 
         -- if not JM_Font.current:__get_char_equals("--a--") then
@@ -403,21 +423,9 @@ State:implements {
             cellsize = 16 * 4,
         }
 
-        -- Particle:init_module(world, State)
-
-        -- Emitter:init_module(world, State)
-
         ParticleSystem:init_module(world, State)
 
-        ParticleSystem:register_anima(
-            JM_Anima:new {
-                img = ParticleSystem.IMG["smoke"],
-                frames = 4,
-                stop_at_the_end = true,
-                duration = 1
-            },
-            "smoke"
-        )
+
 
         local GameObject = require "jm-love2d-package.modules.gamestate.game_object"
         GameObject:init_state(State, world)
@@ -555,9 +563,9 @@ State:implements {
         end
 
         if not player:is_dead() then
-            spawn_enemy(dt)
+            -- spawn_enemy(dt)
             respawn_mush(dt)
-            spawn_heart(dt)
+            -- spawn_heart(dt)
 
             State.camera:follow(player.x + player.w * 0.5, player.y + player.h * 0.5)
 

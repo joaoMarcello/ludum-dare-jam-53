@@ -3,8 +3,58 @@ local GC = require "jm-love2d-package.modules.gamestate.game_object"
 local lgx = love.graphics
 local Phys = _G.JM_Love2D_Package.Physics
 local Utils = _G.JM_Utils
-
+local PS = require "jm-love2d-package.modules.jm_ps"
 local imgs
+
+---@param self JM.Particle
+---@param dt any
+local part_update = function(self, dt)
+    local bd = self.body
+    if bd.speed_y >= 0 then
+        self.sx = self.sx - 1.0 / 2 * dt
+        if self.sx < 0.0 then
+            self.sx = 0.0
+        end
+        self.sy = self.sx
+
+        -- local w = self.body.w * self.sx
+        -- local h = self.body.h * self.sx
+        -- if w <= 0 then w = 1 end
+        -- if h <= 0 then h = 1 end
+        -- bd:refresh(nil, bd.y + bd.h - h, w, h)
+    end
+end
+
+---@param self JM.Emitter
+---@param dt any
+---@param args Cauldron
+local bubble_action = function(self, dt, args)
+    self.time = self.time + dt
+
+    args.time = args.time + dt
+
+    if self.time >= 0.25 then
+        self.time = 0.0
+
+        local p = self:add_particle(PS.Particle:newBodyAnimated(
+            PS.Emitter:pop_anima("bubble"),
+            math.random(self.x, self.x + self.w), self.y, 6, 6, 2, nil,
+            "bubble"
+        ))
+
+        p.__custom_update__ = part_update
+        local dir = p.body.x <= self.x + self.w * 0.5 and -1 or 1
+        local bd = p.body
+        bd.speed_x = (16 * 4 * math.random()) * dir
+        bd.dacc_x = 16 * 6
+        bd.bouncing_y = 0.3
+        bd.allowed_air_dacc = false
+        bd.mass = bd.mass * 0.75
+
+        bd:jump(16 + 24 * math.random(), -1)
+    end
+end
+
 
 ---@class Cauldron : GameObject
 local Cauldron = setmetatable({}, GC)
@@ -57,6 +107,15 @@ function Cauldron:__constructor__()
 
     self.ox = self.w * 0.5
     self.oy = self.h
+
+    self.emitter = PS.Emitter:new(self.x, self.y - 8, self.w, 8, self.draw_order + 1, math.huge, bubble_action, self)
+
+    ---@type GameState.Game | any
+    local gamestate = self.gamestate
+
+    gamestate:game_add_component(self.emitter)
+
+    self.time = 0.0
 end
 
 function Cauldron:load()
