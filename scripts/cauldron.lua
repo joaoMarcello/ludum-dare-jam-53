@@ -33,7 +33,7 @@ local bubble_action = function(self, dt, args)
 
     args.time = args.time + dt
 
-    if self.time >= 0.25 then
+    if self.time >= 0.15 then
         self.time = 0.0
 
         local p = self:add_particle(PS.Particle:newBodyAnimated(
@@ -108,7 +108,7 @@ function Cauldron:__constructor__()
     self.ox = self.w * 0.5
     self.oy = self.h
 
-    self.emitter = PS.Emitter:new(self.x, self.y - 8, self.w, 8, self.draw_order + 1, math.huge, bubble_action, self)
+    self.emitter = PS.Emitter:new(self.x, self.y - 8, self.w, 8, self.draw_order - 1, math.huge, bubble_action, self)
 
     ---@type GameState.Game | any
     local gamestate = self.gamestate
