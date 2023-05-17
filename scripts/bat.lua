@@ -1,12 +1,12 @@
 -- local GC = require "lib.bodyComponent"
-local GC = require "jm-love2d-package.modules.gamestate.body_object"
+local GC = _G.JM_Package.BodyObject
 local Bullet = require "scripts.bullet"
 local Utils = _G.JM_Utils
 local Item = require "scripts.item"
-local Smoke = require "scripts.smoke"
+-- local Smoke = require "scripts.smoke"
 -- local Particle = require "jm-love2d-package.modules.particle.particle"
 -- local Emitter = require "jm-love2d-package.modules.particle.emitter"
-local PS = require "jm-love2d-package.modules.jm_ps"
+local PS = _G.JM_Package.ParticleSystem
 
 local Anima = _G.JM_Anima
 
@@ -259,7 +259,7 @@ end
 function Bat:load()
     Bullet:load()
     Item:load()
-    Smoke:load()
+    -- Smoke:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
@@ -273,7 +273,7 @@ end
 function Bat:finish()
     Bullet:finish()
     Item:finish()
-    Smoke:finish()
+    -- Smoke:finish()
     imgs = nil
 end
 

@@ -199,7 +199,7 @@ local function spawn_enemy(dt)
         spawn_speed = 11
     end
 
-    -- spawn_speed = 3
+    spawn_speed = 3
 
     time_spawn = time_spawn + dt
     if time_spawn >= spawn_speed then
@@ -395,7 +395,7 @@ State:implements {
         ParticleSystem:register_anima(
             JM_Anima:new {
                 img = ParticleSystem.IMG["bubble"],
-                bottom = 10,
+                bottom = 11,
             },
             "bubble"
         )

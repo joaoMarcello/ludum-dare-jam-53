@@ -1,11 +1,8 @@
--- local GC = require "lib.bodyComponent"
-local GC = require "jm-love2d-package.modules.gamestate.body_object"
+-- local GC = require "jm-love2d-package.modules.gamestate.body_object"
+local GC = _G.JM_Package.BodyObject
 local Utils = _G.JM_Utils
 local Spell = require "scripts.spell"
-local Smoke = require "scripts.smoke"
--- local Emitter = require "jm-love2d-package.modules.particle.emitter"
--- local Particle = require "jm-love2d-package.modules.particle.particle"
-local PS = require "jm-love2d-package.modules.jm_ps"
+local PS = _G.JM_Package.ParticleSystem
 
 local keys = {
     left = { 'left', 'a' },
@@ -274,7 +271,7 @@ end
 
 function Player:load()
     Spell:load()
-    Smoke:load()
+    -- Smoke:load()
 
     local newImage = lgx.newImage
     imgs = imgs or {
@@ -287,7 +284,7 @@ end
 
 function Player:finish()
     Spell:finish()
-    Smoke:finish()
+    -- Smoke:finish()
     imgs = nil
 end
 
@@ -583,14 +580,14 @@ function Player:draw()
         self.skull:draw(self.x + self.w * 0.5 - 16 * self.direction, self.y - 4)
     end
 
-    local font = JM_Font.current
+    -- local font = JM_Font.current
 
-    local N = 0
-    for _, __ in pairs(self.smoke_emitter.ParticleRecycler) do
-        N = N + 1
-    end
+    -- local N = 0
+    -- for _, __ in pairs(self.smoke_emitter.ParticleRecycler) do
+    --     N = N + 1
+    -- end
 
-    font:print(tostring(N), self.x, self.y - 10)
+    -- font:print(tostring(N), self.x, self.y - 10)
 end
 
 return Player

@@ -1,5 +1,6 @@
 -- local GC = require "lib.bodyComponent"
-local GC = require "jm-love2d-package.modules.gamestate.body_object"
+-- local GC = require "jm-love2d-package.modules.gamestate.body_object"
+local GC = _G.JM_Package.BodyObject
 local lgx = love.graphics
 
 ---@enum Item.Types
