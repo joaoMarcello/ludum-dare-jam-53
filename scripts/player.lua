@@ -580,14 +580,13 @@ function Player:draw()
         self.skull:draw(self.x + self.w * 0.5 - 16 * self.direction, self.y - 4)
     end
 
-    -- local font = JM_Font.current
+    local font = JM_Font.current
+    local N = 0
 
-    -- local N = 0
-    -- for _, __ in pairs(self.smoke_emitter.ParticleRecycler) do
-    --     N = N + 1
-    -- end
-
-    -- font:print(tostring(N), self.x, self.y - 10)
+    for _, __ in pairs(self.body.BodyRecycler) do
+        N = N + 1
+    end
+    font:print(tostring(N), self.x, self.y - 10)
 end
 
 return Player
