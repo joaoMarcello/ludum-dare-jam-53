@@ -208,13 +208,13 @@ function Cauldron:draw(cam)
         if fx and fy and dist then
             font:printf(string.format("<color, 0.9, 0.9, 0.9>%.1f M", dist / self.world.meter),
                 Utils:clamp(fx, vx, vx + vw - self.w),
-                Utils:clamp(fy, vy, vy + vh - self.h - 10), "center", 38
+                Utils:clamp(fy, vy, vy + vh - self.h - 20), "center", 38
             )
         end
 
         self.anim_down:draw_rec(
             Utils:clamp(self.x, vx, vx + vw - self.w),
-            Utils:clamp(self.y - 10, vy, vy + vh - self.h - 10),
+            Utils:clamp(self.y - 10, vy, vy + vh - self.h - 20),
             self.w,
             self.h
         )
@@ -223,7 +223,7 @@ function Cauldron:draw(cam)
         --
     else
         if not player_bd:check_collision(self.x - 16, self.y - 32, self.w + 32, self.h + 64) then
-            self.anim2:draw_rec(self.x, self.y - 35, self.w, self.h)
+            self.anim2:draw_rec(self.x, self.y - 45, self.w, self.h)
         end
         --
     end

@@ -206,7 +206,7 @@ function Item:update(dt)
             score = self.bounce_count > 0 and (score * 5) or score
             gamestate:game_add_score(score)
 
-            gamestate:display_text(tostring(score), bd.x, cauldron.y - 32)
+            gamestate:display_text(tostring(score), bd.x + bd.w * 0.5, cauldron.y - 42)
             _G.PLAY_SFX("power_up", true)
 
             cauldron:shake()
