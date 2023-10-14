@@ -173,6 +173,7 @@ end
 
 ---@class Bat : BodyObject
 local Bat = setmetatable({}, GC)
+Bat.__is_bat__ = true
 Bat.__index = Bat
 Bat.States = States
 Bat.Modes = Modes

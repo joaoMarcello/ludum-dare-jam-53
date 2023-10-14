@@ -52,7 +52,8 @@ end
 local filter_to_chase = function(obj, item)
     ---@type Bat | nil
     local h = item.holder
-    return item.id == 'bat' and (h and not h:is_dead())
+    -- return item.id == 'bat' and (h and h.__is_bat__ and not h:is_dead())
+    return (h and h.__is_bat__ and not h:is_dead())
 end
 
 ---@param self Spell
